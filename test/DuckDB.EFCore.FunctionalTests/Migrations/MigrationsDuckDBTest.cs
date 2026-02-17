@@ -503,12 +503,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Drop_index()
-    {
-        return base.Drop_index();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Drop_json_columns_from_existing_table()
     {
         return base.Drop_json_columns_from_existing_table();
