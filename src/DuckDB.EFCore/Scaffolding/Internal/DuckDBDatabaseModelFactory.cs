@@ -11,10 +11,6 @@ namespace DuckDB.EFCore.Scaffolding.Internal;
 
 public class DuckDBDatabaseModelFactory : DatabaseModelFactory
 {
-    public DuckDBDatabaseModelFactory()
-    {
-    }
-
     public override DatabaseModel Create(string connectionString, DatabaseModelFactoryOptions options)
     {
         using var connection = new DuckDBConnection(connectionString);
@@ -369,24 +365,17 @@ SELECT child.column_name  AS child_column,
 
                 foreach (var column in columns)
                 {
-                    var tableColumn = table.Columns.FirstOrDefault(c => c.Name == column);
+                    var tableColumn = table.Columns.Single(c => c.Name == column);
 
-                    if (tableColumn != null)
-                    {
-                        index.Columns.Add(tableColumn);
-                        index.IsDescending.Add(false);
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException($"Column {column} not found in table {table.Name} with columns {string.Join(", ", table.Columns.Select(c => c.Name))}.");
-                    }
+                    index.Columns.Add(tableColumn);
+                    index.IsDescending.Add(false);
                 }
 
                 table.Indexes.Add(index);
             }
         }
     }
-    
+
     private static ReferentialAction? ConvertToReferentialAction(string value)
         => value switch
         {
