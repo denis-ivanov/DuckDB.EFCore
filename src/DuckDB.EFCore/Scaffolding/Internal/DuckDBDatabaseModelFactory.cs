@@ -42,6 +42,7 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
             FillTables((DuckDBConnection)connection, databaseModel, options.Tables);
             FillColumns((DuckDBConnection)connection, databaseModel);
             FillPrimaryKeys((DuckDBConnection)connection, databaseModel);
+            FillIndexes((DuckDBConnection)connection, databaseModel);
 
             foreach (var table in databaseModel.Tables)
             {
@@ -108,22 +109,6 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
 
             databaseModel.Tables.Add(table);
         }
-    }
-
-    private static bool AllowsTable(HashSet<string> tables, HashSet<string> selectedTables, string name)
-    {
-        if (tables.Count == 0)
-        {
-            return true;
-        }
-
-        if (tables.Contains(name))
-        {
-            selectedTables.Add(name);
-            return true;
-        }
-
-        return false;
     }
 
     private void FillColumns(DuckDBConnection connection, DatabaseModel database)
@@ -233,156 +218,6 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
             }
 
             table.PrimaryKey = primaryKey;
-        }
-    }
-
-    private static void GetRowidPrimaryKey(
-        DbConnection connection,
-        DatabaseTable table)
-    {
-        using var command = connection.CreateCommand();
-        command.CommandText =
-            """
-SELECT "name"
-FROM pragma_table_info(@table)
-WHERE "pk" = 1
-""";
-
-        var parameter = command.CreateParameter();
-        parameter.ParameterName = "@table";
-        parameter.Value = table.Name;
-        command.Parameters.Add(parameter);
-
-        using var reader = command.ExecuteReader();
-        if (!reader.Read())
-        {
-            return;
-        }
-
-        var columnName = reader.GetString(0);
-        var column = table.Columns.FirstOrDefault(c => c.Name == columnName)
-            ?? table.Columns.FirstOrDefault(c => c.Name.Equals(columnName, StringComparison.OrdinalIgnoreCase));
-        Debug.Assert(column != null, "column is null.");
-
-        Debug.Assert(!reader.Read(), "Unexpected composite primary key.");
-
-        table.PrimaryKey = new DatabasePrimaryKey
-        {
-            Table = table,
-            Name = string.Empty,
-            Columns = { column }
-        };
-    }
-
-    private void GetUniqueConstraints(DbConnection connection, DatabaseTable table)
-    {
-        using var command1 = connection.CreateCommand();
-        command1.CommandText =
-            """
-SELECT constraint_name
-  FROM information_schema.table_constraints
- WHERE constraint_type = 'UNIQUE'
-   AND table_name = ?
-   AND table_schema = ?;
-""";
-
-        command1.Parameters.Add(new DuckDBParameter(table.Name));
-        command1.Parameters.Add(new DuckDBParameter(table.Schema));
-
-        using var reader1 = command1.ExecuteReader();
-        while (reader1.Read())
-        {
-            var constraintName = reader1.GetString("constraint_name");
-            var uniqueConstraint = new DatabaseUniqueConstraint
-            {
-                Table = table,
-                Name = constraintName
-            };
-
-            // TODO _logger.UniqueConstraintFound(constraintName, table.Name);
-
-            using (var command2 = connection.CreateCommand())
-            {
-                command2.CommandText =
-                    """
-SELECT "name"
-FROM pragma_index_info(@index)
-ORDER BY "seqno"
-""";
-
-                var parameter2 = command2.CreateParameter();
-                parameter2.ParameterName = "@index";
-                parameter2.Value = constraintName;
-                command2.Parameters.Add(parameter2);
-
-                using var reader2 = command2.ExecuteReader();
-                while (reader2.Read())
-                {
-                    var columnName = reader2.GetString(0);
-                    var column = table.Columns.FirstOrDefault(c => c.Name == columnName)
-                        ?? table.Columns.FirstOrDefault(
-                            c => c.Name.Equals(columnName, StringComparison.OrdinalIgnoreCase));
-                    // TODO Check.DebugAssert(column != null, "column is null.");
-
-                    uniqueConstraint.Columns.Add(column);
-                }
-            }
-
-            table.UniqueConstraints.Add(uniqueConstraint);
-        }
-    }
-
-    private void GetIndexes(DbConnection connection, DatabaseTable table)
-    {
-        // TODO
-        return;
-        
-        using var command1 = connection.CreateCommand();
-        command1.CommandText = $"PRAGMA show_indexes('{table.Name}');";
-
-        command1.Parameters.Add(new DuckDBParameter(table.Name));
-
-        using var reader1 = command1.ExecuteReader();
-        while (reader1.Read())
-        {
-            var index = new DatabaseIndex
-            {
-                Table = table,
-                Name = reader1.GetString(0),
-                IsUnique = reader1.GetBoolean(1)
-            };
-
-            // TODO _logger.IndexFound(index.Name, table.Name, index.IsUnique);
-
-            using (var command2 = connection.CreateCommand())
-            {
-                command2.CommandText =
-                    """
-SELECT "name", "desc"
-FROM pragma_index_xinfo(@index)
-WHERE key = 1
-ORDER BY "seqno"
-""";
-
-                var parameter2 = command2.CreateParameter();
-                parameter2.ParameterName = "@index";
-                parameter2.Value = index.Name;
-                command2.Parameters.Add(parameter2);
-
-                using var reader2 = command2.ExecuteReader();
-                while (reader2.Read())
-                {
-                    var name = reader2.GetString(0);
-                    var column = table.Columns.FirstOrDefault(c => c.Name == name)
-                        ?? table.Columns.FirstOrDefault(c => c.Name.Equals(name, StringComparison.Ordinal));
-                    // TODO Check.DebugAssert(column != null, "column is null.");
-
-                    index.Columns.Add(column);
-                    index.IsDescending.Add(reader2.GetBoolean(1));
-                }
-            }
-
-            table.Indexes.Add(index);
         }
     }
 
@@ -505,6 +340,53 @@ SELECT child.column_name  AS child_column,
         }
     }
 
+    private void FillIndexes(DuckDBConnection connection, DatabaseModel database)
+    {
+        foreach (var table in database.Tables)
+        {
+            using var command = connection.CreateCommand();
+            command.CommandText = """
+                                  SELECT *
+                                    FROM duckdb_indexes
+                                    WHERE table_name = $table_name
+                                  """;
+
+            command.Parameters.Add(new DuckDBParameter("table_name", table.Name));
+
+            using var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                var index = new DatabaseIndex
+                {
+                    Name = reader.GetString("index_name"),
+                    Table = table,
+                    IsUnique = reader.GetBoolean("is_unique")
+                };
+
+                var expressions = reader.GetFieldValue<string>("expressions");
+                var columns = Array.ConvertAll(expressions.TrimStart('[').TrimEnd(']').Split(','), e => e.Trim());
+
+                foreach (var column in columns)
+                {
+                    var tableColumn = table.Columns.FirstOrDefault(c => c.Name == column);
+
+                    if (tableColumn != null)
+                    {
+                        index.Columns.Add(tableColumn);
+                        index.IsDescending.Add(false);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Column {column} not found in table {table.Name} with columns {string.Join(", ", table.Columns.Select(c => c.Name))}.");
+                    }
+                }
+
+                table.Indexes.Add(index);
+            }
+        }
+    }
+    
     private static ReferentialAction? ConvertToReferentialAction(string value)
         => value switch
         {
