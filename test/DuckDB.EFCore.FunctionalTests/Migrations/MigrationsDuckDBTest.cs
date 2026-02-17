@@ -389,12 +389,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Create_sequence()
-    {
-        return base.Create_sequence();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Create_sequence_all_settings()
     {
         return base.Create_sequence_all_settings();
@@ -512,12 +506,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     {
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Drop_primary_key_string());
         Assert.Equal("Not implemented Error: No support for that ALTER TABLE option yet!", exception.Message);
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Drop_sequence()
-    {
-        return base.Drop_sequence();
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
