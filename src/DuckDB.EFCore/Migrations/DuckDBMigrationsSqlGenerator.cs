@@ -35,4 +35,14 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         builder.Append("ALTER TABLE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name))
             .Append(" RENAME TO ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.NewName));
     }
+
+    protected override void Generate(DropIndexOperation operation, IModel? model, MigrationCommandListBuilder builder, bool terminate = true)
+    {
+        builder.Append("DROP INDEX ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name));
+
+        if (terminate)
+        {
+            EndStatement(builder);
+        }
+    }
 }
