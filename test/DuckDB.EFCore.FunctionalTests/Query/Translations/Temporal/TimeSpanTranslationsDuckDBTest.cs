@@ -1,0 +1,51 @@
+﻿using Microsoft.EntityFrameworkCore.Query.Translations.Temporal;
+using Xunit;
+using Xunit.Abstractions;
+
+namespace DuckDB.EFCore.FunctionalTests.Query.Translations.Temporal;
+
+public class TimeSpanTranslationsDuckDBTest : TimeSpanTranslationsTestBase<BasicTypesQueryDuckDBFixture>
+{
+    public TimeSpanTranslationsDuckDBTest(BasicTypesQueryDuckDBFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
+    {
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
+    }
+
+    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Hours()
+    {
+        return base.Hours();
+    }
+
+    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Microseconds()
+    {
+        return base.Microseconds();
+    }
+
+    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Milliseconds()
+    {
+        return base.Milliseconds();
+    }
+
+    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Minutes()
+    {
+        return base.Minutes();
+    }
+
+    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Seconds()
+    {
+        return base.Seconds();
+    }
+
+    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Nanoseconds()
+    {
+        return base.Nanoseconds();
+    }
+}
