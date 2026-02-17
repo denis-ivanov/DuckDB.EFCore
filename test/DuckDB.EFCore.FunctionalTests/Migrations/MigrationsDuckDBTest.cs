@@ -556,10 +556,10 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         return base.Rename_sequence();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Rename_table()
+    public override async Task Rename_table()
     {
-        return base.Rename_table();
+        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Rename_table());
+        Assert.Equal("Not implemented Error: No support for that ALTER TABLE option yet!", exception.Message);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
