@@ -45,4 +45,23 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
             EndStatement(builder);
         }
     }
+
+    protected override void Generate(CreateSequenceOperation operation, IModel? model, MigrationCommandListBuilder builder)
+    {
+        builder
+            .Append("CREATE SEQUENCE IF NOT EXISTS ")
+            .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema));
+
+        var typeMapping = Dependencies.TypeMappingSource.FindMapping(operation.ClrType);
+
+        builder
+            .Append(" START WITH ")
+            .Append(typeMapping.GenerateSqlLiteral(operation.StartValue));
+
+        SequenceOptions(operation, model, builder);
+
+        builder.AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+
+        EndStatement(builder);
+    }
 }

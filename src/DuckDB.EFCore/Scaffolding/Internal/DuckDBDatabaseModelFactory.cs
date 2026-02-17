@@ -39,6 +39,7 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
             FillColumns((DuckDBConnection)connection, databaseModel);
             FillPrimaryKeys((DuckDBConnection)connection, databaseModel);
             FillIndexes((DuckDBConnection)connection, databaseModel);
+            FillSequences((DuckDBConnection)connection, databaseModel);
 
             foreach (var table in databaseModel.Tables)
             {
@@ -373,6 +374,31 @@ SELECT child.column_name  AS child_column,
 
                 table.Indexes.Add(index);
             }
+        }
+    }
+
+    private void FillSequences(DuckDBConnection connection, DatabaseModel database)
+    {
+        using var command = connection.CreateCommand();
+        command.CommandText = "SELECT * FROM duckdb_sequences()";
+        using var reader = command.ExecuteReader();
+
+        while (reader.Read())
+        {
+            var sequence = new DatabaseSequence
+            {
+                Name = reader.GetString("sequence_name"),
+                Schema = reader.GetString("schema_name"),
+                Database = database,
+                IncrementBy = reader.GetInt32("increment_by"),
+                StartValue = reader.GetInt64("start_value"),
+                MinValue = reader.GetInt64("min_value"),
+                MaxValue = reader.GetInt64("max_value"),
+                IsCyclic = reader.GetBoolean("cycle"),
+                StoreType = "BIGINT"
+            };
+
+            database.Sequences.Add(sequence);
         }
     }
 
