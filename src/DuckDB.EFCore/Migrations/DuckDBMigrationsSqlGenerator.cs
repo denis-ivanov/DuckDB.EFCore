@@ -32,8 +32,8 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
 
     protected override void Generate(RenameTableOperation operation, IModel? model, MigrationCommandListBuilder builder)
     {
-        builder.Append("ALTER TABLE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name))
-            .Append(" RENAME TO ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.NewName));
+        builder.Append("ALTER TABLE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
+            .Append(" RENAME TO ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.NewName, operation.NewSchema));
     }
 
     protected override void Generate(DropIndexOperation operation, IModel? model, MigrationCommandListBuilder builder, bool terminate = true)
@@ -49,7 +49,7 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
     protected override void Generate(CreateSequenceOperation operation, IModel? model, MigrationCommandListBuilder builder)
     {
         builder
-            .Append("CREATE SEQUENCE IF NOT EXISTS ")
+            .Append("CREATE SEQUENCE ")
             .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema));
 
         var typeMapping = Dependencies.TypeMappingSource.FindMapping(operation.ClrType);
@@ -62,6 +62,12 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
 
         builder.AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
 
+        EndStatement(builder);
+    }
+
+    protected override void Generate(EnsureSchemaOperation operation, IModel? model, MigrationCommandListBuilder builder)
+    {
+        builder.Append("CREATE SCHEMA IF NOT EXISTS ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name));
         EndStatement(builder);
     }
 }
