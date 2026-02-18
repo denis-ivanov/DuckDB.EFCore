@@ -108,6 +108,34 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         }
     }
 
+    protected override void Generate(AlterColumnOperation operation, IModel? model, MigrationCommandListBuilder builder)
+    {
+        if (operation.OldColumn.Name != operation.Name ||
+            operation.OldColumn.Schema != operation.Schema ||
+            operation.OldColumn.Table != operation.Table ||
+            operation.OldColumn.ColumnType != operation.ColumnType ||
+            operation.OldColumn.IsUnicode != operation.IsUnicode ||
+            operation.OldColumn.IsFixedLength != operation.IsFixedLength ||
+            operation.OldColumn.MaxLength != operation.MaxLength ||
+            operation.OldColumn.Precision != operation.Precision ||
+            operation.OldColumn.Scale != operation.Scale ||
+            operation.OldColumn.IsRowVersion != operation.IsRowVersion ||
+            operation.OldColumn.IsNullable != operation.IsNullable ||
+            operation.OldColumn.DefaultValue != operation.DefaultValue ||
+            operation.OldColumn.DefaultValueSql != operation.DefaultValueSql ||
+            operation.OldColumn.ComputedColumnSql != operation.ComputedColumnSql ||
+            operation.OldColumn.IsStored != operation.IsStored ||
+            operation.OldColumn.Collation != operation.Collation)
+        {
+            // base.Generate(operation, model, builder);
+        }
+
+        if (operation.OldColumn.Comment != operation.Comment)
+        {
+            Comment(builder, "COLUMN", Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Table), operation.Comment);
+        }
+    }
+
     protected virtual void Comment(MigrationCommandListBuilder builder, string objectType, string objectName, string? comment)
     {
         var stringTypeMapping = Dependencies.TypeMappingSource.FindMapping(typeof(string))!;
