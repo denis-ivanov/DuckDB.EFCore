@@ -407,12 +407,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Create_table_with_comments()
-    {
-        return base.Create_table_with_comments();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Create_table_with_complex_properties_mapped_to_json()
     {
         return base.Create_table_with_complex_properties_mapped_to_json();
