@@ -1,39 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <PreserveCompilationContext>true</PreserveCompilationContext>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\src\DuckDB.EFCore.NTS\DuckDB.EFCore.NTS.csproj" />
-      <ProjectReference Include="..\..\src\DuckDB.EFCore\DuckDB.EFCore.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DuckDB.EFCore.NTS\DuckDB.EFCore.NTS.csproj" />
+    <ProjectReference Include="..\..\src\DuckDB.EFCore\DuckDB.EFCore.csproj" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="AwesomeAssertions" Version="9.4.0" />
-      <PackageReference Include="AwesomeAssertions.Analyzers" Version="9.0.8">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.3" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational.Specification.Tests" Version="10.0.3" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.3" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.3" />
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-      <PackageReference Include="xunit.assert" Version="2.9.3" />
-      <PackageReference Include="xunit.core" Version="2.9.3" />
-      <PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
-      <PackageReference Include="xunit.runner.console" Version="2.9.3">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AwesomeAssertions" Version="9.4.0" />
+    <PackageReference Include="AwesomeAssertions.Analyzers" Version="9.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational.Specification.Tests" Version="10.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="xunit.assert" Version="2.9.3" />
+    <PackageReference Include="xunit.core" Version="2.9.3" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.console" Version="2.9.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage" />
+  </ItemGroup>
 
 </Project>
