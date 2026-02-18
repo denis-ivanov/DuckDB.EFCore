@@ -62,12 +62,6 @@ public class TimeOnlyTranslationsDuckDBTest : TimeOnlyTranslationsTestBase<Basic
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Hour()
-    {
-        return base.Hour();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task IsBetween()
     {
         return base.IsBetween();
@@ -80,21 +74,9 @@ public class TimeOnlyTranslationsDuckDBTest : TimeOnlyTranslationsTestBase<Basic
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Minute()
-    {
-        return base.Minute();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Microsecond()
     {
         return base.Microsecond();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Second()
-    {
-        return base.Second();
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]

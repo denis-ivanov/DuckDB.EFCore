@@ -14,12 +14,6 @@ public class TimeSpanTranslationsDuckDBTest : TimeSpanTranslationsTestBase<Basic
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Hours()
-    {
-        return base.Hours();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Microseconds()
     {
         return base.Microseconds();
@@ -29,18 +23,6 @@ public class TimeSpanTranslationsDuckDBTest : TimeSpanTranslationsTestBase<Basic
     public override Task Milliseconds()
     {
         return base.Milliseconds();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Minutes()
-    {
-        return base.Minutes();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Seconds()
-    {
-        return base.Seconds();
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
