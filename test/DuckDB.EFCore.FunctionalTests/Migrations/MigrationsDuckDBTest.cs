@@ -39,12 +39,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         return base.Add_column_computed_with_collation(stored);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Add_column_with_ansi()
-    {
-        return base.Add_column_with_ansi();
-    }
-
     public override async Task Add_column_with_check_constraint()
     {
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_column_with_check_constraint());
