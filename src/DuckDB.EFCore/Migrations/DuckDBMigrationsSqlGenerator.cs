@@ -70,4 +70,54 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         builder.Append("CREATE SCHEMA IF NOT EXISTS ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name));
         EndStatement(builder);
     }
+
+    protected override void Generate(
+        CreateTableOperation operation,
+        IModel? model,
+        MigrationCommandListBuilder builder,
+        bool terminate = true)
+    {
+        base.Generate(operation, model, builder, terminate);
+
+        if (!string.IsNullOrEmpty(operation.Comment))
+        {
+            Comment(builder, "TABLE", Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema), operation.Comment);
+        }
+
+        foreach (var addColumnOperation in operation.Columns.Where(c => c.Comment != null))
+        {
+            Comment(
+                builder,
+                "COLUMN",
+                Dependencies.SqlGenerationHelper.DelimitIdentifier(addColumnOperation.Name, operation.Name),
+                addColumnOperation.Comment);
+        }
+    }
+
+    protected override void Generate(AlterTableOperation operation, IModel? model, MigrationCommandListBuilder builder)
+    {
+        base.Generate(operation, model, builder);
+
+        if (operation.OldTable.Comment != operation.Comment)
+        {
+            Comment(
+                builder,
+                "TABLE",
+                Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema),
+                operation.Comment);
+        }
+    }
+
+    protected virtual void Comment(MigrationCommandListBuilder builder, string objectType, string objectName, string? comment)
+    {
+        var stringTypeMapping = Dependencies.TypeMappingSource.FindMapping(typeof(string))!;
+
+        builder.Append("COMMENT ON ").Append(objectType).Append(" ")
+            .Append(objectName)
+            .Append(" IS ")
+            .AppendLine(stringTypeMapping.GenerateSqlLiteral(comment))
+            .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+
+        EndStatement(builder);
+    }
 }
