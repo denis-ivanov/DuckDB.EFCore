@@ -119,10 +119,24 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
             });
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Add_primary_key_string()
+    public override async Task Add_primary_key_string()
     {
-        return base.Add_primary_key_string();
+        await Test(
+            builder => builder.Entity("People").Property<string>("SomeField").IsRequired(),
+            builder => { },
+            builder => builder.Entity("People").HasKey("SomeField"),
+            model =>
+            {
+                var table = Assert.Single(model.Tables);
+                var primaryKey = table.PrimaryKey;
+                Assert.NotNull(primaryKey);
+                Assert.Same(table, primaryKey!.Table);
+                Assert.Same(table.Columns.Single(), Assert.Single(primaryKey.Columns));
+                if (AssertConstraintNames)
+                {
+                    Assert.Equal("People_somefield_pkey", primaryKey.Name);
+                }
+            });
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
