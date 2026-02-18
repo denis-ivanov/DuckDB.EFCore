@@ -110,6 +110,15 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
 
     protected override void Generate(AlterColumnOperation operation, IModel? model, MigrationCommandListBuilder builder)
     {
+        if (operation.OldColumn.ColumnType != operation.ColumnType)
+        {
+            builder.Append("ALTER TABLE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Table, operation.Schema))
+                .Append("ALTER ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name))
+                .Append(" TYPE ").Append(operation.ColumnType)
+                .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+            EndStatement(builder);
+        }
+
         if (operation.OldColumn.Name != operation.Name ||
             operation.OldColumn.Schema != operation.Schema ||
             operation.OldColumn.Table != operation.Table ||

@@ -207,12 +207,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         return base.Alter_column_change_computed_type();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Alter_column_change_type()
-    {
-        return base.Alter_column_change_type();
-    }
-
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Alter_column_make_computed(bool? stored)
     {
