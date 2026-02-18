@@ -299,12 +299,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Alter_table_remove_comment()
-    {
-        return base.Alter_table_remove_comment();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Convert_json_entities_to_regular_owned()
     {
         return base.Convert_json_entities_to_regular_owned();
