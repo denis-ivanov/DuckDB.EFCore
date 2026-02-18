@@ -371,12 +371,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Create_sequence_all_settings()
-    {
-        return base.Create_sequence_all_settings();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Create_sequence_long()
     {
         return base.Create_sequence_long();
