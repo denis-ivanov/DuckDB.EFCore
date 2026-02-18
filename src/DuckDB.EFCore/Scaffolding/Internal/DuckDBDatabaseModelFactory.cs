@@ -129,7 +129,7 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
             {
                 var columnName = reader.GetString("column_name");
                 var dataType = reader.GetString("data_type");
-                var notNull = reader.GetBoolean("is_nullable");
+                var isNullable = reader.GetBoolean("is_nullable");
                 var defaultValueSql = !reader.IsDBNull("column_default") ? reader.GetString("column_default") : null;
                 var columnComment = reader.IsDBNull("comment") ? null : reader.GetString("comment");
                 var columnDefault = reader.IsDBNull("column_default") ? null : reader.GetString("column_default");
@@ -142,7 +142,7 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
                     Table = table,
                     Name = columnName,
                     StoreType = dataType,
-                    IsNullable = !notNull,
+                    IsNullable = isNullable,
                     DefaultValueSql = defaultValueSql,
                     ValueGenerated = !string.IsNullOrWhiteSpace(defaultValueSql) && defaultValueSql.StartsWith("nextval(") && defaultValueSql.EndsWith(")")
                         ? ValueGenerated.OnAdd
