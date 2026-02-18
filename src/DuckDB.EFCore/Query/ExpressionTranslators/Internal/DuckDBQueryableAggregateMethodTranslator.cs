@@ -133,8 +133,10 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                          && source.Selector is SqlExpression sumSqlExpression:
                     sumSqlExpression = CombineTerms(source, sumSqlExpression);
                     var sumInputType = sumSqlExpression.Type;
-                    return sumInputType == typeof(float)
-                        ? _sqlExpressionFactory.Convert(
+
+                    if (sumInputType == typeof(float))
+                    {
+                        return _sqlExpressionFactory.Convert(
                             _sqlExpressionFactory.Function(
                                 "SUM",
                                 [sumSqlExpression],
@@ -142,14 +144,29 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                                 argumentsPropagateNullability: [false],
                                 typeof(double)),
                             sumInputType,
-                            sumSqlExpression.TypeMapping)
-                        : _sqlExpressionFactory.Function(
-                            "SUM",
-                            [sumSqlExpression],
-                            nullable: true,
-                            argumentsPropagateNullability: [false],
+                            sumSqlExpression.TypeMapping);
+                    }
+
+                    if (sumInputType == typeof(decimal))
+                    {
+                        return _sqlExpressionFactory.Convert(
+                            _sqlExpressionFactory.Function(
+                                "SUM",
+                                [sumSqlExpression],
+                                nullable: true,
+                                argumentsPropagateNullability: [false],
+                                typeof(decimal)),
                             sumInputType,
                             sumSqlExpression.TypeMapping);
+                    }
+
+                    return _sqlExpressionFactory.Function(
+                        "SUM",
+                        [sumSqlExpression],
+                        nullable: true,
+                        argumentsPropagateNullability: [false],
+                        sumInputType,
+                        sumSqlExpression.TypeMapping);
             }
         }
 
