@@ -25,4 +25,9 @@ public class DuckDBBooleanTypeMapping : BoolTypeMapping
         ((DuckDBParameter)parameter).RemoveDollarSign();
         base.ConfigureParameter(parameter);
     }
+
+    protected override string GenerateNonNullSqlLiteral(object value)
+    {
+        return (bool)value ? "true" : "false";
+    }
 }
