@@ -236,12 +236,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Alter_column_make_non_computed()
-    {
-        return base.Alter_column_make_non_computed();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Alter_column_make_required_with_composite_index()
     {
         return base.Alter_column_make_required_with_composite_index();
