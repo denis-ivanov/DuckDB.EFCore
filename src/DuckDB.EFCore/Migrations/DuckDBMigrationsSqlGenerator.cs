@@ -136,6 +136,16 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         }
     }
 
+    protected override void Generate(AddColumnOperation operation, IModel? model, MigrationCommandListBuilder builder, bool terminate = true)
+    {
+        base.Generate(operation, model, builder, terminate);
+
+        if (operation.Comment != null)
+        {
+            Comment(builder, "COLUMN", Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Table), operation.Comment);
+        }
+    }
+
     protected virtual void Comment(MigrationCommandListBuilder builder, string objectType, string objectName, string? comment)
     {
         var stringTypeMapping = Dependencies.TypeMappingSource.FindMapping(typeof(string))!;

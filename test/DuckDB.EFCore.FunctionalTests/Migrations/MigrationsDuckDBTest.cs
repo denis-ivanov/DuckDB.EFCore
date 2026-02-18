@@ -51,12 +51,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Add_column_with_comment()
-    {
-        return base.Add_column_with_comment();
-    }
-
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Add_column_with_computedSql(bool? stored)
     {
