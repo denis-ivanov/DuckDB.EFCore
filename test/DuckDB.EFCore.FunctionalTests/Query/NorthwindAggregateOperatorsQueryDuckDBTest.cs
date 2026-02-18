@@ -96,12 +96,6 @@ public class NorthwindAggregateOperatorsQueryDuckDBTest : NorthwindAggregateOper
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Sum_with_division_on_decimal(bool async)
-    {
-        return base.Sum_with_division_on_decimal(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Sum_with_division_on_decimal_no_significant_digits(bool async)
     {
         return base.Sum_with_division_on_decimal_no_significant_digits(async);
