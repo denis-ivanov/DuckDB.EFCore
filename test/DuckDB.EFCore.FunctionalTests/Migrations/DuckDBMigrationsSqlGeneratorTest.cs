@@ -81,7 +81,6 @@ public class DuckDBMigrationsSqlGeneratorTest : MigrationsSqlGeneratorTestBase
         base.RenameTableOperation();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override void AlterColumnOperation_without_column_type()
     {
         base.AlterColumnOperation_without_column_type();
