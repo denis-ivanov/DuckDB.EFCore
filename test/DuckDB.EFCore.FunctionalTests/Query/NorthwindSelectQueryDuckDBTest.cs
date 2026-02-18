@@ -113,12 +113,6 @@ public class NorthwindSelectQueryDuckDBTest : NorthwindSelectQueryRelationalTest
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Select_bool_constant(bool async)
-    {
-        return base.Select_bool_constant(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Select_conditional_with_null_comparison_in_test(bool async)
     {
         return base.Select_conditional_with_null_comparison_in_test(async);
