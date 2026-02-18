@@ -1,4 +1,5 @@
-﻿using DuckDB.NET.Data;
+﻿using DuckDB.EFCore.Extensions.Internal;
+using DuckDB.NET.Data;
 using DuckDB.NET.Native;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Json;
@@ -101,11 +102,7 @@ public class DuckDBTimestampTypeMapping : RelationalTypeMapping
 
     protected override void ConfigureParameter(DbParameter parameter)
     {
-        if (parameter.ParameterName.StartsWith('$'))
-        {
-            parameter.ParameterName = parameter.ParameterName[1..];
-        }
-
+        ((DuckDBParameter)parameter).RemoveDollarSign();
         base.ConfigureParameter(parameter);
     }
 

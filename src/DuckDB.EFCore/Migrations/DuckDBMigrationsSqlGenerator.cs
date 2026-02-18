@@ -119,6 +119,24 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
             EndStatement(builder);
         }
 
+        if (operation.OldColumn.IsNullable && !operation.IsNullable)
+        {
+            builder.Append("ALTER TABLE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Table, operation.Schema))
+                .Append("ALTER ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name))
+                .Append(" SET NOT NULL")
+                .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+            EndStatement(builder);
+        }
+
+        if (!operation.OldColumn.IsNullable && operation.IsNullable)
+        {
+            builder.Append("ALTER TABLE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Table, operation.Schema))
+                .Append("ALTER ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name))
+                .Append(" DROP NOT NULL")
+                .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+            EndStatement(builder);
+        }
+
         if (operation.OldColumn.Name != operation.Name ||
             operation.OldColumn.Schema != operation.Schema ||
             operation.OldColumn.Table != operation.Table ||
