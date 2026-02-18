@@ -24,6 +24,7 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
     private static readonly DuckDBUInt16TypeMapping UInt16TypeMapping = new();
     private static readonly DuckDBUInt32TypeMapping UInt32TypeMapping = new();
     private static readonly DuckDBUInt64TypeMapping UInt64TypeMapping = new();
+    private static readonly DuckDBJsonTypeMapping JsonTypeMapping = new();
 
     private static readonly Dictionary<Type, RelationalTypeMapping> ClrTypeMappings = new()
     {
@@ -48,6 +49,7 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         { typeof(double), DoubleTypeMapping },
         { typeof(float), FloatTypeMapping },
         { typeof(Guid), GuidTypeMapping },
+        { typeof(JsonTypePlaceholder), JsonTypeMapping },
         // TODO { typeof(JsonElement), SqliteJsonTypeMapping.Default }
     };
 
@@ -90,7 +92,8 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         { "CHAR", StringTypeMapping },
         { "BPCHAR", StringTypeMapping },
         { "TEXT", StringTypeMapping },
-        { "STRING", StringTypeMapping }
+        { "STRING", StringTypeMapping },
+        { "JSON", JsonTypeMapping }
     };
 
     public DuckDBTypeMappingSource(TypeMappingSourceDependencies dependencies, RelationalTypeMappingSourceDependencies relationalDependencies) : base(dependencies, relationalDependencies)

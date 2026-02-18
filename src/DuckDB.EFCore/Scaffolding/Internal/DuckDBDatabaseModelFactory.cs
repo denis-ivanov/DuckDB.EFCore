@@ -1,5 +1,6 @@
 ﻿using DuckDB.NET.Data;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Scaffolding;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
@@ -114,17 +115,13 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
         {
             using var command = connection.CreateCommand();
             command.CommandText = """
-                                  SELECT column_name,
-                                         data_type,
-                                         is_nullable == 'YES' AS is_nullable,
-                                         column_default,
-                                         collation_name,
-                                         column_comment
-                                    FROM information_schema.columns
-                                   WHERE table_name = $table_name
+                                  SELECT *
+                                    FROM duckdb_columns
+                                   WHERE table_name = $table_name AND schema_name = $table_schema
                                   """;
 
             command.Parameters.Add(new DuckDBParameter("table_name", table.Name));
+            command.Parameters.Add(new DuckDBParameter("table_schema", table.Schema));
 
             using var reader = command.ExecuteReader();
 
@@ -134,9 +131,11 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
                 var dataType = reader.GetString("data_type");
                 var notNull = reader.GetBoolean("is_nullable");
                 var defaultValueSql = !reader.IsDBNull("column_default") ? reader.GetString("column_default") : null;
-                var collation = reader.IsDBNull("collation_name") ? null : reader.GetString("collation_name");
-                var columnComment = reader.IsDBNull("COLUMN_COMMENT") ? null : reader.GetString("COLUMN_COMMENT");
+                var columnComment = reader.IsDBNull("comment") ? null : reader.GetString("comment");
                 var columnDefault = reader.IsDBNull("column_default") ? null : reader.GetString("column_default");
+                var characterMaximumLength = reader.IsDBNull("character_maximum_length") ? (int?)null : reader.GetInt32("character_maximum_length");
+                var numericPrecision = reader.IsDBNull("numeric_precision") ? (int?)null : reader.GetInt32("numeric_precision");
+                var numericScale = reader.IsDBNull("numeric_scale") ? (int?)null : reader.GetInt32("numeric_scale");
 
                 var column = new DatabaseColumn
                 {
@@ -145,7 +144,6 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
                     StoreType = dataType,
                     IsNullable = !notNull,
                     DefaultValueSql = defaultValueSql,
-                    Collation = collation,
                     ValueGenerated = !string.IsNullOrWhiteSpace(defaultValueSql) && defaultValueSql.StartsWith("nextval(") && defaultValueSql.EndsWith(")")
                         ? ValueGenerated.OnAdd
                         : null,
@@ -153,6 +151,21 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
                     DefaultValue = columnDefault // TODO Computed or Default.
                     // TODO IsStored
                 };
+
+                if (characterMaximumLength.HasValue)
+                {
+                    column.SetAnnotation(CoreAnnotationNames.MaxLength, characterMaximumLength.Value);
+                }
+
+                if (numericPrecision.HasValue)
+                {
+                    column.SetAnnotation(CoreAnnotationNames.Precision, numericPrecision.Value);
+                }
+
+                if (numericScale.HasValue)
+                {
+                    column.SetAnnotation(CoreAnnotationNames.Scale, numericScale.Value);
+                }
 
                 table.Columns.Add(column);
             }
