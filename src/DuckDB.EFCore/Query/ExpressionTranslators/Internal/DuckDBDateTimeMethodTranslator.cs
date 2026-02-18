@@ -8,6 +8,17 @@ namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
 
 public class DuckDBDateTimeMethodTranslator : IMethodCallTranslator
 {
+    private static readonly MemberInfo Hour = typeof(DateTime).GetRuntimeProperty(nameof(DateTime.Hour))!;
+    private static readonly MemberInfo Minute = typeof(DateTime).GetRuntimeProperty(nameof(DateTime.Minute))!;
+    private static readonly MemberInfo Second = typeof(DateTime).GetRuntimeProperty(nameof(DateTime.Second))!;
+
+    private readonly ISqlExpressionFactory _sqlExpressionFactory;
+
+    public DuckDBDateTimeMethodTranslator(ISqlExpressionFactory sqlExpressionFactory)
+    {
+        _sqlExpressionFactory = sqlExpressionFactory;
+    }
+
     public SqlExpression? Translate(
         SqlExpression? instance,
         MethodInfo method,

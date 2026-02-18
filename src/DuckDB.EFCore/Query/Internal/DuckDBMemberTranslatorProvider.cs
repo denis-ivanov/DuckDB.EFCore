@@ -10,7 +10,8 @@ public class DuckDBMemberTranslatorProvider : RelationalMemberTranslatorProvider
     {
         AddTranslators([
             new DuckDBStringMemberTranslator(dependencies.SqlExpressionFactory),
-            new DuckDBDateOnlyMemberTranslator(dependencies.SqlExpressionFactory)
+            new DuckDBDateOnlyMemberTranslator(dependencies.SqlExpressionFactory),
+            new DuckDBDateTimeMemberTranslator(dependencies.SqlExpressionFactory)
         ]);
     }
 }
