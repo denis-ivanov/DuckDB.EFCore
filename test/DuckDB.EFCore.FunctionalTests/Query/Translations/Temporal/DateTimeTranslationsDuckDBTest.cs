@@ -26,12 +26,6 @@ public class DateTimeTranslationsDuckDBTest : DateTimeTranslationsTestBase<Basic
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Day()
-    {
-        return base.Day();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task DayOfYear()
     {
         return base.DayOfYear();
@@ -44,33 +38,9 @@ public class DateTimeTranslationsDuckDBTest : DateTimeTranslationsTestBase<Basic
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Hour()
-    {
-        return base.Hour();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Minute()
-    {
-        return base.Minute();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Month()
-    {
-        return base.Month();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Now()
     {
         return base.Now();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Second()
-    {
-        return base.Second();
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -95,11 +65,5 @@ public class DateTimeTranslationsDuckDBTest : DateTimeTranslationsTestBase<Basic
     public override Task UtcNow()
     {
         return base.UtcNow();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Year()
-    {
-        return base.Year();
     }
 }
