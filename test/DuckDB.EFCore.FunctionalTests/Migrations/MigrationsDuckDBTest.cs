@@ -412,12 +412,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         Assert.Equal("Not implemented Error: No support for that ALTER TABLE option yet!", exception.Message);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Drop_json_columns_from_existing_table()
-    {
-        return base.Drop_json_columns_from_existing_table();
-    }
-
     public override async Task Drop_primary_key_int()
     {
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Drop_primary_key_int());
