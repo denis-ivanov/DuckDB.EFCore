@@ -105,10 +105,24 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         return base.Add_primary_key_composite_with_name();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Add_primary_key_int()
+    public override async Task Add_primary_key_int()
     {
-        return base.Add_primary_key_int();
+        await Test(
+            builder => builder.Entity("People").Property<int>("SomeField"),
+            builder => { },
+            builder => builder.Entity("People").HasKey("SomeField"),
+            model =>
+            {
+                var table = Assert.Single(model.Tables);
+                var primaryKey = table.PrimaryKey;
+                Assert.NotNull(primaryKey);
+                Assert.Same(table, primaryKey!.Table);
+                Assert.Same(table.Columns.Single(), Assert.Single(primaryKey.Columns));
+                if (AssertConstraintNames)
+                {
+                    Assert.Equal("People_somefield_pkey", primaryKey.Name);
+                }
+            });
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
