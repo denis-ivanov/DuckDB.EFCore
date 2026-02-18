@@ -3,4 +3,15 @@ using Microsoft.EntityFrameworkCore.TestModels.Northwind;
 
 namespace DuckDB.EFCore.FunctionalTests.TestModels.Northwind;
 
-public class NorthwindDuckDBContext(DbContextOptions options) : NorthwindRelationalContext(options);
+public class NorthwindDuckDBContext(DbContextOptions options) : NorthwindRelationalContext(options)
+{
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        
+        modelBuilder.Entity<CustomerQuery>().ToSqlQuery(
+            """
+            SELECT "c"."CustomerID", "c"."Address", "c"."City", "c"."CompanyName", "c"."ContactName", "c"."ContactTitle", "c"."Country", "c"."Fax", "c"."Phone", "c"."PostalCode", "c"."Region" FROM "Customers" AS "c"
+            """);
+    }
+}
