@@ -317,12 +317,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Alter_table_change_comment()
-    {
-        return base.Alter_table_change_comment();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Alter_table_remove_comment()
     {
         return base.Alter_table_remove_comment();
