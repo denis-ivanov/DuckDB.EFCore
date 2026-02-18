@@ -1,4 +1,5 @@
-﻿using DuckDB.EFCore.Storage.ValueConverters;
+﻿using DuckDB.EFCore.Extensions.Internal;
+using DuckDB.EFCore.Storage.ValueConverters;
 using DuckDB.NET.Data;
 using DuckDB.NET.Native;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -94,11 +95,7 @@ public class DuckDBTimeTypeMapping : RelationalTypeMapping
 
     protected override void ConfigureParameter(DbParameter parameter)
     {
-        if (parameter.ParameterName.StartsWith('$'))
-        {
-            parameter.ParameterName = parameter.ParameterName[1..];
-        }
-
+        ((DuckDBParameter)parameter).RemoveDollarSign();
         base.ConfigureParameter(parameter);
     }
 

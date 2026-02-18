@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using System.Data;
+﻿using DuckDB.EFCore.Extensions.Internal;
+using DuckDB.NET.Data;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Data.Common;
 
 namespace DuckDB.EFCore.Storage.Internal;
@@ -21,11 +22,7 @@ public class DuckDBGuidTypeMapping : GuidTypeMapping
 
     protected override void ConfigureParameter(DbParameter parameter)
     {
-        if (parameter.ParameterName.StartsWith('$'))
-        {
-            parameter.ParameterName = parameter.ParameterName[1..];
-        }
-        
+        ((DuckDBParameter)parameter).RemoveDollarSign();
         base.ConfigureParameter(parameter);
     }
 }

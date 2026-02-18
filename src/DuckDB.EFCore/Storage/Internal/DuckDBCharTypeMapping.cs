@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using DuckDB.EFCore.Extensions.Internal;
+using DuckDB.NET.Data;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Data.Common;
@@ -38,11 +40,7 @@ public class DuckDBCharTypeMapping : StringTypeMapping
 
     protected override void ConfigureParameter(DbParameter parameter)
     {
-        if (parameter.ParameterName.StartsWith('$'))
-        {
-            parameter.ParameterName = parameter.ParameterName[1..];
-        }
-        
+        ((DuckDBParameter)parameter).RemoveDollarSign();
         base.ConfigureParameter(parameter);
     }
 }
