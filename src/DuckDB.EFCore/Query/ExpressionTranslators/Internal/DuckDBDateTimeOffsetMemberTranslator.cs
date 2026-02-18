@@ -6,22 +6,27 @@ using System.Reflection;
 
 namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
 
-public class DuckDBDateOnlyMemberTranslator : IMemberTranslator
+public class DuckDBDateTimeOffsetMemberTranslator : IMemberTranslator
 {
-    private static readonly MemberInfo Year = typeof(DateOnly).GetProperty(nameof(DateOnly.Year))!;
-    private static readonly MemberInfo Month = typeof(DateOnly).GetProperty(nameof(DateOnly.Month))!;
-    private static readonly MemberInfo Day = typeof(DateOnly).GetProperty(nameof(DateOnly.Day))!;
-    private static readonly MemberInfo DayOfWeek = typeof(DateOnly).GetProperty(nameof(DateOnly.DayOfWeek))!;
-    private static readonly MemberInfo DayOfYear = typeof(DateOnly).GetProperty(nameof(DateOnly.DayOfYear))!;
+    private static readonly MemberInfo Year = typeof(DateTimeOffset).GetRuntimeProperty(nameof(DateTimeOffset.Year))!;
+    private static readonly MemberInfo Month = typeof(DateTimeOffset).GetRuntimeProperty(nameof(DateTimeOffset.Month))!;
+    private static readonly MemberInfo Day = typeof(DateTimeOffset).GetRuntimeProperty(nameof(DateTimeOffset.Day))!;
+    private static readonly MemberInfo Hour = typeof(DateTimeOffset).GetRuntimeProperty(nameof(DateTimeOffset.Hour))!;
+    private static readonly MemberInfo Minute = typeof(DateTimeOffset).GetRuntimeProperty(nameof(DateTimeOffset.Minute))!;
+    private static readonly MemberInfo Second = typeof(DateTimeOffset).GetRuntimeProperty(nameof(DateTimeOffset.Second))!;
 
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
 
-    public DuckDBDateOnlyMemberTranslator(ISqlExpressionFactory sqlExpressionFactory)
+    public DuckDBDateTimeOffsetMemberTranslator(ISqlExpressionFactory sqlExpressionFactory)
     {
         _sqlExpressionFactory = sqlExpressionFactory;
     }
 
-    public SqlExpression? Translate(SqlExpression? instance, MemberInfo member, Type returnType, IDiagnosticsLogger<DbLoggerCategory.Query> logger)
+    public SqlExpression? Translate(
+        SqlExpression? instance,
+        MemberInfo member,
+        Type returnType,
+        IDiagnosticsLogger<DbLoggerCategory.Query> logger)
     {
         if (member == Year)
         {
@@ -53,20 +58,30 @@ public class DuckDBDateOnlyMemberTranslator : IMemberTranslator
                 returnType: typeof(int));
         }
 
-        if (member == DayOfWeek)
+        if (member == Hour)
         {
             return _sqlExpressionFactory.Function(
-                name: "dayofweek",
+                name: "hour",
                 arguments: [instance],
                 argumentsPropagateNullability: [true],
                 nullable: true,
                 returnType: typeof(int));
         }
 
-        if (member == DayOfYear)
+        if (member == Minute)
         {
             return _sqlExpressionFactory.Function(
-                name: "dayofyear",
+                name: "minute",
+                arguments: [instance],
+                argumentsPropagateNullability: [true],
+                nullable: true,
+                returnType: typeof(int));
+        }
+
+        if (member == Second)
+        {
+            return _sqlExpressionFactory.Function(
+                name: "second",
                 arguments: [instance],
                 argumentsPropagateNullability: [true],
                 nullable: true,

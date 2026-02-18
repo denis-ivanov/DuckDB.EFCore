@@ -92,12 +92,6 @@ public class DateTimeOffsetTranslationsDuckDBTest : DateTimeOffsetTranslationsTe
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Month()
-    {
-        return base.Month();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Nanosecond()
     {
         return base.Nanosecond();
@@ -107,12 +101,6 @@ public class DateTimeOffsetTranslationsDuckDBTest : DateTimeOffsetTranslationsTe
     public override Task Now()
     {
         return base.Now();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Second()
-    {
-        return base.Second();
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -143,11 +131,5 @@ public class DateTimeOffsetTranslationsDuckDBTest : DateTimeOffsetTranslationsTe
     public override Task UtcNow()
     {
         return base.UtcNow();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Year()
-    {
-        return base.Year();
     }
 }
