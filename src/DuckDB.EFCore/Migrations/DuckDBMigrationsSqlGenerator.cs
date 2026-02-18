@@ -146,6 +146,28 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         }
     }
 
+    protected override void ComputedColumnDefinition(
+        string? schema,
+        string table,
+        string name,
+        ColumnOperation operation,
+        IModel? model,
+        MigrationCommandListBuilder builder)
+    {
+        builder
+            .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(name))
+            .Append(" ")
+            .Append(operation.ColumnType)
+            .Append(" GENERATED ALWAYS AS (")
+            .Append(operation.ComputedColumnSql)
+            .Append(")");
+
+        if (operation.IsStored == true)
+        {
+            builder.Append(" STORED");
+        }
+    }
+
     protected virtual void Comment(MigrationCommandListBuilder builder, string objectType, string objectName, string? comment)
     {
         var stringTypeMapping = Dependencies.TypeMappingSource.FindMapping(typeof(string))!;

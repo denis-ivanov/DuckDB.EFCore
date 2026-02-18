@@ -250,12 +250,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Alter_computed_column_add_comment()
-    {
-        return base.Alter_computed_column_add_comment();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Alter_index_change_sort_order()
     {
         return base.Alter_index_change_sort_order();
