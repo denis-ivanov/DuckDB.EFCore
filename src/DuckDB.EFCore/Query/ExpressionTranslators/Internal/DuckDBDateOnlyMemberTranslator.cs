@@ -13,6 +13,7 @@ public class DuckDBDateOnlyMemberTranslator : IMemberTranslator
     private static readonly MemberInfo Day = typeof(DateOnly).GetProperty(nameof(DateOnly.Day))!;
     private static readonly MemberInfo DayOfWeek = typeof(DateOnly).GetProperty(nameof(DateOnly.DayOfWeek))!;
     private static readonly MemberInfo DayOfYear = typeof(DateOnly).GetProperty(nameof(DateOnly.DayOfYear))!;
+    private static readonly MemberInfo DayNumber = typeof(DateOnly).GetProperty(nameof(DateOnly.DayNumber))!;
 
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
 
@@ -69,6 +70,21 @@ public class DuckDBDateOnlyMemberTranslator : IMemberTranslator
                 name: "dayofyear",
                 arguments: [instance],
                 argumentsPropagateNullability: [true],
+                nullable: true,
+                returnType: typeof(int));
+        }
+
+        if (member == DayNumber)
+        {
+            return _sqlExpressionFactory.Function(
+                name: "date_diff",
+                arguments:
+                [
+                    _sqlExpressionFactory.Constant("day"),
+                    _sqlExpressionFactory.Constant(DateOnly.MinValue),
+                    instance
+                ],
+                argumentsPropagateNullability: [true, true, true],
                 nullable: true,
                 returnType: typeof(int));
         }
