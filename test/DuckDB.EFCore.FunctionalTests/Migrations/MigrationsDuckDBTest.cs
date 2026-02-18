@@ -291,12 +291,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Alter_table_add_comment_non_default_schema()
-    {
-        return base.Alter_table_add_comment_non_default_schema();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Convert_json_entities_to_regular_owned()
     {
         return base.Convert_json_entities_to_regular_owned();
