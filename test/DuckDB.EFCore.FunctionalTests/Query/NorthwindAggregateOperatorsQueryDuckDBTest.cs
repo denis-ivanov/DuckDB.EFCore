@@ -24,12 +24,6 @@ public class NorthwindAggregateOperatorsQueryDuckDBTest : NorthwindAggregateOper
     }
 
     [Theory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task All_true(bool async)
-    {
-        return base.All_true(async);
-    }
-
-    [Theory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Average_over_max_subquery(bool async)
     {
         return base.Average_over_max_subquery(async);
