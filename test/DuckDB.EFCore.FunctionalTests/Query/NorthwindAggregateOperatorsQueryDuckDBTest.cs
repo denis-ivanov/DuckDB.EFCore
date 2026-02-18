@@ -42,12 +42,6 @@ public class NorthwindAggregateOperatorsQueryDuckDBTest : NorthwindAggregateOper
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Average_with_coalesce(bool async)
-    {
-        return base.Average_with_coalesce(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Average_with_division_on_decimal(bool async)
     {
         return base.Average_with_division_on_decimal(async);

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+﻿using DuckDB.EFCore.Query.ExpressionTranslators.Internal;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace DuckDB.EFCore.Query.Internal;
 
@@ -6,5 +7,9 @@ public class DuckDBAggregateMethodCallTranslatorProvider : RelationalAggregateMe
 {
     public DuckDBAggregateMethodCallTranslatorProvider(RelationalAggregateMethodCallTranslatorProviderDependencies dependencies) : base(dependencies)
     {
+        AddTranslators([
+            new DuckDBQueryableAggregateMethodTranslator(Dependencies.SqlExpressionFactory),
+            new DuckDBStringAggregateMethodTranslator()
+        ]);
     }
 }
