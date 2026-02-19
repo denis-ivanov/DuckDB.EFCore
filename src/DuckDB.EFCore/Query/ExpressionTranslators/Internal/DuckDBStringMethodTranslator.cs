@@ -1,5 +1,4 @@
-﻿using DuckDB.NET.Native;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -25,10 +24,14 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
     private static readonly MethodInfo TrimStartWithChar = typeof(string).GetRuntimeMethod(nameof(string.TrimStart), [typeof(char)])!;
     private static readonly MethodInfo TrimStartWithCharArray = typeof(string).GetRuntimeMethod(nameof(string.TrimStart), [typeof(char[])])!;
     private static readonly MethodInfo TrimEnd = typeof(string).GetRuntimeMethod(nameof(string.TrimEnd), Type.EmptyTypes)!;
+    private static readonly MethodInfo TrimEndWithChar = typeof(string).GetRuntimeMethod(nameof(string.TrimEnd), [typeof(char)])!;
+    private static readonly MethodInfo TrimEndWithCharArray = typeof(string).GetRuntimeMethod(nameof(string.TrimEnd), [typeof(char[])])!;
     private static readonly MethodInfo IndexOf = typeof(string).GetRuntimeMethod(nameof(string.IndexOf), [typeof(string)])!;
     private static readonly MethodInfo IndexOfChar = typeof(string).GetRuntimeMethod(nameof(string.IndexOf), [typeof(char)])!;
     private static readonly MethodInfo Replace = typeof(string).GetRuntimeMethod(nameof(string.Replace), [typeof(string), typeof(string)])!;
     private static readonly MethodInfo ReplaceChar = typeof(string).GetRuntimeMethod(nameof(string.Replace), [typeof(char), typeof(char)])!;
+    private static readonly MethodInfo IsNullOrEmpty = typeof(string).GetRuntimeMethod(nameof(string.IsNullOrEmpty), [typeof(string)])!;
+    private static readonly MethodInfo IsNullOrWhiteSpace = typeof(string).GetRuntimeMethod(nameof(string.IsNullOrWhiteSpace), [typeof(string)])!;
 
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
 
@@ -186,6 +189,28 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
                 returnType: typeof(string));
         }
 
+        if (method == TrimEndWithChar)
+        {
+            return _sqlExpressionFactory.Function(
+                name: "rtrim",
+                arguments: [instance!, arguments[0]],
+                nullable: true,
+                argumentsPropagateNullability: [true, true],
+                returnType: typeof(string));
+        }
+
+        if (method == TrimEndWithCharArray && arguments[0] is SqlConstantExpression { Value: char[] } trimEndChars)
+        {
+            var stringValue = string.Join("", (char[])trimEndChars.Value);
+
+            return _sqlExpressionFactory.Function(
+                name: "rtrim",
+                arguments: [instance!, _sqlExpressionFactory.Constant(stringValue, typeof(string))],
+                nullable: true,
+                argumentsPropagateNullability: [true, true],
+                returnType: typeof(string));
+        }
+
         if (method == TrimStartWithChar)
         {
             return _sqlExpressionFactory.Function(
@@ -204,6 +229,49 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
                 nullable: true,
                 argumentsPropagateNullability: [true, true, true],
                 returnType: typeof(string));
+        }
+
+        if (method == IsNullOrEmpty)
+        {
+            return _sqlExpressionFactory.OrElse(
+                _sqlExpressionFactory.IsNull(arguments[0]),
+                _sqlExpressionFactory.Equal(
+                    _sqlExpressionFactory.Function(
+                        name: "length",
+                        arguments:
+                        [
+                            _sqlExpressionFactory.Convert(arguments[0], typeof(string))
+                        ],
+                        argumentsPropagateNullability: [true],
+                        nullable: true,
+                        returnType: typeof(int)),
+                    _sqlExpressionFactory.Constant(0))
+            );
+        }
+
+        if (method == IsNullOrWhiteSpace)
+        {
+            return _sqlExpressionFactory.OrElse(
+                _sqlExpressionFactory.IsNull(arguments[0]),
+                _sqlExpressionFactory.Equal(
+                    _sqlExpressionFactory.Function(
+                        name: "length",
+                        arguments:
+                        [
+                            _sqlExpressionFactory.Convert(
+                                _sqlExpressionFactory.Function(
+                                    name: "trim",
+                                    arguments: [arguments[0]],
+                                    nullable: true,
+                                    argumentsPropagateNullability: [true],
+                                    returnType: typeof(string)),
+                                typeof(string))
+                        ],
+                        argumentsPropagateNullability: [true],
+                        nullable: true,
+                        returnType: typeof(int)),
+                    _sqlExpressionFactory.Constant(0))
+            );
         }
 
         return null;
