@@ -11,7 +11,8 @@ public class DuckDBDateTimeOffsetMethodTranslator : IMethodCallTranslator
 {
     private static readonly MethodInfo AddYears = typeof(DateTimeOffset).GetRuntimeMethod(nameof(DateTimeOffset.AddYears), [typeof(int)])!;
     private static readonly MethodInfo AddMonths = typeof(DateTimeOffset).GetRuntimeMethod(nameof(DateTimeOffset.AddMonths), [typeof(int)])!;
-    
+    private static readonly MethodInfo AddDays = typeof(DateTimeOffset).GetRuntimeMethod(nameof(DateTimeOffset.AddDays), [typeof(int)])!;
+
     private readonly DuckDBSqlExpressionFactory _sqlExpressionFactory;
 
     public DuckDBDateTimeOffsetMethodTranslator(ISqlExpressionFactory sqlExpressionFactory)
@@ -33,6 +34,11 @@ public class DuckDBDateTimeOffsetMethodTranslator : IMethodCallTranslator
         if (method == AddMonths)
         {
             return _sqlExpressionFactory.AddMonths(instance, arguments[0], typeof(DateTimeOffset));
+        }
+
+        if (method == AddDays)
+        {
+            return _sqlExpressionFactory.AddDays(instance, arguments[0], typeof(DateTimeOffset));
         }
 
         return null;

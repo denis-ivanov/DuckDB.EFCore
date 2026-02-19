@@ -89,6 +89,16 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: returnType);
     }
 
+    public SqlExpression AddDays(SqlExpression timestamp, SqlExpression days, Type returnType)
+    {
+        return Function(
+            name: "date_add",
+            arguments: [timestamp, ToDays(days)],
+            argumentsPropagateNullability: [true, true],
+            nullable: true,
+            returnType: returnType);
+    }
+    
     public SqlExpression ToYears(SqlExpression years)
     {
         return Function(
@@ -104,6 +114,16 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
         return Function(
             name: "to_months",
             arguments: [months],
+            argumentsPropagateNullability: [true],
+            nullable: true,
+            returnType: typeof(TimeSpan));
+    }
+    
+    public SqlExpression ToDays(SqlExpression days)
+    {
+        return Function(
+            name: "to_days",
+            arguments: [days],
             argumentsPropagateNullability: [true],
             nullable: true,
             returnType: typeof(TimeSpan));
