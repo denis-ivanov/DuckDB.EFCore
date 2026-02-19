@@ -128,4 +128,17 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             nullable: true,
             returnType: typeof(TimeSpan));
     }
+
+    public SqlExpression DateDiff(string unit, SqlExpression left, SqlExpression right)
+    {
+        return Convert(
+            Function(
+                name: "date_diff",
+                arguments: [Constant(unit), left, right],
+                argumentsPropagateNullability: [true, true, true],
+                nullable: true,
+                returnType: typeof(int)),
+            typeof(double)
+        );
+    }
 }

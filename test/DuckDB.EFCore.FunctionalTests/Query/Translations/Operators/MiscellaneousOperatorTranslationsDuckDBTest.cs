@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Query.Translations.Operators;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace DuckDB.EFCore.FunctionalTests.Query.Translations.Operators;
@@ -11,11 +10,5 @@ public class MiscellaneousOperatorTranslationsDuckDBTest : MiscellaneousOperator
     {
         Fixture.TestSqlLoggerFactory.Clear();
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Coalesce()
-    {
-        return base.Coalesce();
     }
 }
