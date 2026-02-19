@@ -71,29 +71,41 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
 
     public SqlExpression AddYears(SqlExpression timestamp, SqlExpression years, Type returnType)
     {
-        SqlExpression? yearsArg = null;
-
-        if (years is SqlConstantExpression { Value: int yearsInt })
-        {
-            yearsArg = Constant(yearsInt);
-        }
-        else
-        {
-            yearsArg = Convert(years, typeof(int), this.Dependencies.TypeMappingSource.FindMapping(typeof(int)));
-        }
-
-        var intervalExpression = Function(
-            name: "to_years",
-            arguments: [yearsArg],
-            argumentsPropagateNullability: [true],
-            nullable: true,
-            returnType: typeof(TimeSpan));
-
         return Function(
             name: "date_add",
-            arguments: [timestamp, intervalExpression],
+            arguments: [timestamp, ToYears(years)],
             argumentsPropagateNullability: [true, true],
             nullable: true,
             returnType: returnType);
-    } 
+    }
+
+    public SqlExpression AddMonths(SqlExpression timestamp, SqlExpression months, Type returnType)
+    {
+        return Function(
+            name: "date_add",
+            arguments: [timestamp, ToMonths(months)],
+            argumentsPropagateNullability: [true, true],
+            nullable: true,
+            returnType: returnType);
+    }
+
+    public SqlExpression ToYears(SqlExpression years)
+    {
+        return Function(
+            name: "to_years",
+            arguments: [years],
+            argumentsPropagateNullability: [true],
+            nullable: true,
+            returnType: typeof(TimeSpan));
+    }
+
+    public SqlExpression ToMonths(SqlExpression months)
+    {
+        return Function(
+            name: "to_months",
+            arguments: [months],
+            argumentsPropagateNullability: [true],
+            nullable: true,
+            returnType: typeof(TimeSpan));
+    }
 }

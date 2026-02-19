@@ -10,6 +10,7 @@ namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
 public class DuckDBDateOnlyMethodTranslator : IMethodCallTranslator
 {
     private static readonly MethodInfo AddYears = typeof(DateOnly).GetRuntimeMethod(nameof(DateOnly.AddYears), [typeof(int)])!;
+    private static readonly MethodInfo AddMonths = typeof(DateOnly).GetRuntimeMethod(nameof(DateOnly.AddMonths), [typeof(int)])!;
 
     private readonly DuckDBSqlExpressionFactory _sqlExpressionFactory;
 
@@ -27,6 +28,11 @@ public class DuckDBDateOnlyMethodTranslator : IMethodCallTranslator
         if (method == AddYears)
         {
             return _sqlExpressionFactory.AddYears(instance, arguments[0], typeof(DateOnly));
+        }
+
+        if (method == AddMonths)
+        {
+            return _sqlExpressionFactory.AddMonths(instance, arguments[0], typeof(DateOnly));
         }
 
         return null;
