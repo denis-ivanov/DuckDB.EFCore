@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DuckDB.EFCore.Query.Internal;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -15,11 +16,11 @@ public class DuckDBDateTimeOffsetMemberTranslator : IMemberTranslator
     private static readonly MemberInfo Minute = typeof(DateTimeOffset).GetRuntimeProperty(nameof(DateTimeOffset.Minute))!;
     private static readonly MemberInfo Second = typeof(DateTimeOffset).GetRuntimeProperty(nameof(DateTimeOffset.Second))!;
 
-    private readonly ISqlExpressionFactory _sqlExpressionFactory;
+    private readonly DuckDBSqlExpressionFactory _sqlExpressionFactory;
 
     public DuckDBDateTimeOffsetMemberTranslator(ISqlExpressionFactory sqlExpressionFactory)
     {
-        _sqlExpressionFactory = sqlExpressionFactory;
+        _sqlExpressionFactory = (DuckDBSqlExpressionFactory)sqlExpressionFactory;
     }
 
     public SqlExpression? Translate(
@@ -30,62 +31,32 @@ public class DuckDBDateTimeOffsetMemberTranslator : IMemberTranslator
     {
         if (member == Year)
         {
-            return _sqlExpressionFactory.Function(
-                name: "year",
-                arguments: [instance],
-                argumentsPropagateNullability: [true],
-                nullable: true,
-                returnType: typeof(int));
+            return _sqlExpressionFactory.Year(instance);
         }
 
         if (member == Month)
         {
-            return _sqlExpressionFactory.Function(
-                name: "month",
-                arguments: [instance],
-                argumentsPropagateNullability: [true],
-                nullable: true,
-                returnType: typeof(int));
+            return _sqlExpressionFactory.Month(instance);
         }
 
         if (member == Day)
         {
-            return _sqlExpressionFactory.Function(
-                name: "day",
-                arguments: [instance],
-                argumentsPropagateNullability: [true],
-                nullable: true,
-                returnType: typeof(int));
+            return _sqlExpressionFactory.Day(instance);
         }
 
         if (member == Hour)
         {
-            return _sqlExpressionFactory.Function(
-                name: "hour",
-                arguments: [instance],
-                argumentsPropagateNullability: [true],
-                nullable: true,
-                returnType: typeof(int));
+            return _sqlExpressionFactory.Hour(instance);
         }
 
         if (member == Minute)
         {
-            return _sqlExpressionFactory.Function(
-                name: "minute",
-                arguments: [instance],
-                argumentsPropagateNullability: [true],
-                nullable: true,
-                returnType: typeof(int));
+            return _sqlExpressionFactory.Minute(instance);
         }
 
         if (member == Second)
         {
-            return _sqlExpressionFactory.Function(
-                name: "second",
-                arguments: [instance],
-                argumentsPropagateNullability: [true],
-                nullable: true,
-                returnType: typeof(int));
+            return _sqlExpressionFactory.Second(instance);
         }
 
         return null;

@@ -14,12 +14,6 @@ public class DateTimeTranslationsDuckDBTest : DateTimeTranslationsTestBase<Basic
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task AddYear()
-    {
-        return base.AddYear();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Date()
     {
         return base.Date();

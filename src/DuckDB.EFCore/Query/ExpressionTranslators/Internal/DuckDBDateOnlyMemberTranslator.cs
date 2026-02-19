@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DuckDB.EFCore.Query.Internal;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -15,43 +16,28 @@ public class DuckDBDateOnlyMemberTranslator : IMemberTranslator
     private static readonly MemberInfo DayOfYear = typeof(DateOnly).GetProperty(nameof(DateOnly.DayOfYear))!;
     private static readonly MemberInfo DayNumber = typeof(DateOnly).GetProperty(nameof(DateOnly.DayNumber))!;
 
-    private readonly ISqlExpressionFactory _sqlExpressionFactory;
+    private readonly DuckDBSqlExpressionFactory _sqlExpressionFactory;
 
     public DuckDBDateOnlyMemberTranslator(ISqlExpressionFactory sqlExpressionFactory)
     {
-        _sqlExpressionFactory = sqlExpressionFactory;
+        _sqlExpressionFactory = (DuckDBSqlExpressionFactory)sqlExpressionFactory;
     }
 
     public SqlExpression? Translate(SqlExpression? instance, MemberInfo member, Type returnType, IDiagnosticsLogger<DbLoggerCategory.Query> logger)
     {
         if (member == Year)
         {
-            return _sqlExpressionFactory.Function(
-                name: "year",
-                arguments: [instance],
-                argumentsPropagateNullability: [true],
-                nullable: true,
-                returnType: typeof(int));
+            return _sqlExpressionFactory.Year(instance);
         }
 
         if (member == Month)
         {
-            return _sqlExpressionFactory.Function(
-                name: "month",
-                arguments: [instance],
-                argumentsPropagateNullability: [true],
-                nullable: true,
-                returnType: typeof(int));
+            return _sqlExpressionFactory.Month(instance);
         }
 
         if (member == Day)
         {
-            return _sqlExpressionFactory.Function(
-                name: "day",
-                arguments: [instance],
-                argumentsPropagateNullability: [true],
-                nullable: true,
-                returnType: typeof(int));
+            return _sqlExpressionFactory.Day(instance);
         }
 
         if (member == DayOfWeek)

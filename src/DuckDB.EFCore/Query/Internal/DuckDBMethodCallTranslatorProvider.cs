@@ -10,7 +10,8 @@ public class DuckDBMethodCallTranslatorProvider : RelationalMethodCallTranslator
         AddTranslators([
             new DuckDBMathTranslator(dependencies.SqlExpressionFactory),
             new DuckDBStringMethodTranslator(dependencies.SqlExpressionFactory),
-            new DuckDBDateOnlyMethodTranslator(dependencies.SqlExpressionFactory)
+            new DuckDBDateOnlyMethodTranslator(dependencies.SqlExpressionFactory),
+            new DuckDBDateTimeMethodTranslator(dependencies.SqlExpressionFactory)
         ]);
     }
 }

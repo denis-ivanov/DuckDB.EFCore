@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DuckDB.EFCore.Query.Internal;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -8,15 +9,13 @@ namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
 
 public class DuckDBDateTimeMethodTranslator : IMethodCallTranslator
 {
-    private static readonly MemberInfo Hour = typeof(DateTime).GetRuntimeProperty(nameof(DateTime.Hour))!;
-    private static readonly MemberInfo Minute = typeof(DateTime).GetRuntimeProperty(nameof(DateTime.Minute))!;
-    private static readonly MemberInfo Second = typeof(DateTime).GetRuntimeProperty(nameof(DateTime.Second))!;
+    private static readonly MethodInfo AddYears = typeof(DateTime).GetRuntimeMethod(nameof(DateTime.AddYears), [typeof(int)])!;
 
-    private readonly ISqlExpressionFactory _sqlExpressionFactory;
+    private readonly DuckDBSqlExpressionFactory _sqlExpressionFactory;
 
     public DuckDBDateTimeMethodTranslator(ISqlExpressionFactory sqlExpressionFactory)
     {
-        _sqlExpressionFactory = sqlExpressionFactory;
+        _sqlExpressionFactory = (DuckDBSqlExpressionFactory)sqlExpressionFactory;
     }
 
     public SqlExpression? Translate(
@@ -25,6 +24,11 @@ public class DuckDBDateTimeMethodTranslator : IMethodCallTranslator
         IReadOnlyList<SqlExpression> arguments,
         IDiagnosticsLogger<DbLoggerCategory.Query> logger)
     {
+        if (method == AddYears)
+        {
+            return _sqlExpressionFactory.AddYears(instance, arguments[0], typeof(DateTime));
+        }
+
         return null;
     }
 }
