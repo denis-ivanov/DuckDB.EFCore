@@ -71,12 +71,20 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
 
     public SqlExpression AddYears(SqlExpression timestamp, SqlExpression years, Type returnType)
     {
+        SqlExpression? yearsArg = null;
+
+        if (years is SqlConstantExpression { Value: int yearsInt })
+        {
+            yearsArg = Constant(yearsInt);
+        }
+        else
+        {
+            yearsArg = Convert(years, typeof(int), this.Dependencies.TypeMappingSource.FindMapping(typeof(int)));
+        }
+
         var intervalExpression = Function(
             name: "to_years",
-            arguments: 
-            [
-                Convert(years, typeof(int), this.Dependencies.TypeMappingSource.FindMapping(typeof(int)))
-            ],
+            arguments: [yearsArg],
             argumentsPropagateNullability: [true],
             nullable: true,
             returnType: typeof(TimeSpan));

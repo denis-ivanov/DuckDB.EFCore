@@ -7,17 +7,17 @@ using System.Reflection;
 
 namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
 
-public class DuckDBDateOnlyMethodTranslator : IMethodCallTranslator
+public class DuckDBDateTimeOffsetMethodTranslator : IMethodCallTranslator
 {
-    private static readonly MethodInfo AddYears = typeof(DateOnly).GetRuntimeMethod(nameof(DateOnly.AddYears), [typeof(int)])!;
-
+    private static readonly MethodInfo AddYears = typeof(DateTimeOffset).GetRuntimeMethod(nameof(DateTimeOffset.AddYears), [typeof(int)])!;
+    
     private readonly DuckDBSqlExpressionFactory _sqlExpressionFactory;
 
-    public DuckDBDateOnlyMethodTranslator(ISqlExpressionFactory sqlExpressionFactory)
+    public DuckDBDateTimeOffsetMethodTranslator(ISqlExpressionFactory sqlExpressionFactory)
     {
         _sqlExpressionFactory = (DuckDBSqlExpressionFactory)sqlExpressionFactory;
     }
-
+    
     public SqlExpression? Translate(
         SqlExpression? instance,
         MethodInfo method,
@@ -26,7 +26,7 @@ public class DuckDBDateOnlyMethodTranslator : IMethodCallTranslator
     {
         if (method == AddYears)
         {
-            return _sqlExpressionFactory.AddYears(instance, arguments[0], typeof(DateOnly));
+            return _sqlExpressionFactory.AddYears(instance, arguments[0], typeof(DateTimeOffset));
         }
 
         return null;

@@ -44,24 +44,4 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
 
         return base.GetOperator(binaryExpression);
     }
-
-    protected override Expression VisitMethodCall(MethodCallExpression node)
-    {
-        if (node.Method == DuckDBMethods.DateOnlyAddDays)
-        {
-            // TODO DateOnly.AddDays();
-        }
-        
-        return base.VisitMethodCall(node);
-    }
-
-    protected override Expression VisitBinary(BinaryExpression node)
-    {
-        if (node.Left.Type == typeof(DateOnly))
-        {
-            // TODO DateOnly.AddDays();
-        }
-
-        return base.VisitBinary(node);
-    }
 }

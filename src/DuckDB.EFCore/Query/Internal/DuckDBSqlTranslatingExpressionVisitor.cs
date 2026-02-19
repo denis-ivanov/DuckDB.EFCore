@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using System.Linq.Expressions;
-using System.Reflection;
 
 namespace DuckDB.EFCore.Query.Internal;
 
@@ -23,15 +21,5 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
         var resultTypeMapping = ExpressionExtensions.InferTypeMapping(expressions);
 
         return Dependencies.SqlExpressionFactory.Function("least", expressions, nullable: true, Enumerable.Repeat(true, expressions.Count), resultType, resultTypeMapping);
-    }
-
-    protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression)
-    {
-        if (methodCallExpression.Method == DuckDBMethods.DateOnlyAddDays)
-        {
-            // throw new NotImplementedException();
-        }
-
-        return base.VisitMethodCall(methodCallExpression);
     }
 }

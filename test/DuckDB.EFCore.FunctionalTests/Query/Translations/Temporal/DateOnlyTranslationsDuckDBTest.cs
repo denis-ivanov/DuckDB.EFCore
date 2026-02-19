@@ -26,12 +26,6 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task AddYears()
-    {
-        return base.AddYears();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task DayNumber_subtraction()
     {
         return base.DayNumber_subtraction();
