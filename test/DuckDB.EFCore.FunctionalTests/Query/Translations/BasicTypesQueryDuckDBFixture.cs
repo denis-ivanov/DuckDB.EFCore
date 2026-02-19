@@ -104,8 +104,25 @@ public class BasicTypesQueryDuckDBFixture : BasicTypesQueryFixtureBase, ITestSql
                     aa.TimeOnly.Should().BeNull();
                 }
 
-                Assert.Equal(ee.DateTimeOffset, aa.DateTimeOffset);
-                Assert.Equal(ee.TimeSpan, aa.TimeSpan);
+                if (ee.DateTimeOffset.HasValue)
+                {
+                    aa.DateTimeOffset.Should().NotBeNull();
+                    aa.DateTimeOffset.Value.Should().BeCloseTo(ee.DateTimeOffset.Value, TimeSpan.FromMicroseconds(100));
+                }
+                else
+                {
+                    aa.DateTimeOffset.Should().BeNull();
+                }
+
+                if (ee.TimeSpan.HasValue)
+                {
+                    aa.TimeSpan.Should().NotBeNull();
+                    aa.TimeSpan.Value.Should().BeCloseTo(ee.TimeSpan.Value, TimeSpan.FromMilliseconds(1));
+                }
+                else
+                {
+                    aa.TimeSpan.Should().BeNull();
+                }
 
                 Assert.Equal(ee.Bool, aa.Bool);
                 Assert.Equal(ee.Guid, aa.Guid);

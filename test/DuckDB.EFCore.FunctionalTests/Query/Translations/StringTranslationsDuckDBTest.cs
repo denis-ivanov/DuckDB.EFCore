@@ -62,18 +62,6 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task IsNullOrEmpty_negated()
-    {
-        return base.IsNullOrEmpty_negated();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task IsNullOrWhiteSpace()
-    {
-        return base.IsNullOrWhiteSpace();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Join_non_aggregate()
     {
         return base.Join_non_aggregate();
@@ -107,17 +95,5 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
     public override Task Trim_with_char_array_argument_in_predicate()
     {
         return base.Trim_with_char_array_argument_in_predicate();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task TrimEnd_with_char_argument()
-    {
-        return base.TrimEnd_with_char_argument();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task TrimEnd_with_char_array_argument()
-    {
-        return base.TrimEnd_with_char_array_argument();
     }
 }
