@@ -50,7 +50,6 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         { typeof(float), FloatTypeMapping },
         { typeof(Guid), GuidTypeMapping },
         { typeof(JsonTypePlaceholder), JsonTypeMapping },
-        // TODO { typeof(JsonElement), SqliteJsonTypeMapping.Default }
     };
 
     private static readonly Dictionary<string, RelationalTypeMapping> StoreTypeMappings = new()
