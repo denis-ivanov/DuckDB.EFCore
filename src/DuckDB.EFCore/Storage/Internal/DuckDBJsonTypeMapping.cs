@@ -2,6 +2,7 @@
 using DuckDB.NET.Data;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Data.Common;
+using System.Reflection;
 
 namespace DuckDB.EFCore.Storage.Internal;
 
@@ -18,6 +19,11 @@ public class DuckDBJsonTypeMapping : JsonTypeMapping
     protected override RelationalTypeMapping Clone(RelationalTypeMappingParameters parameters)
     {
         return new DuckDBJsonTypeMapping(parameters);
+    }
+
+    public override MethodInfo GetDataReaderMethod()
+    {
+        return GetDataReaderMethod(typeof(string));
     }
 
     protected override void ConfigureParameter(DbParameter parameter)

@@ -53,9 +53,9 @@ public class BuiltInDataTypesDuckDBTest : BuiltInDataTypesTestBase<BuiltInDataTy
 
         public override bool StrictEquality { get; }
 
-        public override bool SupportsAnsi { get; }
+        public override bool SupportsAnsi => false;
 
-        public override bool SupportsUnicodeToAnsiConversion { get; }
+        public override bool SupportsUnicodeToAnsiConversion => false;
 
         public override bool SupportsLargeStringComparisons { get; }
 
