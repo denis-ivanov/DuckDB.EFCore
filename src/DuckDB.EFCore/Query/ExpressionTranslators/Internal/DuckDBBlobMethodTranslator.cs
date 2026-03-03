@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
 
-public class DuckDBByteArrayMethodTranslator : IMethodCallTranslator
+public class DuckDBBlobMethodTranslator : IMethodCallTranslator
 {
     public SqlExpression? Translate(
         SqlExpression? instance,

@@ -14,7 +14,8 @@ public class DuckDBMemberTranslatorProvider : RelationalMemberTranslatorProvider
             new DuckDBDateTimeMemberTranslator(dependencies.SqlExpressionFactory),
             new DuckDBDateTimeOffsetMemberTranslator(dependencies.SqlExpressionFactory),
             new DuckDBTimeOnlyMemberTranslator(dependencies.SqlExpressionFactory),
-            new DuckDBTimeSpanMemberTranslator(dependencies.SqlExpressionFactory)
+            new DuckDBTimeSpanMemberTranslator(dependencies.SqlExpressionFactory),
+            new DuckDBBlobMemberTranslator()
         ]);
     }
 }

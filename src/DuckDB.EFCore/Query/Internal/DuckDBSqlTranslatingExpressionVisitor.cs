@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+﻿using DuckDB.EFCore.Storage.Internal;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace DuckDB.EFCore.Query.Internal;
@@ -55,5 +57,41 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
         }
 
         return base.VisitMember(memberExpression);
+    }
+
+    protected override Expression VisitUnary(UnaryExpression unaryExpression)
+    {
+        if (unaryExpression.NodeType == ExpressionType.ArrayLength)
+        {
+            if (TranslationFailed(unaryExpression.Operand, Visit(unaryExpression.Operand), out var sqlOperand))
+            {
+                return QueryCompilationContext.NotTranslatedExpression;
+            }
+
+            if (sqlOperand!.Type == typeof(byte[]) && sqlOperand.TypeMapping is DuckDBBlobTypeMapping or null)
+            {
+                return this.Dependencies.SqlExpressionFactory.Function(
+                    "octet_length",
+                    [sqlOperand],
+                    nullable: true,
+                    argumentsPropagateNullability: [true],
+                    typeof(int));
+            }
+        }
+
+        return base.VisitUnary(unaryExpression);
+    }
+
+    [DebuggerStepThrough]
+    private static bool TranslationFailed(Expression? original, Expression? translation, out SqlExpression? castTranslation)
+    {
+        if (original is not null && translation is not SqlExpression)
+        {
+            castTranslation = null;
+            return true;
+        }
+
+        castTranslation = translation as SqlExpression;
+        return false;
     }
 }
