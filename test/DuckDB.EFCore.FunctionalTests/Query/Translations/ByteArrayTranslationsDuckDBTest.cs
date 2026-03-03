@@ -13,19 +13,19 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [ConditionalFact(Skip = "https://github.com/duckdb/duckdb/discussions/7071")]
     public override Task Contains_with_column()
     {
         return base.Contains_with_column();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [ConditionalFact(Skip = "https://github.com/duckdb/duckdb/discussions/7071")]
     public override Task Contains_with_constant()
     {
         return base.Contains_with_constant();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [ConditionalFact(Skip = "https://github.com/duckdb/duckdb/discussions/7071")]
     public override Task Contains_with_parameter()
     {
         return base.Contains_with_parameter();
@@ -41,11 +41,5 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
     public override Task Index()
     {
         return base.Index();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Length()
-    {
-        return base.Length();
     }
 }
