@@ -10,7 +10,7 @@ public class DuckDBModificationCommandBatchFactory : IModificationCommandBatchFa
     }
 
     protected virtual ModificationCommandBatchFactoryDependencies Dependencies { get; }
-    
+
     public ModificationCommandBatch Create()
     {
         return new SingularModificationCommandBatch(Dependencies);

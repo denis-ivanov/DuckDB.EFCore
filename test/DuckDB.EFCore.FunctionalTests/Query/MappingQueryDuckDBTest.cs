@@ -8,7 +8,7 @@ namespace DuckDB.EFCore.FunctionalTests.Query;
 
 public class MappingQueryDuckDBTest : MappingQueryTestBase<MappingQueryDuckDBTest.MappingQueryDuckDBFixture>
 {
-    public MappingQueryDuckDBTest(MappingQueryFixtureBase fixture) : base(fixture)
+    public MappingQueryDuckDBTest(MappingQueryDuckDBFixture fixture) : base(fixture)
     {
     }
 

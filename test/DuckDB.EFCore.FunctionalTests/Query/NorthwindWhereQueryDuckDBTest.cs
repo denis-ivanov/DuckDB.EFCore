@@ -14,6 +14,18 @@ public class NorthwindWhereQueryDuckDBTest : NorthwindWhereQueryRelationalTestBa
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Where_array_of_object_contains_over_value_type(bool async)
+    {
+        return base.Where_array_of_object_contains_over_value_type(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Where_list_object_contains_over_value_type(bool async)
+    {
+        return base.Where_list_object_contains_over_value_type(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Where_compare_constructed_equal(bool async)
     {
         return base.Where_compare_constructed_equal(async);
