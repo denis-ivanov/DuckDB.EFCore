@@ -13,7 +13,6 @@ public class GuidTranslationsDuckDBTest : GuidTranslationsTestBase<BasicTypesQue
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task NewGuid()
     {
         return base.NewGuid();

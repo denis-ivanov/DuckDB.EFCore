@@ -14,7 +14,8 @@ public class DuckDBMethodCallTranslatorProvider : RelationalMethodCallTranslator
             new DuckDBDateTimeMethodTranslator(dependencies.SqlExpressionFactory),
             new DuckDBDateTimeOffsetMethodTranslator(dependencies.SqlExpressionFactory),
             new DuckDBBlobMethodTranslator(),
-            new DuckDBCharMethodTranslator()
+            new DuckDBCharMethodTranslator(),
+            new DuckDBGuidMethodTranslator(dependencies.SqlExpressionFactory, dependencies.RelationalTypeMappingSource)
         ]);
     }
 }
