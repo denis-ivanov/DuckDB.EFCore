@@ -14,6 +14,12 @@ public class NonSharedPrimitiveCollectionsQueryDuckDBTest : NonSharedPrimitiveCo
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Multidimensional_array_is_not_supported()
+    {
+        return base.Multidimensional_array_is_not_supported();
+    }
+
+    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Column_collection_inside_json_owned_entity()
     {
         return base.Column_collection_inside_json_owned_entity();

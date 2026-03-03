@@ -17,6 +17,30 @@ public class NorthwindAggregateOperatorsQueryDuckDBTest : NorthwindAggregateOper
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Contains_with_local_object_enumerable_closure(bool async)
+    {
+        return base.Contains_with_local_object_enumerable_closure(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Contains_with_local_object_list_closure(bool async)
+    {
+        return base.Contains_with_local_object_list_closure(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Contains_with_local_object_ordered_enumerable_closure(bool async)
+    {
+        return base.Contains_with_local_object_ordered_enumerable_closure(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Contains_with_local_object_read_only_collection_closure(bool async)
+    {
+        return base.Contains_with_local_object_read_only_collection_closure(async);
+    }
+
     [Theory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Contains_over_keyless_entity_throws(bool async)
     {

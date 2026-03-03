@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Diagnostics;
 
 namespace DuckDB.EFCore.Storage.Internal;
 
@@ -112,33 +114,136 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
 
     protected override RelationalTypeMapping? FindCollectionMapping(
         RelationalTypeMappingInfo info,
-        Type modelType,
+        Type? modelType,
         Type? providerType,
         CoreTypeMapping? elementMapping)
+        => FindCollectionMapping(info.StoreTypeName, modelType, providerType, elementMapping);
+
+    [EntityFrameworkInternal]
+    public virtual RelationalTypeMapping? FindCollectionMapping(
+        string? storeType,
+        Type? modelClrType,
+        Type? providerClrType,
+        CoreTypeMapping? elementMapping)
     {
-        if (modelType.IsArray && modelType.GetArrayRank() == 1)
+        if (elementMapping is not null and not RelationalTypeMapping)
         {
-            var elementType = modelType.GetElementType();
+            return null;
+        }
 
-            if (elementType != null)
+        Type concreteCollectionType;
+        Type? elementType = null;
+
+        if (modelClrType is not null)
+        {
+            elementType = modelClrType.TryGetElementType(typeof(IEnumerable<>)) ?? modelClrType.GetElementType();
+
+            if (elementType is null || elementType == modelClrType || modelClrType.GetGenericTypeImplementations(typeof(IDictionary<,>)).Any())
             {
-                var elementTypeMapping = FindMapping(elementType);
-
-                if (elementTypeMapping != null)
-                {
-                    return new DuckDBCollectionTypeMapping(
-                        elementTypeMapping,
-                        modelType,
-                        elementType,
-                        info is { IsFixedLength: true, Size: > 0 },
-                        info is { IsFixedLength: true, Size: > 0 } ? info.Size.Value : null);
-                }
+                return null;
             }
         }
 
-        return base.FindCollectionMapping(info, modelType, providerType, elementMapping);
-    }
+        switch (storeType)
+        {
+            case null:
+            {
+                if (modelClrType is null)
+                {
+                    return null;
+                }
 
+                Debug.Assert(elementType is not null, "elementClrType is null");
+
+                var relationalElementMapping = elementMapping as RelationalTypeMapping ?? FindMapping(elementType);
+                if (relationalElementMapping is not { ElementTypeMapping: null })
+                {
+                    return null;
+                }
+
+                concreteCollectionType = FindTypeToInstantiate(modelClrType, elementType);
+
+                return (DuckDBArrayTypeMapping)Activator.CreateInstance(
+                    typeof(DuckDBArrayTypeMapping<,,>).MakeGenericType(modelClrType, concreteCollectionType, elementType),
+                    relationalElementMapping)!;
+            }
+
+            case var _ when storeType.EndsWith("[]", StringComparison.Ordinal):
+            {
+                var elementStoreType = storeType.Substring(0, storeType.Length - 2);
+
+                var relationalElementMapping = elementMapping as RelationalTypeMapping
+                    ?? (elementType is null
+                        ? FindMapping(elementStoreType)
+                        : FindMapping(elementType, elementStoreType));
+                if (relationalElementMapping is not { ElementTypeMapping: null })
+                {
+                    return null;
+                }
+
+                if (relationalElementMapping is not null and not DuckDBArrayTypeMapping)
+                {
+                    if (modelClrType is null)
+                    {
+                        elementType = relationalElementMapping.ClrType;
+                        modelClrType = concreteCollectionType = typeof(List<>).MakeGenericType(elementType);
+                    }
+                    else
+                    {
+                        concreteCollectionType = FindTypeToInstantiate(modelClrType, elementType!);
+                        Debug.Assert(elementType is not null, "elementType is null");
+                    }
+
+                    return (DuckDBArrayTypeMapping)Activator.CreateInstance(
+                        typeof(DuckDBArrayTypeMapping<,,>).MakeGenericType(modelClrType, concreteCollectionType, elementType),
+                        storeType, relationalElementMapping)!;
+                }
+
+                return null;
+            }
+
+#pragma warning disable EF1001 // SelectExpression constructors are pubternal
+
+            case "JSON" or "json" when modelClrType is not null:
+                return base.FindCollectionMapping(
+                    new RelationalTypeMappingInfo(
+                        modelClrType, (RelationalTypeMapping?)elementMapping, storeTypeName: storeType, storeTypeNameBase: storeType),
+                    modelClrType,
+                    providerClrType,
+                    elementMapping);
+#pragma warning restore EF1001 // SelectExpression constructors are pubternal
+
+            default:
+                return null;
+        }
+
+        static Type FindTypeToInstantiate(Type collectionType, Type elementType)
+        {
+            if (collectionType.IsArray)
+            {
+                return collectionType;
+            }
+
+            var listOfT = typeof(List<>).MakeGenericType(elementType);
+
+            if (collectionType.IsAssignableFrom(listOfT))
+            {
+                if (!collectionType.IsAbstract)
+                {
+                    var constructor = collectionType.GetDeclaredConstructor(null);
+                    if (constructor?.IsPublic == true)
+                    {
+                        return collectionType;
+                    }
+                }
+
+                return listOfT;
+            }
+
+            return collectionType;
+        }
+    }
+    
     private RelationalTypeMapping? FindRawMapping(RelationalTypeMappingInfo mappingInfo)
     {
         var clrType = mappingInfo.ClrType;
