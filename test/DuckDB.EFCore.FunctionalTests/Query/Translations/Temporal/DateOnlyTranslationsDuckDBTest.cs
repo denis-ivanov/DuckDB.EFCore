@@ -20,18 +20,6 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task FromDateTime()
-    {
-        return base.FromDateTime();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task FromDateTime_compared_to_constant_and_parameter()
-    {
-        return base.FromDateTime_compared_to_constant_and_parameter();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task FromDateTime_compared_to_property()
     {
         return base.FromDateTime_compared_to_property();
@@ -66,7 +54,4 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
     {
         return base.ToDateTime_with_complex_TimeOnly();
     }
-
-    private void AssertSql(params string[] expected)
-        => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
