@@ -54,7 +54,6 @@ public static class DuckDBServiceCollectionExtensions
             .TryAdd<IMigrationsSqlGenerator, DuckDBMigrationsSqlGenerator>()
             .TryAdd<IRelationalDatabaseCreator, DuckDBDatabaseCreator>()
             .TryAdd<IHistoryRepository, DuckDBHistoryRepository>()
-            .TryAdd<IRelationalQueryStringFactory, DuckDBQueryStringFactory>()
             .TryAdd<IQueryCompilationContextFactory, DuckDBQueryCompilationContextFactory>()
             .TryAdd<IMethodCallTranslatorProvider, DuckDBMethodCallTranslatorProvider>()
             .TryAdd<IAggregateMethodCallTranslatorProvider, DuckDBAggregateMethodCallTranslatorProvider>()

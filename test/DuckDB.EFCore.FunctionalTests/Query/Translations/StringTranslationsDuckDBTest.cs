@@ -38,21 +38,9 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task IndexOf_with_constant_starting_position()
-    {
-        return base.IndexOf_with_constant_starting_position();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task IndexOf_with_constant_starting_position_char()
     {
         return base.IndexOf_with_constant_starting_position_char();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task IndexOf_with_parameter_starting_position()
-    {
-        return base.IndexOf_with_parameter_starting_position();
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -74,26 +62,8 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Regex_IsMatch()
-    {
-        return base.Regex_IsMatch();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Regex_IsMatch_constant_input()
-    {
-        return base.Regex_IsMatch_constant_input();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Replace_using_property_arguments()
     {
         return base.Replace_using_property_arguments();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Trim_with_char_array_argument_in_predicate()
-    {
-        return base.Trim_with_char_array_argument_in_predicate();
     }
 }

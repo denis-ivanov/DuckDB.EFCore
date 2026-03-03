@@ -10,12 +10,6 @@ public class GearsOfWarQueryDuckDBTest : GearsOfWarQueryRelationalTestBase<Gears
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Byte_array_filter_by_length_literal_does_not_cast_on_varbinary_n(bool async)
-    {
-        return base.Byte_array_filter_by_length_literal_does_not_cast_on_varbinary_n(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Correlated_collection_after_distinct_3_levels(bool async)
     {
         return base.Correlated_collection_after_distinct_3_levels(async);

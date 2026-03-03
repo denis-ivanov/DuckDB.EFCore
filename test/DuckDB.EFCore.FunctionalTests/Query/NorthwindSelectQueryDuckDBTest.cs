@@ -113,12 +113,6 @@ public class NorthwindSelectQueryDuckDBTest : NorthwindSelectQueryRelationalTest
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Select_nested_collection(bool async)
-    {
-        return base.Select_nested_collection(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Select_nested_collection_deep(bool async)
     {
         return base.Select_nested_collection_deep(async);

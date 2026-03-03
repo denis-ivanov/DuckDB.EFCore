@@ -27,21 +27,12 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
 
     protected override string GetOperator(SqlBinaryExpression binaryExpression)
     {
-        if (binaryExpression.OperatorType == ExpressionType.Add && binaryExpression.Type == typeof(string))
+        return binaryExpression.OperatorType switch
         {
-            return " || ";
-        }
-
-        if (binaryExpression.OperatorType == ExpressionType.LeftShift)
-        {
-            return " << ";
-        }
-
-        if (binaryExpression.OperatorType == ExpressionType.RightShift)
-        {
-            return " >> ";
-        }
-
-        return base.GetOperator(binaryExpression);
+            ExpressionType.Add when binaryExpression.Type == typeof(string) => " || ",
+            ExpressionType.LeftShift => " << ",
+            ExpressionType.RightShift => " >> ",
+            _ => base.GetOperator(binaryExpression)
+        };
     }
 }

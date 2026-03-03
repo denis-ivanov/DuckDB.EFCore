@@ -20,6 +20,7 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
     private static readonly MethodInfo ToLower = typeof(string).GetRuntimeMethod(nameof(string.ToLower), Type.EmptyTypes)!;
     private static readonly MethodInfo Trim = typeof(string).GetRuntimeMethod(nameof(string.Trim), Type.EmptyTypes)!;
     private static readonly MethodInfo TrimWithChar = typeof(string).GetRuntimeMethod(nameof(string.Trim), [typeof(char)])!;
+    private static readonly MethodInfo TrimWithChars = typeof(string).GetRuntimeMethod(nameof(string.Trim), [typeof(char[])])!;
     private static readonly MethodInfo TrimStart = typeof(string).GetRuntimeMethod(nameof(string.TrimStart), Type.EmptyTypes)!;
     private static readonly MethodInfo TrimStartWithChar = typeof(string).GetRuntimeMethod(nameof(string.TrimStart), [typeof(char)])!;
     private static readonly MethodInfo TrimStartWithCharArray = typeof(string).GetRuntimeMethod(nameof(string.TrimStart), [typeof(char[])])!;
@@ -28,6 +29,7 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
     private static readonly MethodInfo TrimEndWithCharArray = typeof(string).GetRuntimeMethod(nameof(string.TrimEnd), [typeof(char[])])!;
     private static readonly MethodInfo IndexOf = typeof(string).GetRuntimeMethod(nameof(string.IndexOf), [typeof(string)])!;
     private static readonly MethodInfo IndexOfChar = typeof(string).GetRuntimeMethod(nameof(string.IndexOf), [typeof(char)])!;
+    private static readonly MethodInfo IndexOfWithPosition = typeof(string).GetRuntimeMethod(nameof(string.IndexOf), [typeof(string), typeof(int)])!;
     private static readonly MethodInfo Replace = typeof(string).GetRuntimeMethod(nameof(string.Replace), [typeof(string), typeof(string)])!;
     private static readonly MethodInfo ReplaceChar = typeof(string).GetRuntimeMethod(nameof(string.Replace), [typeof(char), typeof(char)])!;
     private static readonly MethodInfo IsNullOrEmpty = typeof(string).GetRuntimeMethod(nameof(string.IsNullOrEmpty), [typeof(string)])!;
@@ -136,6 +138,16 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
                 returnType: typeof(string));
         }
 
+        if (method == TrimWithChars && arguments[0] is SqlConstantExpression { Value: char[] } trimChars)
+        {
+            return _sqlExpressionFactory.Function(
+                name: "trim",
+                arguments: [instance!, _sqlExpressionFactory.Constant(string.Join("", (char[])trimChars.Value), typeof(string))],
+                nullable: true,
+                argumentsPropagateNullability: [true, true],
+                returnType: typeof(string));
+        }
+
         if (method == IndexOf || method == IndexOfChar)
         {
             return _sqlExpressionFactory.Subtract(_sqlExpressionFactory.Function(
@@ -147,6 +159,27 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
                 _sqlExpressionFactory.Constant(1));
         }
 
+        if (method == IndexOfWithPosition)
+        {
+            var substringFromStart = _sqlExpressionFactory.Function(
+                name: "substring",
+                arguments: [instance!, _sqlExpressionFactory.Add(arguments[1], _sqlExpressionFactory.Constant(1))],
+                nullable: true,
+                argumentsPropagateNullability: [true, true],
+                returnType: typeof(string));
+
+            var instrResult = _sqlExpressionFactory.Function(
+                name: "instr",
+                arguments: [substringFromStart, arguments[0]],
+                nullable: true,
+                argumentsPropagateNullability: [true, true],
+                returnType: typeof(int));
+
+            return _sqlExpressionFactory.Add(
+                _sqlExpressionFactory.Subtract(instrResult, _sqlExpressionFactory.Constant(1)),
+                arguments[1]);
+        }
+        
         if (method == TrimStart)
         {
             return _sqlExpressionFactory.Function(
