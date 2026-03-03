@@ -49,7 +49,7 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         { typeof(double), DoubleTypeMapping },
         { typeof(float), FloatTypeMapping },
         { typeof(Guid), GuidTypeMapping },
-        { typeof(JsonTypePlaceholder), JsonTypeMapping },
+        { typeof(JsonTypePlaceholder), JsonTypeMapping }
     };
 
     private static readonly Dictionary<string, RelationalTypeMapping> StoreTypeMappings = new()
@@ -109,7 +109,36 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
             ? mapping.WithStoreTypeAndSize(mappingInfo.StoreTypeName, null)
             : mapping;
     }
-    
+
+    protected override RelationalTypeMapping? FindCollectionMapping(
+        RelationalTypeMappingInfo info,
+        Type modelType,
+        Type? providerType,
+        CoreTypeMapping? elementMapping)
+    {
+        if (modelType.IsArray && modelType.GetArrayRank() == 1)
+        {
+            var elementType = modelType.GetElementType();
+
+            if (elementType != null)
+            {
+                var elementTypeMapping = FindMapping(elementType);
+
+                if (elementTypeMapping != null)
+                {
+                    return new DuckDBCollectionTypeMapping(
+                        elementTypeMapping,
+                        modelType,
+                        elementType,
+                        info is { IsFixedLength: true, Size: > 0 },
+                        info is { IsFixedLength: true, Size: > 0 } ? info.Size.Value : null);
+                }
+            }
+        }
+
+        return base.FindCollectionMapping(info, modelType, providerType, elementMapping);
+    }
+
     private RelationalTypeMapping? FindRawMapping(RelationalTypeMappingInfo mappingInfo)
     {
         var clrType = mappingInfo.ClrType;
@@ -118,8 +147,7 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
             return null;
         }
 
-        if (clrType != null
-            && ClrTypeMappings.TryGetValue(clrType, out var mapping))
+        if (clrType != null && ClrTypeMappings.TryGetValue(clrType, out var mapping))
         {
             return mapping;
         }
