@@ -13,8 +13,8 @@ public class NorthwindAggregateOperatorsQueryDuckDBTest : NorthwindAggregateOper
         ITestOutputHelper testOutputHelper)
         : base(fixture)
     {
-        ClearLog();
-        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
+        fixture.TestSqlLoggerFactory.Clear();
+        fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -47,7 +47,7 @@ public class NorthwindAggregateOperatorsQueryDuckDBTest : NorthwindAggregateOper
         return base.Contains_over_keyless_entity_throws(async);
     }
 
-    [Theory(Skip = DuckDBSkipReasons.Tbd)]
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Average_over_max_subquery(bool async)
     {
         return base.Average_over_max_subquery(async);

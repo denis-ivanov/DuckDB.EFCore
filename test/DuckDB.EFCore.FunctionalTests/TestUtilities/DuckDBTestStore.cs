@@ -94,7 +94,7 @@ public class DuckDBTestStore : RelationalTestStore
 
         for (var i = 0; i < parameters.Length; i++)
         {
-            command.Parameters.Add(new DuckDBParameter("@p" + i, parameters[i]));
+            command.Parameters.Add(new DuckDBParameter("p" + i, parameters[i]));
         }
 
         return command;
@@ -111,4 +111,8 @@ public class DuckDBTestStore : RelationalTestStore
 
         return new DuckDBConnection(connectionString);
     }
+
+    protected override string OpenDelimiter => "\"";
+
+    protected override string CloseDelimiter => "\"";
 }

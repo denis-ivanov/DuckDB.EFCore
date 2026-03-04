@@ -1,27 +1,47 @@
 using DuckDB.NET.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.TestModels.Northwind;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using System.Data.Common;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DuckDB.EFCore.FunctionalTests.Query;
 
 public class FromSqlQueryDuckDBTest : FromSqlQueryTestBase<NorthwindQueryDuckDBFixture<NoopModelCustomizer>>
 {
-    public FromSqlQueryDuckDBTest(NorthwindQueryDuckDBFixture<NoopModelCustomizer> fixture) : base(fixture)
+    public FromSqlQueryDuckDBTest(NorthwindQueryDuckDBFixture<NoopModelCustomizer> fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
     {
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     protected override DbParameter CreateDbParameter(string name, object value)
     {
         return new DuckDBParameter
         {
-            ParameterName = name.StartsWith('$')
-                ? name.Substring(1)
+            ParameterName = name.StartsWith('$') || name.StartsWith('@')
+                ? name[1..]
                 : name,
             Value = value
         };
     }
+
+    [ConditionalTheory, MemberData(nameof(IsAsyncData))]
+    public override async Task FromSqlRaw_in_subquery_with_dbParameter(bool async)
+        => await AssertQuery(
+            async,
+            ss => ss.Set<Order>().Where(o => ((DbSet<Customer>)ss.Set<Customer>()).FromSqlRaw(
+                    NormalizeDelimitersInRawString(@"SELECT * FROM Customers WHERE City = $city"),
+                    // ReSharper disable once FormatStringProblem
+                    CreateDbParameter("@city", "London"))
+                .Select(c => c.CustomerID)
+                .Contains(o.CustomerID)),
+            ss => ss.Set<Order>().Where(o => ss.Set<Customer>().Where(x => x.City == "London")
+                .Select(c => c.CustomerID)
+                .Contains(o.CustomerID)));
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Bad_data_error_handling_invalid_cast(bool async)
@@ -54,39 +74,43 @@ public class FromSqlQueryDuckDBTest : FromSqlQueryTestBase<NorthwindQueryDuckDBF
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task FromSql_with_inlined_db_parameter(bool async)
-    {
-        return base.FromSql_with_inlined_db_parameter(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task FromSqlInterpolated_with_inlined_db_parameter(bool async)
-    {
-        return base.FromSqlInterpolated_with_inlined_db_parameter(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task FromSqlRaw_in_subquery_with_dbParameter(bool async)
-    {
-        return base.FromSqlRaw_in_subquery_with_dbParameter(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task FromSqlRaw_in_subquery_with_positional_dbParameter_with_name(bool async)
-    {
-        return base.FromSqlRaw_in_subquery_with_positional_dbParameter_with_name(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task FromSqlRaw_in_subquery_with_positional_dbParameter_without_name(bool async)
     {
         return base.FromSqlRaw_in_subquery_with_positional_dbParameter_without_name(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task FromSqlRaw_queryable_composed_compiled_with_DbParameter(bool async)
+    public override async Task FromSqlRaw_queryable_composed_compiled_with_DbParameter(bool async)
     {
-        return base.FromSqlRaw_queryable_composed_compiled_with_DbParameter(async);
+        if (async)
+        {
+            var query = EF.CompileAsyncQuery((NorthwindContext context) => context.Set<Customer>()
+                .FromSqlRaw(
+                    NormalizeDelimitersInRawString("SELECT * FROM Customers WHERE CustomerID = $customer"),
+                    CreateDbParameter("customer", "CONSH"))
+                .Where(c => c.ContactName.Contains("z")));
+
+            using (var context = CreateContext())
+            {
+                var actual = await query(context).ToListAsync();
+
+                Assert.Single(actual);
+            }
+        }
+        else
+        {
+            var query = EF.CompileQuery((NorthwindContext context) => context.Set<Customer>()
+                .FromSqlRaw(
+                    NormalizeDelimitersInRawString("SELECT * FROM Customers WHERE CustomerID = $customer"),
+                    CreateDbParameter("customer", "CONSH"))
+                .Where(c => c.ContactName.Contains("z")));
+
+            using (var context = CreateContext())
+            {
+                var actual = query(context).ToArray();
+
+                Assert.Single(actual);
+            }
+        }
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -96,9 +120,9 @@ public class FromSqlQueryDuckDBTest : FromSqlQueryTestBase<NorthwindQueryDuckDBF
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task FromSqlRaw_queryable_simple_projection_composed(bool async)
+    public override async Task FromSqlRaw_queryable_simple_projection_composed(bool async)
     {
-        return base.FromSqlRaw_queryable_simple_projection_composed(async);
+        await base.FromSqlRaw_queryable_simple_projection_composed(async);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -113,10 +137,15 @@ public class FromSqlQueryDuckDBTest : FromSqlQueryTestBase<NorthwindQueryDuckDBF
         return base.FromSqlRaw_with_db_parameters_called_multiple_times(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task FromSqlRaw_with_dbParameter(bool async)
+    public override async Task FromSqlRaw_with_dbParameter(bool async)
     {
-        return base.FromSqlRaw_with_dbParameter(async);
+        var parameter = CreateDbParameter("city", "London");
+
+        await AssertQuery(
+            async,
+            ss => ((DbSet<Customer>)ss.Set<Customer>()).FromSqlRaw(
+                NormalizeDelimitersInRawString("SELECT * FROM Customers WHERE City = $city"), parameter),
+            ss => ss.Set<Customer>().Where(x => x.City == "London"));
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]

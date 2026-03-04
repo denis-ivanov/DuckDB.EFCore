@@ -4,7 +4,7 @@ using Xunit;
 
 namespace DuckDB.EFCore.FunctionalTests.Query;
 
-public class NorthwindSplitIncludeNoTrackingQueryDuckDBTest: NorthwindSplitIncludeNoTrackingQueryTestBase<NorthwindQueryDuckDBFixture<NoopModelCustomizer>>
+public class NorthwindSplitIncludeNoTrackingQueryDuckDBTest : NorthwindSplitIncludeNoTrackingQueryTestBase<NorthwindQueryDuckDBFixture<NoopModelCustomizer>>
 {
     public NorthwindSplitIncludeNoTrackingQueryDuckDBTest(NorthwindQueryDuckDBFixture<NoopModelCustomizer> fixture) : base(fixture)
     {
