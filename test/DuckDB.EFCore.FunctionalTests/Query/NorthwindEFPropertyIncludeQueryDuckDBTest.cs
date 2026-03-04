@@ -1,25 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DuckDB.EFCore.FunctionalTests.Query;
 
 public class NorthwindEFPropertyIncludeQueryDuckDBTest : NorthwindEFPropertyIncludeQueryTestBase<NorthwindQueryDuckDBFixture<NoopModelCustomizer>>
 {
-    public NorthwindEFPropertyIncludeQueryDuckDBTest(NorthwindQueryDuckDBFixture<NoopModelCustomizer> fixture) : base(fixture)
+    public NorthwindEFPropertyIncludeQueryDuckDBTest(NorthwindQueryDuckDBFixture<NoopModelCustomizer> fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
     {
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Filtered_include_with_multiple_ordering(bool async)
-    {
-        return base.Filtered_include_with_multiple_ordering(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Include_collection_with_cross_apply_with_filter(bool async)
-    {
-        return base.Include_collection_with_cross_apply_with_filter(async);
+        fixture.TestSqlLoggerFactory.Clear();
+        fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -38,12 +30,6 @@ public class NorthwindEFPropertyIncludeQueryDuckDBTest : NorthwindEFPropertyIncl
     public override Task Include_collection_with_outer_apply_with_filter(bool async)
     {
         return base.Include_collection_with_outer_apply_with_filter(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Include_collection_with_outer_apply_with_filter_non_equality(bool async)
-    {
-        return base.Include_collection_with_outer_apply_with_filter_non_equality(async);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]

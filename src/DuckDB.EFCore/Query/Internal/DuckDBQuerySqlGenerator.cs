@@ -35,4 +35,21 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
             _ => base.GetOperator(binaryExpression)
         };
     }
+
+    protected override Expression VisitCrossApply(CrossApplyExpression crossApplyExpression)
+    {
+        Sql.Append("CROSS JOIN LATERAL ");
+        Visit(crossApplyExpression.Table);
+
+        return crossApplyExpression;
+    }
+
+    protected override Expression VisitOuterApply(OuterApplyExpression outerApplyExpression)
+    {
+        Sql.Append("LEFT JOIN LATERAL ");
+        Visit(outerApplyExpression.Table);
+        Sql.Append(" ON true");
+
+        return outerApplyExpression;
+    }
 }
