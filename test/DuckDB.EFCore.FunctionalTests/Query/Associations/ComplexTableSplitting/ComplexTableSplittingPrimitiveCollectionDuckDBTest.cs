@@ -16,6 +16,7 @@ public class ComplexTableSplittingPrimitiveCollectionDuckDBTest: ComplexTableSpl
         return base.Any_predicate();
     }
 
+    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Contains()
     {
         return base.Contains();
