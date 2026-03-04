@@ -78,10 +78,4 @@ public class NorthwindWhereQueryDuckDBTest : NorthwindWhereQueryRelationalTestBa
     {
         return base.Where_compare_tuple_create_constructed_multi_value_not_equal(async);
     }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task<string> Where_simple_closure(bool async)
-    {
-        return base.Where_simple_closure(async);
-    }
 }

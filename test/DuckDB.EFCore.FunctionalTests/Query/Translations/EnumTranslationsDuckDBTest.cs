@@ -20,27 +20,9 @@ public class EnumTranslationsDuckDBTest : EnumTranslationsTestBase<BasicTypesQue
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Equality_nullable_enum_to_constant()
-    {
-        return base.Equality_nullable_enum_to_constant();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Equality_nullable_enum_to_null_constant()
-    {
-        return base.Equality_nullable_enum_to_null_constant();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Bitwise_and_integral_constant()
     {
         return base.Bitwise_and_integral_constant();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Equality_nullable_enum_to_null_parameter()
-    {
-        return base.Equality_nullable_enum_to_null_parameter();
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -49,13 +31,6 @@ public class EnumTranslationsDuckDBTest : EnumTranslationsTestBase<BasicTypesQue
         return base.Bitwise_and_nullable_enum_with_constant();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Equality_nullable_enum_to_nullable_parameter()
-    {
-        return base.Equality_nullable_enum_to_nullable_parameter();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Equality_nullable_enum_to_parameter()
     {
         return base.Equality_nullable_enum_to_parameter();
