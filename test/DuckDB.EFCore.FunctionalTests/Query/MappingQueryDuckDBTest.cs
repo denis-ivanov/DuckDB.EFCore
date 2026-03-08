@@ -3,13 +3,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DuckDB.EFCore.FunctionalTests.Query;
 
 public class MappingQueryDuckDBTest : MappingQueryTestBase<MappingQueryDuckDBTest.MappingQueryDuckDBFixture>
 {
-    public MappingQueryDuckDBTest(MappingQueryDuckDBFixture fixture) : base(fixture)
+    public MappingQueryDuckDBTest(MappingQueryDuckDBFixture fixture, ITestOutputHelper testOutputHelper) : base(fixture)
     {
+        fixture.TestSqlLoggerFactory.Clear();
+        fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]

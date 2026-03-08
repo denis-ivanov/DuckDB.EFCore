@@ -15,7 +15,7 @@ public class NorthwindSqlQueryDuckDBTest : NorthwindSqlQueryTestBase<NorthwindQu
     {
         return new DuckDBParameter
         {
-            ParameterName = name.StartsWith('$')
+            ParameterName = name.StartsWith('$') || name.StartsWith('@')
                 ? name.Substring(1)
                 : name,
             Value = value

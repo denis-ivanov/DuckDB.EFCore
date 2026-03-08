@@ -152,6 +152,10 @@ public class SqlQueryDuckDBTest : SqlQueryTestBase<NorthwindQueryDuckDBFixture<N
 
     protected override DbParameter CreateDbParameter(string name, object value)
     {
-        return new DuckDBParameter(name.StartsWith('$') ? name[1..] : name, value);
+        return new DuckDBParameter(
+            name.StartsWith('$') || name.StartsWith('@')
+                ? name[1..]
+                : name,
+            value);
     }
 }

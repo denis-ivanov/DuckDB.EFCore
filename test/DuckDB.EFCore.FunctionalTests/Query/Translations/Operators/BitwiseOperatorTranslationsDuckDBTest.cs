@@ -13,19 +13,6 @@ public class BitwiseOperatorTranslationsDuckDBTest : BitwiseOperatorTranslations
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Left_shift()
-    {
-        return base.Left_shift();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Right_shift()
-    {
-        return base.Right_shift();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Xor()
     {
         return base.Xor();
