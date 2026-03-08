@@ -36,7 +36,7 @@ public class FromSqlQueryDuckDBTest : FromSqlQueryTestBase<NorthwindQueryDuckDBF
             ss => ss.Set<Order>().Where(o => ((DbSet<Customer>)ss.Set<Customer>()).FromSqlRaw(
                     NormalizeDelimitersInRawString(@"SELECT * FROM Customers WHERE City = $city"),
                     // ReSharper disable once FormatStringProblem
-                    CreateDbParameter("@city", "London"))
+                    CreateDbParameter("city", "London"))
                 .Select(c => c.CustomerID)
                 .Contains(o.CustomerID)),
             ss => ss.Set<Order>().Where(o => ss.Set<Customer>().Where(x => x.City == "London")

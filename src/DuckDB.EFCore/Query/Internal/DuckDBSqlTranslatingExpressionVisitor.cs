@@ -1,4 +1,5 @@
-﻿using DuckDB.EFCore.Storage.Internal;
+﻿using DuckDB.EFCore.Query.Expressions.Internal;
+using DuckDB.EFCore.Storage.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Diagnostics;
@@ -80,6 +81,35 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
         }
 
         return base.VisitUnary(unaryExpression);
+    }
+
+    protected override Expression VisitBinary(BinaryExpression binaryExpression)
+    {
+        switch (binaryExpression.NodeType)
+        {
+            case ExpressionType.LeftShift:
+            case ExpressionType.RightShift:
+                var left = Translate(binaryExpression.Left)!;
+                var right = Translate(binaryExpression.Right)!;
+                return new DuckDBBinaryExpression(
+                    binaryExpression.NodeType,
+                    left,
+                    right,
+                    binaryExpression.Type,
+                    ExpressionExtensions.InferTypeMapping(left, right)!);
+            case ExpressionType.ExclusiveOr:
+                var leftXor = Translate(binaryExpression.Left)!;
+                var rightXor = Translate(binaryExpression.Right)!;
+                return Dependencies.SqlExpressionFactory.Function(
+                    name: "xor",
+                    arguments: [leftXor, rightXor],
+                    nullable: true,
+                    argumentsPropagateNullability: [true, true],
+                    returnType: binaryExpression.Type,
+                    typeMapping: ExpressionExtensions.InferTypeMapping(leftXor, rightXor)!);
+            default:
+                return base.VisitBinary(binaryExpression);
+        }
     }
 
     [DebuggerStepThrough]

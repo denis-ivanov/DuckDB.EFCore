@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+﻿using DuckDB.EFCore.Query.Expressions.Internal;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace DuckDB.EFCore.Query.Internal;
@@ -36,6 +38,24 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         };
     }
 
+    protected override Expression VisitExtension(Expression extensionExpression)
+    {
+        return extensionExpression switch
+        {
+            DuckDBBinaryExpression duckDbBinaryExpression => VisitBinary(duckDbBinaryExpression),
+            _ => base.VisitExtension(extensionExpression)
+        };
+    }
+
+    protected override Expression VisitSqlBinary(SqlBinaryExpression sqlBinaryExpression)
+    {
+        return sqlBinaryExpression.OperatorType switch
+        {
+            ExpressionType.ArrayIndex => VisitArrayIndex(sqlBinaryExpression),
+            _ => base.VisitSqlBinary(sqlBinaryExpression)
+        };
+    }
+
     protected override Expression VisitCrossApply(CrossApplyExpression crossApplyExpression)
     {
         Sql.Append("CROSS JOIN LATERAL ");
@@ -51,5 +71,45 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         Sql.Append(" ON true");
 
         return outerApplyExpression;
+    }
+
+    protected virtual Expression VisitArrayIndex(SqlBinaryExpression sqlBinaryExpression)
+    {
+        Visit(sqlBinaryExpression.Left);
+        Sql.Append("[");
+        Visit(sqlBinaryExpression.Right);
+        Sql.Append("]");
+        return sqlBinaryExpression;
+    }
+
+    protected virtual Expression VisitBinary(DuckDBBinaryExpression binaryExpression)
+    {
+        switch (binaryExpression.OperatorType)
+        {
+            case ExpressionType.LeftShift:
+                Sql.Append("CASE WHEN (");
+                Visit(binaryExpression.Left);
+                Sql.Append(" >= 0) THEN ");
+                Visit(binaryExpression.Left);
+                Sql.Append(" << ");
+                Visit(binaryExpression.Right);
+                Sql.Append(" ELSE NULL END");
+                break;
+
+            case ExpressionType.RightShift:
+                Sql.Append("CASE WHEN (");
+                Visit(binaryExpression.Left);
+                Sql.Append(" >= 0) THEN ");
+                Visit(binaryExpression.Left);
+                Sql.Append(" >> ");
+                Visit(binaryExpression.Right);
+                Sql.Append(" ELSE NULL END");
+                break;
+
+            default:
+                throw new UnreachableException("Unknown binary operator");
+        }
+
+        return binaryExpression;
     }
 }
