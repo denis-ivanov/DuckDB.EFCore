@@ -137,6 +137,42 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
             EndStatement(builder);
         }
 
+        if (operation.OldColumn.ComputedColumnSql != operation.ComputedColumnSql)
+        {
+            Generate(new DropColumnOperation
+            {
+                Name = operation.Name,
+                Schema = operation.Schema,
+                Table = operation.Table,
+            }, model, builder);
+
+            Generate(
+                new AddColumnOperation
+                {
+                    Name = operation.Name,
+                    Schema = operation.Schema,
+                    Table = operation.Table,
+                    ColumnType = operation.ColumnType,
+                    IsNullable = operation.IsNullable,
+                    ComputedColumnSql = operation.ComputedColumnSql,
+                    IsStored = operation.IsStored,
+                    DefaultValueSql = operation.DefaultValueSql,
+                    Comment = operation.Comment,
+                    Collation = operation.Collation,
+                    ClrType = operation.ClrType,
+                    DefaultValue = operation.DefaultValue,
+                    IsDestructiveChange = operation.IsDestructiveChange,
+                    IsFixedLength = operation.IsFixedLength,
+                    IsRowVersion = operation.IsRowVersion,
+                    IsUnicode = operation.IsUnicode,
+                    MaxLength = operation.MaxLength,
+                    Precision = operation.Precision,
+                    Scale = operation.Scale
+                },
+                model,
+                builder);
+        }
+
         if (operation.OldColumn.Name != operation.Name ||
             operation.OldColumn.Schema != operation.Schema ||
             operation.OldColumn.Table != operation.Table ||
