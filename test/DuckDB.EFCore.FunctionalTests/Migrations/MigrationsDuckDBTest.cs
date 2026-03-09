@@ -6,13 +6,16 @@ using Microsoft.EntityFrameworkCore.Scaffolding;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DuckDB.EFCore.FunctionalTests.Migrations;
 
 public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.MigrationsDuckDBFixture>
 {
-    public MigrationsDuckDBTest(MigrationsDuckDBFixture fixture) : base(fixture)
+    public MigrationsDuckDBTest(MigrationsDuckDBFixture fixture, ITestOutputHelper testOutputHelper) : base(fixture)
     {
+        fixture.TestSqlLoggerFactory.Clear();
+        fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -87,10 +90,10 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         return base.Add_foreign_key_with_name();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Add_json_columns_to_existing_table()
+    public override async Task Add_json_columns_to_existing_table()
     {
-        return base.Add_json_columns_to_existing_table();
+        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_json_columns_to_existing_table());
+        Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -211,10 +214,10 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         Assert.Equal("Not implemented Error: No support for that ALTER TABLE option yet!", exception.Message);   
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Alter_column_change_computed()
+    public override async Task Alter_column_change_computed()
     {
-        return base.Alter_column_change_computed();
+        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Alter_column_change_computed());
+        Assert.Equal("Parser Error: Adding generated columns after table creation is not supported yet", exception.Message);  
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -251,6 +254,12 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     public override Task Alter_column_make_required_with_null_data()
     {
         return base.Alter_column_make_required_with_null_data();
+    }
+
+    public override async Task Alter_column_make_non_computed()
+    {
+        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Alter_column_make_non_computed());
+        Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);  
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
