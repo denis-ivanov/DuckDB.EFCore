@@ -17,7 +17,8 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
     {
         return sqlExpression switch
         {
-            DuckDBBinaryExpression duckDbBinaryExpression => VisitBinary(duckDbBinaryExpression, allowOptimizedExpansion, out nullable),
+            DuckDBBinaryExpression e => VisitBinary(e, allowOptimizedExpansion, out nullable),
+            DuckDBArrayIndexExpression e => VisitArrayIndex(e, allowOptimizedExpansion, out nullable),
             _ => base.VisitCustomSqlExpression(sqlExpression, allowOptimizedExpansion, out nullable)
         };
     }
@@ -37,5 +38,18 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
 
         nullable = leftNullable || rightNullable;
         return updated;
+    }
+
+    protected virtual SqlExpression VisitArrayIndex(
+        DuckDBArrayIndexExpression arrayIndexExpression,
+        bool allowOptimizedExpansion,
+        out bool nullable)
+    {
+        var array = Visit(arrayIndexExpression.Array, allowOptimizedExpansion, out var arrayNullable);
+        var index = Visit(arrayIndexExpression.Index, allowOptimizedExpansion, out var indexNullable);
+
+        nullable = arrayNullable || indexNullable || arrayIndexExpression.IsNullable;
+
+        return arrayIndexExpression.Update(array, index);
     }
 }
