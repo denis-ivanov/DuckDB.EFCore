@@ -42,7 +42,8 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
     {
         return extensionExpression switch
         {
-            DuckDBBinaryExpression duckDbBinaryExpression => VisitBinary(duckDbBinaryExpression),
+            DuckDBBinaryExpression e => VisitBinary(e),
+            DuckDBArrayIndexExpression e => VisitArrayIndex(e),
             _ => base.VisitExtension(extensionExpression)
         };
     }
@@ -80,6 +81,28 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         Visit(sqlBinaryExpression.Right);
         Sql.Append("]");
         return sqlBinaryExpression;
+    }
+
+    protected virtual Expression VisitArrayIndex(DuckDBArrayIndexExpression expression)
+    {
+        var requiresParentheses = RequiresParentheses(expression, expression.Array);
+
+        if (requiresParentheses)
+        {
+            Sql.Append("(");
+        }
+
+        Visit(expression.Array);
+
+        if (requiresParentheses)
+        {
+            Sql.Append(")");
+        }
+
+        Sql.Append("[");
+        Visit(expression.Index);
+        Sql.Append("]");
+        return expression;
     }
 
     protected virtual Expression VisitBinary(DuckDBBinaryExpression binaryExpression)

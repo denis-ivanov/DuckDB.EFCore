@@ -99,16 +99,16 @@ public class DuckDBNewArrayExpression : SqlExpression
             expressionPrinter.Append("::").Append(TypeMapping.StoreType).Append("[]");
         }
     }
-    
+
     public override bool Equals(object? obj)
         => obj is not null
            && (ReferenceEquals(this, obj)
                || obj is DuckDBNewArrayExpression sqlBinaryExpression
                && Equals(sqlBinaryExpression));
 
-    private bool Equals(DuckDBNewArrayExpression pgNewArrayExpression)
-        => base.Equals(pgNewArrayExpression)
-           && Expressions.SequenceEqual(pgNewArrayExpression.Expressions);
+    private bool Equals(DuckDBNewArrayExpression newArrayExpression)
+        => base.Equals(newArrayExpression)
+           && Expressions.SequenceEqual(newArrayExpression.Expressions);
 
     public override int GetHashCode()
     {
