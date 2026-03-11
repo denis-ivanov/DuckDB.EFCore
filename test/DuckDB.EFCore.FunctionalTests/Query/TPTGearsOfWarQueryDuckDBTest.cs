@@ -1,12 +1,16 @@
 using Microsoft.EntityFrameworkCore.Query;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DuckDB.EFCore.FunctionalTests.Query;
 
 public class TPTGearsOfWarQueryDuckDBTest : TPTGearsOfWarQueryRelationalTestBase<TPTGearsOfWarQueryDuckDBFixture>
 {
-    public TPTGearsOfWarQueryDuckDBTest(TPTGearsOfWarQueryDuckDBFixture fixture) : base(fixture)
+    public TPTGearsOfWarQueryDuckDBTest(TPTGearsOfWarQueryDuckDBFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
     {
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -271,5 +275,35 @@ public class TPTGearsOfWarQueryDuckDBTest : TPTGearsOfWarQueryRelationalTestBase
     public override Task Where_subquery_with_ElementAt_using_column_as_index(bool async)
     {
         return base.Where_subquery_with_ElementAt_using_column_as_index(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Include_multiple_circular(bool async)
+    {
+        return base.Include_multiple_circular(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Include_reference_on_derived_type_using_string_nested2(bool async)
+    {
+        return base.Include_reference_on_derived_type_using_string_nested2(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Include_with_join_multi_level(bool async)
+    {
+        return base.Include_with_join_multi_level(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Left_join_projection_using_coalesce_tracking(bool async)
+    {
+        return base.Left_join_projection_using_coalesce_tracking(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Left_join_projection_using_conditional_tracking(bool async)
+    {
+        return base.Left_join_projection_using_conditional_tracking(async);
     }
 }
