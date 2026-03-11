@@ -100,6 +100,19 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
             case ExpressionType.ExclusiveOr:
                 var leftXor = Translate(binaryExpression.Left)!;
                 var rightXor = Translate(binaryExpression.Right)!;
+
+                if (leftXor.Type == typeof(bool) && rightXor.Type == typeof(bool))
+                {
+                    return Dependencies.SqlExpressionFactory.OrElse(
+                        Dependencies.SqlExpressionFactory.AndAlso(
+                            leftXor,
+                            Dependencies.SqlExpressionFactory.Not(rightXor)),
+                        Dependencies.SqlExpressionFactory.AndAlso(
+                            Dependencies.SqlExpressionFactory.Not(leftXor),
+                            rightXor)
+                    );
+                }
+
                 return Dependencies.SqlExpressionFactory.Function(
                     name: "xor",
                     arguments: [leftXor, rightXor],
