@@ -16,4 +16,10 @@ public class NorthwindNavigationsQueryDuckDBTest: NorthwindNavigationsQueryRelat
     {
         return base.Select_collection_FirstOrDefault_project_anonymous_type_client_eval(async);
     }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Select_collection_FirstOrDefault_project_anonymous_type(bool async)
+    {
+        return base.Select_collection_FirstOrDefault_project_anonymous_type(async);
+    }
 }
