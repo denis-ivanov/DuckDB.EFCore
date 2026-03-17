@@ -2,13 +2,16 @@
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DuckDB.EFCore.FunctionalTests.Query;
 
 public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRelationalTestBase<PrimitiveCollectionsQueryDuckDBTest.PrimitiveCollectionsQueryDuckDBFixture>
 {
-    public PrimitiveCollectionsQueryDuckDBTest(PrimitiveCollectionsQueryDuckDBFixture fixture) : base(fixture)
+    public PrimitiveCollectionsQueryDuckDBTest(PrimitiveCollectionsQueryDuckDBFixture fixture, ITestOutputHelper testOutputHelper) : base(fixture)
     {
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
