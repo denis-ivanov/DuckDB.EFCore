@@ -43,12 +43,6 @@ public class SqlQueryDuckDBTest : SqlQueryTestBase<NorthwindQueryDuckDBFixture<N
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task SqlQuery_with_inlined_db_parameter(bool async)
-    {
-        return base.SqlQuery_with_inlined_db_parameter(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task SqlQueryRaw_does_not_parameterize_interpolated_string(bool async)
     {
         return base.SqlQueryRaw_does_not_parameterize_interpolated_string(async);
