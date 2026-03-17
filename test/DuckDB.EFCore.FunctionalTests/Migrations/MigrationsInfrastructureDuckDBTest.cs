@@ -2,13 +2,16 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DuckDB.EFCore.FunctionalTests.Migrations;
 
 public class MigrationsInfrastructureDuckDBTest : MigrationsInfrastructureTestBase<MigrationsInfrastructureDuckDBTest.MigrationsInfrastructureDuckDBFixture>
 {
-    public MigrationsInfrastructureDuckDBTest(MigrationsInfrastructureDuckDBFixture fixture) : base(fixture)
+    public MigrationsInfrastructureDuckDBTest(MigrationsInfrastructureDuckDBFixture fixture, ITestOutputHelper testOutputHelper) : base(fixture)
     {
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -163,7 +166,8 @@ public class MigrationsInfrastructureDuckDBTest : MigrationsInfrastructureTestBa
 
     protected override Task ExecuteSqlAsync(string value)
     {
-        throw new NotImplementedException();
+        ((DuckDBTestStore)Fixture.TestStore).ExecuteNonQuery(value);
+        return Task.CompletedTask;
     }
 
     public class MigrationsInfrastructureDuckDBFixture : MigrationsInfrastructureFixtureBase
