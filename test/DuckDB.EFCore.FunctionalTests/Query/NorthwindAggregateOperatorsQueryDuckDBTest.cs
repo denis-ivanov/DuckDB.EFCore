@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+﻿using AwesomeAssertions;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -8,13 +9,19 @@ namespace DuckDB.EFCore.FunctionalTests.Query;
 public class NorthwindAggregateOperatorsQueryDuckDBTest : NorthwindAggregateOperatorsQueryRelationalTestBase<
     NorthwindQueryDuckDBFixture<NoopModelCustomizer>>
 {
-    public NorthwindAggregateOperatorsQueryDuckDBTest(
-        NorthwindQueryDuckDBFixture<NoopModelCustomizer> fixture,
-        ITestOutputHelper testOutputHelper)
+    public NorthwindAggregateOperatorsQueryDuckDBTest(NorthwindQueryDuckDBFixture<NoopModelCustomizer> fixture, ITestOutputHelper testOutputHelper)
         : base(fixture)
     {
-        fixture.TestSqlLoggerFactory.Clear();
-        fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
+        var asserters = (Dictionary<Type, object>)Fixture.EntityAsserters;
+
+        void Comparer(decimal expected, decimal actual)
+        {
+            actual.Should().BeApproximately(expected, 0.001m);
+        }
+
+        asserters.TryAdd(typeof(decimal), (Action<decimal, decimal>)Comparer);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -57,12 +64,6 @@ public class NorthwindAggregateOperatorsQueryDuckDBTest : NorthwindAggregateOper
     public override Task Max_over_nested_subquery(bool async)
     {
         return base.Max_over_nested_subquery(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Average_over_nested_subquery(bool async)
-    {
-        return base.Average_over_nested_subquery(async);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
