@@ -19,6 +19,7 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
         {
             DuckDBBinaryExpression e => VisitBinary(e, allowOptimizedExpansion, out nullable),
             DuckDBArrayIndexExpression e => VisitArrayIndex(e, allowOptimizedExpansion, out nullable),
+            DuckDBArraySliceExpression e => VisitArraySlice(e, allowOptimizedExpansion, out nullable),
             _ => base.VisitCustomSqlExpression(sqlExpression, allowOptimizedExpansion, out nullable)
         };
     }
@@ -51,5 +52,21 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
         nullable = arrayNullable || indexNullable || arrayIndexExpression.IsNullable;
 
         return arrayIndexExpression.Update(array, index);
+    }
+
+    protected virtual SqlExpression VisitArraySlice(
+        DuckDBArraySliceExpression arraySliceExpression,
+        bool allowOptimizedExpansion,
+        out bool nullable)
+    {
+        ArgumentNullException.ThrowIfNull(arraySliceExpression);
+
+        var array = Visit(arraySliceExpression.Array, allowOptimizedExpansion, out var arrayNullable);
+        var lowerBound = Visit(arraySliceExpression.LowerBound, allowOptimizedExpansion, out var lowerBoundNullable);
+        var upperBound = Visit(arraySliceExpression.UpperBound, allowOptimizedExpansion, out var upperBoundNullable);
+
+        nullable = arrayNullable || lowerBoundNullable || upperBoundNullable || arraySliceExpression.IsNullable;
+
+        return arraySliceExpression.Update(array, lowerBound, upperBound);
     }
 }
