@@ -22,7 +22,8 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
     {
         var databaseModel = new DatabaseModel
         {
-            DatabaseName = connection.Database
+            DatabaseName = connection.Database,
+            DefaultSchema = "main"
         };
 
         // TODO

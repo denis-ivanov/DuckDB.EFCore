@@ -1,5 +1,6 @@
 ﻿using DuckDB.NET.Data;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DuckDB.EFCore.Storage.Internal;
@@ -47,26 +48,37 @@ public class DuckDBDatabaseCreator : RelationalDatabaseCreator
 
     public override bool HasTables()
     {
-        var count = (long)_rawSqlCommandBuilder
-            .Build("SELECT COUNT(*) FROM information_schema.tables")
-            .ExecuteScalar(
-                new RelationalCommandParameterObject(
-                    Dependencies.Connection,
-                    null,
-                    null,
-                    null,
-                    Dependencies.CommandLogger, CommandSource.Migrations))!;
-
-        return count != 0;
+        return (bool)_rawSqlCommandBuilder
+            .Build(
+                """
+                SELECT coalesce(any_value(true), false)
+                  FROM duckdb_tables
+                 WHERE table_name != $default_table_name
+                """,
+                [
+                    new DuckDBParameter("default_table_name", HistoryRepository.DefaultTableName)
+                ]).RelationalCommand.ExecuteScalar(new RelationalCommandParameterObject(
+                Dependencies.Connection,
+                null,
+                null,
+                null,
+                Dependencies.CommandLogger, CommandSource.Migrations))!;
     }
 
     public override void Create()
     {
-        throw new NotImplementedException();
+        Dependencies.Connection.Open();
+        Dependencies.Connection.Close();
     }
 
     public override void Delete()
     {
-        throw new NotImplementedException();
+        var connection = (DuckDBConnection)Dependencies.Connection.DbConnection;
+        connection.Close();
+
+        if (File.Exists(connection.DataSource))
+        {
+            File.Delete(connection.DataSource);
+        }
     }
 }

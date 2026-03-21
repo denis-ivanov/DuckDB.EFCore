@@ -9,7 +9,7 @@ namespace DuckDB.EFCore.Query.Expressions.Internal;
 public class DuckDBNewArrayExpression : SqlExpression
 {
     private static ConstructorInfo? _quotingConstructor;
-    
+
     public DuckDBNewArrayExpression(IReadOnlyList<SqlExpression> expressions, Type type, RelationalTypeMapping? typeMapping)
         : base(type, typeMapping)
     {
@@ -118,7 +118,7 @@ public class DuckDBNewArrayExpression : SqlExpression
 
         for (var i = 0; i < Expressions.Count; i++)
         {
-            hash.Add(Expressions[i]);
+            hash.Add(i);
         }
 
         return hash.ToHashCode();
