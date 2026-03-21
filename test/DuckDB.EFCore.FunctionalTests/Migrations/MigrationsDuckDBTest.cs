@@ -1,7 +1,7 @@
-﻿using AwesomeAssertions;
-using DuckDB.EFCore.FunctionalTests.TestUtilities;
+﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
 using DuckDB.EFCore.Scaffolding.Internal;
 using DuckDB.NET.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Scaffolding;
 using Microsoft.EntityFrameworkCore.TestUtilities;
@@ -143,10 +143,24 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
             });
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Add_primary_key_with_name()
+    public override async Task Add_primary_key_with_name()
     {
-        return base.Add_primary_key_with_name();
+        await Test(
+            builder => builder.Entity("People").Property<string>("SomeField"),
+            builder => { },
+            builder => builder.Entity("People").HasKey("SomeField").HasName("PK_Foo"),
+            model =>
+            {
+                var table = Assert.Single(model.Tables);
+                var primaryKey = table.PrimaryKey;
+                Assert.NotNull(primaryKey);
+                Assert.Same(table, primaryKey!.Table);
+                Assert.Same(table.Columns.Single(), Assert.Single(primaryKey.Columns));
+                if (AssertConstraintNames)
+                {
+                    Assert.Equal("People_somefield_pkey", primaryKey.Name);
+                }
+            });
     }
 
     public override async Task Add_required_primitive_collection_to_existing_table()
@@ -267,12 +281,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     public override Task Alter_index_change_sort_order()
     {
         return base.Alter_index_change_sort_order();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Alter_index_make_unique()
-    {
-        return base.Alter_index_make_unique();
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -432,10 +440,10 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         Assert.Equal("Not implemented Error: No support for that ALTER TABLE option yet!", exception.Message);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Drop_unique_constraint()
+    public override async Task Drop_unique_constraint()
     {
-        return base.Drop_unique_constraint();
+        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Drop_unique_constraint());
+        Assert.Equal("Not implemented Error: No support for that ALTER TABLE option yet!", exception.Message);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
