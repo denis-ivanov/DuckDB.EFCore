@@ -164,6 +164,16 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             typeMapping);
     }
 
+    public virtual DuckDBArraySliceExpression ArraySlice(
+        SqlExpression array,
+        SqlExpression? lowerBound,
+        SqlExpression? upperBound,
+        bool nullable,
+        RelationalTypeMapping? typeMapping = null)
+        => (DuckDBArraySliceExpression)ApplyTypeMapping(
+            new DuckDBArraySliceExpression(array, lowerBound, upperBound, nullable, array.Type, typeMapping: null),
+            typeMapping);
+    
     [return: NotNullIfNotNull("sqlExpression")]
     public override SqlExpression? ApplyTypeMapping(SqlExpression? sqlExpression, RelationalTypeMapping? typeMapping)
     {
@@ -172,6 +182,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             sqlExpression = sqlExpression switch
             {
                 DuckDBArrayIndexExpression e => ApplyTypeMappingOnArrayIndex(e, typeMapping),
+                DuckDBArraySliceExpression e => ApplyTypeMappingOnArraySlice(e, typeMapping),
                 _ => base.ApplyTypeMapping(sqlExpression, typeMapping)
             };
 
@@ -200,6 +211,21 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
                   ?? Dependencies.TypeMappingSource.FindMapping(arrayIndexExpression.Type, Dependencies.Model));
     }
 
+    private SqlExpression ApplyTypeMappingOnArraySlice(
+        DuckDBArraySliceExpression slice,
+        RelationalTypeMapping? typeMapping)
+    {
+        var array = ApplyTypeMapping(slice.Array, typeMapping);
+
+        return new DuckDBArraySliceExpression(
+            array,
+            slice.LowerBound is null ? null : ApplyDefaultTypeMapping(slice.LowerBound),
+            slice.UpperBound is null ? null : ApplyDefaultTypeMapping(slice.UpperBound),
+            slice.IsNullable,
+            slice.Type,
+            array.TypeMapping);
+    }
+    
     internal (SqlExpression, SqlExpression) ApplyTypeMappingsOnItemAndArray(SqlExpression itemExpression, SqlExpression arrayExpression)
     {
         var arrayMapping = arrayExpression.TypeMapping;
