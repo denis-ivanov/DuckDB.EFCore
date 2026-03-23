@@ -1,6 +1,8 @@
 ﻿using DuckDB.EFCore.Extensions.Internal;
 using DuckDB.EFCore.Query.Expressions.Internal;
+using DuckDB.EFCore.Storage.Internal;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -11,6 +13,8 @@ namespace DuckDB.EFCore.Query.Internal;
 
 public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQueryableMethodTranslatingExpressionVisitor
 {
+    private readonly RelationalQueryCompilationContext _queryCompilationContext;
+    private readonly DuckDBTypeMappingSource _typeMappingSource;
     private readonly DuckDBSqlExpressionFactory _sqlExpressionFactory;
     private RelationalTypeMapping? _ordinalityTypeMapping;
     
@@ -20,9 +24,44 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         RelationalQueryCompilationContext queryCompilationContext)
         : base(dependencies, relationalDependencies, queryCompilationContext)
     {
+        _queryCompilationContext = queryCompilationContext;
+        _typeMappingSource = (DuckDBTypeMappingSource)relationalDependencies.TypeMappingSource;
         _sqlExpressionFactory = (DuckDBSqlExpressionFactory)relationalDependencies.SqlExpressionFactory;
     }
-    
+
+    protected DuckDBQueryableMethodTranslatingExpressionVisitor(DuckDBQueryableMethodTranslatingExpressionVisitor parentVisitor)
+        : base(parentVisitor)
+    {
+        _queryCompilationContext = parentVisitor._queryCompilationContext;
+        _typeMappingSource = parentVisitor._typeMappingSource;
+        _sqlExpressionFactory = parentVisitor._sqlExpressionFactory;
+    }
+
+    protected override QueryableMethodTranslatingExpressionVisitor CreateSubqueryVisitor()
+    {
+        return new DuckDBQueryableMethodTranslatingExpressionVisitor(this);
+    }
+
+    protected override ShapedQueryExpression? TranslatePrimitiveCollection(SqlExpression sqlExpression, IProperty? property, string tableAlias)
+    {
+        return base.TranslatePrimitiveCollection(sqlExpression, property, tableAlias);
+    }
+
+    protected override ShapedQueryExpression? TransformJsonQueryToTable(JsonQueryExpression jsonQueryExpression)
+    {
+        return base.TransformJsonQueryToTable(jsonQueryExpression);
+    }
+
+    protected override ShapedQueryExpression? TranslateAll(ShapedQueryExpression source, LambdaExpression predicate)
+    {
+        return base.TranslateAll(source, predicate);
+    }
+
+    protected override ShapedQueryExpression? TranslateAny(ShapedQueryExpression source, LambdaExpression? predicate)
+    {
+        return base.TranslateAny(source, predicate);
+    }
+
     protected override ShapedQueryExpression? TranslateElementAtOrDefault(
         ShapedQueryExpression source,
         Expression index,
