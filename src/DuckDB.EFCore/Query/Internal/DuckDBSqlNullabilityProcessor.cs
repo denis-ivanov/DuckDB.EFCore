@@ -6,17 +6,21 @@ namespace DuckDB.EFCore.Query.Internal;
 
 public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
 {
+    private readonly DuckDBSqlExpressionFactory _sqlExpressionFactory;
+
     public DuckDBSqlNullabilityProcessor(
         RelationalParameterBasedSqlProcessorDependencies dependencies,
         RelationalParameterBasedSqlProcessorParameters parameters)
         : base(dependencies, parameters)
     {
+        _sqlExpressionFactory = (DuckDBSqlExpressionFactory)dependencies.SqlExpressionFactory;
     }
 
     protected override SqlExpression VisitCustomSqlExpression(SqlExpression sqlExpression, bool allowOptimizedExpansion, out bool nullable)
     {
         return sqlExpression switch
         {
+            DuckDBAnyExpression e => VisitAny(e, allowOptimizedExpansion, out nullable),
             DuckDBBinaryExpression e => VisitBinary(e, allowOptimizedExpansion, out nullable),
             DuckDBArrayIndexExpression e => VisitArrayIndex(e, allowOptimizedExpansion, out nullable),
             DuckDBArraySliceExpression e => VisitArraySlice(e, allowOptimizedExpansion, out nullable),
@@ -24,6 +28,46 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
         };
     }
 
+    protected virtual SqlExpression VisitAny(DuckDBAnyExpression anyExpression, bool allowOptimizedExpansion, out bool nullable)
+    {
+        ArgumentNullException.ThrowIfNull(anyExpression);
+
+        var item = Visit(anyExpression.Item, out var itemNullable);
+        var array = Visit(anyExpression.Array, out var entireArrayNullable);
+
+        SqlExpression updated = anyExpression.Update(item, array);
+
+        if (UseRelationalNulls)
+        {
+            nullable = false;
+            return updated;
+        }
+
+        nullable = false;
+
+        if (!allowOptimizedExpansion)
+        {
+            updated = _sqlExpressionFactory.And(updated, _sqlExpressionFactory.IsNotNull(updated));
+        }
+
+        if (!itemNullable)
+        {
+            return updated;
+        }
+
+        return _sqlExpressionFactory.OrElse(
+            updated,
+            _sqlExpressionFactory.AndAlso(
+                _sqlExpressionFactory.IsNull(item),
+                _sqlExpressionFactory.IsNotNull(
+                    _sqlExpressionFactory.Function(
+                        "array_position",
+                        [array, _sqlExpressionFactory.Constant(null, item.Type, item.TypeMapping)],
+                        nullable: true,
+                        argumentsPropagateNullability: [false, false],
+                        typeof(int)))));
+    }
+    
     protected virtual SqlExpression VisitBinary(DuckDBBinaryExpression binaryExpression, bool allowOptimizedExpansion, out bool nullable)
     {
         var leftExpression = Visit(binaryExpression.Left, allowOptimizedExpansion, out var leftNullable);

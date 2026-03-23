@@ -11,10 +11,20 @@ namespace DuckDB.EFCore.Query.Internal;
 
 public class DuckDBSqlExpressionFactory : SqlExpressionFactory
 {
+    private readonly DuckDBTypeMappingSource _typeMappingSource;
+    private readonly RelationalTypeMapping _boolTypeMapping;
+    
     public DuckDBSqlExpressionFactory(SqlExpressionFactoryDependencies dependencies) : base(dependencies)
     {
+        _typeMappingSource = (DuckDBTypeMappingSource)dependencies.TypeMappingSource;
+        _boolTypeMapping = _typeMappingSource.FindMapping(typeof(bool), dependencies.Model)!;
     }
 
+    public virtual DuckDBAnyExpression Any(SqlExpression item, SqlExpression array)
+    {
+        return (DuckDBAnyExpression)ApplyDefaultTypeMapping(new DuckDBAnyExpression(item, array, null));
+    }
+    
     public SqlExpression Year(SqlExpression? expression)
     {
         return Function(
@@ -181,6 +191,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
         {
             sqlExpression = sqlExpression switch
             {
+                DuckDBAnyExpression e => ApplyTypeMappingOnAny(e),
                 DuckDBArrayIndexExpression e => ApplyTypeMappingOnArrayIndex(e, typeMapping),
                 DuckDBArraySliceExpression e => ApplyTypeMappingOnArraySlice(e, typeMapping),
                 _ => base.ApplyTypeMapping(sqlExpression, typeMapping)
@@ -190,6 +201,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
         }
 
         return base.ApplyTypeMapping(sqlExpression, typeMapping);
+    }
+
+    private SqlExpression ApplyTypeMappingOnAny(DuckDBAnyExpression duckDbAnyExpression)
+    {
+        var (item, array) = ApplyTypeMappingsOnItemAndArray(duckDbAnyExpression.Item, duckDbAnyExpression.Array);
+        return new DuckDBAnyExpression(item, array, _boolTypeMapping);
     }
     
     private SqlExpression ApplyTypeMappingOnArrayIndex(

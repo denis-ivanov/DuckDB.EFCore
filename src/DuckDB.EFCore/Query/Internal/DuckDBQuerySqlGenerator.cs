@@ -11,7 +11,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
     public DuckDBQuerySqlGenerator(QuerySqlGeneratorDependencies dependencies) : base(dependencies)
     {
     }
-
+    
     protected override void GenerateLimitOffset(SelectExpression selectExpression)
     {
         if (selectExpression.Limit != null)
@@ -42,6 +42,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
     {
         return extensionExpression switch
         {
+            DuckDBAnyExpression e => VisitArrayAny(e),
             DuckDBBinaryExpression e => VisitBinary(e),
             DuckDBArrayIndexExpression e => VisitArrayIndex(e),
             DuckDBArraySliceExpression e => VisitArraySlice(e),
@@ -75,6 +76,16 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         return outerApplyExpression;
     }
 
+    protected virtual Expression VisitArrayAny(DuckDBAnyExpression expression)
+    {
+        Visit(expression.Item);
+        
+        Sql.Append(" = ANY(");
+        Visit(expression.Array);
+        Sql.Append(")");
+        return expression;
+    }
+    
     protected virtual Expression VisitArrayIndex(SqlBinaryExpression sqlBinaryExpression)
     {
         Visit(sqlBinaryExpression.Left);
