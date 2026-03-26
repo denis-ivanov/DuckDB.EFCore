@@ -21,4 +21,13 @@ public class DuckDBQueryTranslationPostprocessor : RelationalQueryTranslationPos
                 (RelationalQueryCompilationContext)QueryCompilationContext)
             .Process(expression);
     }
+
+    public override Expression Process(Expression query)
+    {
+        var result = base.Process(query);
+
+        result = new DuckDBUnnestPostprocessor().Visit(result);
+
+        return result;
+    }
 }
