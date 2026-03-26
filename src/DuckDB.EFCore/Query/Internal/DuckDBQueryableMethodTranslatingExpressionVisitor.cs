@@ -42,6 +42,46 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         return new DuckDBQueryableMethodTranslatingExpressionVisitor(this);
     }
 
+    protected override ShapedQueryExpression TranslateDistinct(ShapedQueryExpression source)
+    {
+        if (source.TryExtractArray(out var array, out var projectedColumn, ignoreOrderings: true) ||
+            (source.TryConvertToArray(out array, ignoreOrderings: true) && (projectedColumn = null) == null))
+        {
+            var elementClrType = array.Type.GetSequenceType();
+            var isElementNullable = elementClrType.IsNullableType();
+
+            if (!isElementNullable)
+            {
+                var listDistinct = _sqlExpressionFactory.Function(
+                    "list_distinct",
+                    [array],
+                    nullable: true,
+                    argumentsPropagateNullability: [true],
+                    array.Type,
+                    array.TypeMapping);
+
+                var tableAlias = ((SelectExpression)source.QueryExpression).Tables[0].Alias!;
+                var selectExpression = new SelectExpression(
+                    [new DuckDBUnnestExpression(tableAlias, listDistinct, "unnest")],
+                    new ColumnExpression("unnest", tableAlias, projectedColumn!.Type, projectedColumn.TypeMapping, projectedColumn.IsNullable),
+                    [GenerateOrdinalityIdentifier(tableAlias)],
+                    _queryCompilationContext.SqlAliasManager);
+
+                Expression shaperExpression = new ProjectionBindingExpression(
+                    selectExpression, new ProjectionMember(), source.ShaperExpression.Type.MakeNullable());
+
+                if (source.ShaperExpression.Type != shaperExpression.Type)
+                {
+                    shaperExpression = Expression.Convert(shaperExpression, source.ShaperExpression.Type);
+                }
+
+                return new ShapedQueryExpression(selectExpression, shaperExpression);
+            }
+        }
+
+        return base.TranslateDistinct(source);
+    }
+
     protected override ShapedQueryExpression? TranslatePrimitiveCollection(SqlExpression sqlExpression, IProperty? property, string tableAlias)
     {
         var elementClrType = sqlExpression.Type.GetSequenceType();

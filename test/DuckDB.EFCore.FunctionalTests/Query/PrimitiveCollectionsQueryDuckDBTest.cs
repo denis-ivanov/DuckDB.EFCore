@@ -74,17 +74,11 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
     {
         await base.Column_collection_Distinct();
 
-        // TODO array_length(array_distinct(p.Ints))
         AssertSql(
             """
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
-            WHERE (
-                SELECT COUNT(*)
-                FROM (
-                    SELECT DISTINCT i."unnest"
-                    FROM unnest(p."Ints") AS i
-                ) AS i0) = 3
+            WHERE array_length(list_distinct(p."Ints")) = 3
             """);
     }
 
@@ -851,6 +845,12 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
     public override Task Project_collection_of_nullable_ints_with_paging3()
     {
         return base.Project_collection_of_nullable_ints_with_paging3();
+    }
+
+    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Project_collection_of_ints_with_distinct()
+    {
+        return base.Project_collection_of_ints_with_distinct();
     }
 
     private void AssertSql(params string[] expected)
