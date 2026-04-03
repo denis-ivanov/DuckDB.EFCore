@@ -22,6 +22,7 @@ public class DuckDBDateTimeMemberTranslator : IMemberTranslator
     private static readonly MemberInfo Now = typeof(DateTime).GetRuntimeProperty(nameof(DateTime.Now))!;
     private static readonly MemberInfo UtcNow = typeof(DateTime).GetRuntimeProperty(nameof(DateTime.UtcNow))!;
     private static readonly MemberInfo Today = typeof(DateTime).GetRuntimeProperty(nameof(DateTime.Today))!;
+    private static readonly MemberInfo DayOfYear = typeof(DateTime).GetRuntimeProperty(nameof(DateTime.DayOfYear))!;
 
     private readonly DuckDBSqlExpressionFactory _sqlExpressionFactory;
     private readonly DuckDBTypeMappingSource _typeMappingSource;
@@ -114,6 +115,17 @@ public class DuckDBDateTimeMemberTranslator : IMemberTranslator
                     typeMapping: _typeMappingSource.FindMapping(typeof(DateOnly))),
                 typeof(DateTime),
                 _typeMappingSource.FindMapping(typeof(DateTime)));
+        }
+
+        if (member == DayOfYear)
+        {
+            return _sqlExpressionFactory.Function(
+                name: "dayofyear",
+                arguments: [instance],
+                nullable: false,
+                argumentsPropagateNullability: [true],
+                returnType: typeof(int),
+                typeMapping: _typeMappingSource.FindMapping(typeof(int)));
         }
 
         return null;
