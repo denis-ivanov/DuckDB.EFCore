@@ -13,10 +13,18 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task DayNumber_subtraction()
+    public override async Task DayNumber_subtraction()
     {
-        return base.DayNumber_subtraction();
+        await base.DayNumber_subtraction();
+
+        AssertSql(
+            """
+            DayNumber='726775'
+
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE (date_diff('day', '0001-01-01', b."DateOnly") - $DayNumber) = 5
+            """);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -54,4 +62,7 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
     {
         return base.ToDateTime_with_complex_TimeOnly();
     }
+
+    private void AssertSql(params string[] expected)
+        => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
