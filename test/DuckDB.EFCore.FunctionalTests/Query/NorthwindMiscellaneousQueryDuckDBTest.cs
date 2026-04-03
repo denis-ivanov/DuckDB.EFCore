@@ -1,13 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DuckDB.EFCore.FunctionalTests.Query;
 
 public class NorthwindMiscellaneousQueryDuckDBTest: NorthwindMiscellaneousQueryRelationalTestBase<NorthwindQueryDuckDBFixture<NoopModelCustomizer>>
 {
-    public NorthwindMiscellaneousQueryDuckDBTest(NorthwindQueryDuckDBFixture<NoopModelCustomizer> fixture) : base(fixture)
+    public NorthwindMiscellaneousQueryDuckDBTest(NorthwindQueryDuckDBFixture<NoopModelCustomizer> fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
     {
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -146,5 +150,11 @@ public class NorthwindMiscellaneousQueryDuckDBTest: NorthwindMiscellaneousQueryR
     public override Task Where_nanosecond_and_microsecond_component(bool async)
     {
         return base.Where_nanosecond_and_microsecond_component(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Select_expression_date_add_milliseconds_large_number_divided(bool async)
+    {
+        await base.Select_expression_date_add_milliseconds_large_number_divided(async);
     }
 }

@@ -4,5 +4,4 @@ namespace DuckDB.EFCore.FunctionalTests.Query;
 
 public class QueryNoClientEvalDuckDBFixture : NorthwindQueryDuckDBFixture<NoopModelCustomizer>
 {
-    
 }
