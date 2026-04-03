@@ -11,7 +11,7 @@ public class NorthwindChangeTrackingQueryDuckDBTest : NorthwindChangeTrackingQue
     public NorthwindChangeTrackingQueryDuckDBTest(NorthwindQueryDuckDBFixture<NoopModelCustomizer> fixture) : base(fixture)
     {
     }
-    
+
     protected override NorthwindContext CreateNoTrackingContext()
         => new NorthwindDuckDBContext(
             new DbContextOptionsBuilder(Fixture.CreateOptions())

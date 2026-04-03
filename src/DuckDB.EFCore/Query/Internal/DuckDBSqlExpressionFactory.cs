@@ -85,6 +85,16 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(int));
     }
 
+    public SqlExpression Millisecond(SqlExpression? expression)
+    {
+        return Function(
+            name: "millisecond",
+            arguments: [expression],
+            argumentsPropagateNullability: [true],
+            nullable: true,
+            returnType: typeof(int));
+    }
+    
     public SqlExpression AddYears(SqlExpression timestamp, SqlExpression years, Type returnType)
     {
         return Function(
