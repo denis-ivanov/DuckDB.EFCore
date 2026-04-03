@@ -13,10 +13,16 @@ public class DateTimeTranslationsDuckDBTest : DateTimeTranslationsTestBase<Basic
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task DayOfYear()
+    public override async Task DayOfYear()
     {
-        return base.DayOfYear();
+        await base.DayOfYear();
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE dayofyear(b."DateTime") = 124
+            """);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -37,8 +43,6 @@ public class DateTimeTranslationsDuckDBTest : DateTimeTranslationsTestBase<Basic
         return base.TimeOfDay();
     }
 
-    public override Task UtcNow()
-    {
-        return base.UtcNow();
-    }
+    private void AssertSql(params string[] expected)
+        => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
