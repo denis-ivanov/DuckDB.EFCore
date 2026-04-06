@@ -318,9 +318,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             WHERE (
                 SELECT i."unnest"
                 FROM unnest(p."Ints") AS i
-                ORDER BY i."unnest" DESC
-                LIMIT 1
-                OFFSET 0) = 111
+                ORDER BY i."unnest" DESC NULLS LAST
+                LIMIT 1 OFFSET 0) = 111
             """);
     }
 
@@ -485,8 +484,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                 SELECT i."unnest"
                 FROM unnest(p."Ints") AS i
                 WHERE i."unnest" > 1
-                LIMIT 1
-                OFFSET 0) = 11
+                LIMIT 1 OFFSET 0) = 11
             """);
     }
 
@@ -523,8 +521,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                     SELECT 1
                     FROM unnest(p."Ints") AS i
                     WHERE i."unnest" > 1
-                    LIMIT 2
-                    OFFSET 1
+                    LIMIT 2 OFFSET 1
                 ) AS i0) = 1
             """);
     }
@@ -724,11 +721,11 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                             FROM (
                                 SELECT i."unnest"
                                 FROM unnest(p."Ints") AS i
-                                ORDER BY i."unnest"
+                                ORDER BY i."unnest" NULLS FIRST
                                 OFFSET 1
                             ) AS i0
                         ) AS i1
-                        ORDER BY i1."unnest" DESC
+                        ORDER BY i1."unnest" DESC NULLS LAST
                         LIMIT 20
                     ) AS i2
                 ) AS u) = 3
@@ -819,7 +816,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                     FROM (
                         SELECT i."Value"
                         FROM (SELECT 0 AS _ord, $ints1 AS "Value" UNION ALL VALUES (1, $ints2)) AS i
-                        ORDER BY i._ord
+                        ORDER BY i._ord NULLS FIRST
                         OFFSET 1
                     ) AS i1
                     UNION

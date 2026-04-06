@@ -8,21 +8,34 @@ namespace DuckDB.EFCore.Query.Internal;
 
 public class DuckDBQuerySqlGenerator : QuerySqlGenerator
 {
-    public DuckDBQuerySqlGenerator(QuerySqlGeneratorDependencies dependencies) : base(dependencies)
+    private readonly bool _reverseNullOrderingEnabled;
+
+    public DuckDBQuerySqlGenerator(QuerySqlGeneratorDependencies dependencies, bool reverseNullOrderingEnabled)
+        : base(dependencies)
     {
+        _reverseNullOrderingEnabled = reverseNullOrderingEnabled;
     }
     
     protected override void GenerateLimitOffset(SelectExpression selectExpression)
     {
-        if (selectExpression.Limit != null)
+        if (selectExpression.Limit is not null)
         {
             Sql.AppendLine().Append("LIMIT ");
             Visit(selectExpression.Limit);
         }
 
-        if (selectExpression.Offset != null)
+        if (selectExpression.Offset is not null)
         {
-            Sql.AppendLine().Append("OFFSET ");
+            if (selectExpression.Limit is null)
+            {
+                Sql.AppendLine();
+            }
+            else
+            {
+                Sql.Append(" ");
+            }
+
+            Sql.Append("OFFSET ");
             Visit(selectExpression.Offset);
         }
     }
@@ -36,6 +49,18 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
             ExpressionType.RightShift => " >> ",
             _ => base.GetOperator(binaryExpression)
         };
+    }
+
+    protected override Expression VisitOrdering(OrderingExpression ordering)
+    {
+        var result = base.VisitOrdering(ordering);
+
+        if (_reverseNullOrderingEnabled)
+        {
+            Sql.Append(ordering.IsAscending ? " NULLS FIRST" : " NULLS LAST");
+        }
+
+        return result;
     }
 
     protected override Expression VisitExtension(Expression extensionExpression)
