@@ -6,7 +6,11 @@ namespace DuckDB.EFCore.Infrastructure;
 
 public class DuckDBDbContextOptionsBuilder : RelationalDbContextOptionsBuilder<DuckDBDbContextOptionsBuilder, DuckDBOptionsExtension>
 {
-    public DuckDBDbContextOptionsBuilder(DbContextOptionsBuilder optionsBuilder) : base(optionsBuilder)
+    public DuckDBDbContextOptionsBuilder(DbContextOptionsBuilder optionsBuilder)
+        : base(optionsBuilder)
     {
     }
+
+    internal virtual DuckDBDbContextOptionsBuilder ReverseNullOrdering(bool reverseNullOrdering = true)
+        => WithOption(e => e.WithReverseNullOrdering(reverseNullOrdering));
 }

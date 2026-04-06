@@ -30,10 +30,25 @@ public class NorthwindBulkUpdatesDuckDBTest : NorthwindBulkUpdatesRelationalTest
         return base.Delete_with_cross_apply(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Delete_with_outer_apply(bool async)
+    public override async Task Delete_with_outer_apply(bool async)
     {
-        return base.Delete_with_outer_apply(async);
+        await base.Delete_with_outer_apply(async);
+
+        AssertSql(
+            """
+            DELETE FROM "Order Details" AS o
+            WHERE EXISTS (
+                SELECT 1
+                FROM "Order Details" AS o0
+                LEFT JOIN LATERAL (
+                    SELECT 1
+                    FROM "Orders" AS o2
+                    WHERE o2."OrderID" < o0."OrderID"
+                    ORDER BY o2."OrderID" NULLS FIRST
+                    LIMIT 100 OFFSET 0
+                ) AS o1 ON true
+                WHERE o0."OrderID" < 10276 AND o0."OrderID" = o."OrderID" AND o0."ProductID" = o."ProductID")
+            """);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -107,4 +122,7 @@ public class NorthwindBulkUpdatesDuckDBTest : NorthwindBulkUpdatesRelationalTest
     {
         return base.Update_with_outer_apply_set_constant(async);
     }
+
+    private void AssertSql(params string[] expected)
+        => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }

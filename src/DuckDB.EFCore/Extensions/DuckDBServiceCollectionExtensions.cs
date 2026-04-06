@@ -1,6 +1,7 @@
 ﻿using DuckDB.EFCore.Diagnostics.Internal;
 using DuckDB.EFCore.Infrastructure;
 using DuckDB.EFCore.Infrastructure.Internal;
+using DuckDB.EFCore.Internal;
 using DuckDB.EFCore.Metadata.Conventions;
 using DuckDB.EFCore.Metadata.Internal;
 using DuckDB.EFCore.Migrations;
@@ -54,6 +55,7 @@ public static class DuckDBServiceCollectionExtensions
             .TryAdd<IMigrationsSqlGenerator, DuckDBMigrationsSqlGenerator>()
             .TryAdd<IRelationalDatabaseCreator, DuckDBDatabaseCreator>()
             .TryAdd<IHistoryRepository, DuckDBHistoryRepository>()
+            .TryAdd<ICompiledQueryCacheKeyGenerator, DuckDBCompiledQueryCacheKeyGenerator>()
             .TryAdd<IQueryCompilationContextFactory, DuckDBQueryCompilationContextFactory>()
             .TryAdd<IMethodCallTranslatorProvider, DuckDBMethodCallTranslatorProvider>()
             .TryAdd<IAggregateMethodCallTranslatorProvider, DuckDBAggregateMethodCallTranslatorProvider>()
@@ -65,11 +67,13 @@ public static class DuckDBServiceCollectionExtensions
             .TryAdd<IUpdateSqlGenerator, DuckDBUpdateSqlGenerator>()
             .TryAdd<ISqlExpressionFactory, DuckDBSqlExpressionFactory>()
             .TryAdd<IRelationalParameterBasedSqlProcessorFactory, DuckDBParameterBasedSqlProcessorFactory>()
+            .TryAdd<ISingletonOptions, IDuckDBSingletonOptions>(p => p.GetRequiredService<IDuckDBSingletonOptions>())
             .TryAddProviderSpecificServices(b => b
+                .TryAddSingleton<IDuckDBSingletonOptions, DuckDBSingletonOptions>()
                 .TryAddScoped<IDuckDBRelationalConnection, DuckDBRelationalConnection>());
 
         builder.TryAddCoreServices();
-        
+
         return serviceCollection;
     }
 }

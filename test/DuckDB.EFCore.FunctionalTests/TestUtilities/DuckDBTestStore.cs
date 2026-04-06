@@ -43,6 +43,7 @@ public class DuckDBTestStore : RelationalTestStore
                     b.CommandTimeout(CommandTimeout);
                     b.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery);
                     configureDuckDB?.Invoke(b);
+                    b.ReverseNullOrdering();
                 })
             : builder.UseDuckDB(
                 Connection, b =>
@@ -50,6 +51,7 @@ public class DuckDBTestStore : RelationalTestStore
                     b.CommandTimeout(CommandTimeout);
                     b.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery);
                     configureDuckDB?.Invoke(b);
+                    b.ReverseNullOrdering();
                 });
 
     public override DbContextOptionsBuilder AddProviderOptions(DbContextOptionsBuilder builder)
