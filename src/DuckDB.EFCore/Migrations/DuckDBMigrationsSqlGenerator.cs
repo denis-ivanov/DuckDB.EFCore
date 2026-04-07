@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using DuckDB.EFCore.Metadata;
+using DuckDB.EFCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
@@ -49,7 +51,7 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
     protected override void Generate(CreateSequenceOperation operation, IModel? model, MigrationCommandListBuilder builder)
     {
         builder
-            .Append("CREATE SEQUENCE ")
+            .Append("CREATE SEQUENCE IF NOT EXISTS ")
             .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema));
 
         var typeMapping = Dependencies.TypeMappingSource.FindMapping(operation.ClrType);
@@ -77,6 +79,26 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         MigrationCommandListBuilder builder,
         bool terminate = true)
     {
+        foreach (var column in operation.Columns)
+        {
+            if (column[DuckDBAnnotationNames.ValueGenerationStrategy] is DuckDBValueGenerationStrategy.AutoIncrement)
+            {
+                var sequenceName = $"{operation.Name}_{column.Name}_seq";
+
+                Generate(new CreateSequenceOperation
+                {
+                    Name = sequenceName,
+                    Schema = operation.Schema,
+                    ClrType = column.ClrType
+                }, model, builder);
+
+                if (string.IsNullOrEmpty(column.DefaultValueSql) && column.DefaultValue == null)
+                {
+                    column.DefaultValueSql = $"nextval('{sequenceName}')";
+                }
+            }
+        }
+
         base.Generate(operation, model, builder, terminate);
 
         if (!string.IsNullOrEmpty(operation.Comment))
