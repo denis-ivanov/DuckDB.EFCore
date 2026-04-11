@@ -26,6 +26,10 @@ public class DuckDBConventionSetBuilder : RelationalConventionSetBuilder
         conventionSet.ForeignKeyUniquenessChangedConventions.Clear();
         conventionSet.SkipNavigationForeignKeyChangedConventions.Clear();
         
+        var valueGenerationConvention = new DuckDBValueGenerationConvention(Dependencies, RelationalDependencies);
+        conventionSet.Replace<RelationalValueGenerationConvention>(valueGenerationConvention);
+        conventionSet.ModelFinalizingConventions.Add(valueGenerationConvention);
+
         conventionSet.Replace<RuntimeModelConvention>(new DuckDBRuntimeModelConvention(Dependencies, RelationalDependencies));
 
         return conventionSet;

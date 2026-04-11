@@ -11,7 +11,7 @@ public class AdHocAdvancedMappingsQueryDuckDBTest : AdHocAdvancedMappingsQueryRe
     public AdHocAdvancedMappingsQueryDuckDBTest(NonSharedFixture fixture) : base(fixture)
     {
     }
-    
+
     protected override ITestStoreFactory TestStoreFactory => DuckDBTestStoreFactory.Instance;
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]

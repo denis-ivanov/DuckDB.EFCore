@@ -253,7 +253,6 @@ public class WithConstructorsDuckDBTest : WithConstructorsTestBase<WithConstruct
         base.Query_with_loader_delegate_injected_into_property_via_constructor_for_collections();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Add_immutable_record()
     {
         await base.Add_immutable_record();

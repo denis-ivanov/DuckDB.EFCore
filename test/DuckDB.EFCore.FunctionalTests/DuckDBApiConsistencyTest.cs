@@ -33,7 +33,6 @@ public class DuckDBApiConsistencyTest : ApiConsistencyTestBase<DuckDBApiConsiste
             typeof(DuckDBServiceCollectionExtensions),
             typeof(DuckDBDbContextOptionsBuilderExtensions),
             typeof(DuckDBDbContextOptionsBuilder),
-            typeof(DuckDBPropertyBuilderExtensions),
             typeof(DuckDBTableBuilderExtensions)
         ];
     }
