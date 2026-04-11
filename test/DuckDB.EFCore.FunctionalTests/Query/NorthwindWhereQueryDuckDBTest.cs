@@ -43,22 +43,40 @@ public class NorthwindWhereQueryDuckDBTest : NorthwindWhereQueryRelationalTestBa
         return base.Where_compare_constructed_multi_value_not_equal(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Where_compare_tuple_constructed_equal(bool async)
+    public override async Task Where_compare_tuple_constructed_equal(bool async)
     {
-        return base.Where_compare_tuple_constructed_equal(async);
+        await base.Where_compare_tuple_constructed_equal(async);
+
+        AssertSql(
+            """
+            SELECT c."CustomerID", c."Address", c."City", c."CompanyName", c."ContactName", c."ContactTitle", c."Country", c."Fax", c."Phone", c."PostalCode", c."Region"
+            FROM "Customers" AS c
+            WHERE (c."City") = ('London')
+            """);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Where_compare_tuple_constructed_multi_value_equal(bool async)
+    public override async Task Where_compare_tuple_constructed_multi_value_equal(bool async)
     {
-        return base.Where_compare_tuple_constructed_multi_value_equal(async);
+        await base.Where_compare_tuple_constructed_multi_value_equal(async);
+
+        AssertSql(
+            """
+            SELECT c."CustomerID", c."Address", c."City", c."CompanyName", c."ContactName", c."ContactTitle", c."Country", c."Fax", c."Phone", c."PostalCode", c."Region"
+            FROM "Customers" AS c
+            WHERE (c."City", c."Country") = ('London', 'UK')
+            """);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Where_compare_tuple_constructed_multi_value_not_equal(bool async)
+    public override async Task Where_compare_tuple_constructed_multi_value_not_equal(bool async)
     {
-        return base.Where_compare_tuple_constructed_multi_value_not_equal(async);
+        await base.Where_compare_tuple_constructed_multi_value_not_equal(async);
+
+        AssertSql(
+            """
+            SELECT c."CustomerID", c."Address", c."City", c."CompanyName", c."ContactName", c."ContactTitle", c."Country", c."Fax", c."Phone", c."PostalCode", c."Region"
+            FROM "Customers" AS c
+            WHERE c."City" <> 'London' OR c."City" IS NULL OR c."Country" <> 'UK' OR c."Country" IS NULL
+            """);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -78,4 +96,7 @@ public class NorthwindWhereQueryDuckDBTest : NorthwindWhereQueryRelationalTestBa
     {
         return base.Where_compare_tuple_create_constructed_multi_value_not_equal(async);
     }
+
+    private void AssertSql(params string[] expected)
+        => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }

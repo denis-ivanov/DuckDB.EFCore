@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace DuckDB.EFCore.Query.Internal;
 
@@ -62,22 +63,29 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
 
     protected override Expression VisitUnary(UnaryExpression unaryExpression)
     {
-        if (unaryExpression.NodeType == ExpressionType.ArrayLength)
+        switch (unaryExpression.NodeType)
         {
-            if (TranslationFailed(unaryExpression.Operand, Visit(unaryExpression.Operand), out var sqlOperand))
-            {
-                return QueryCompilationContext.NotTranslatedExpression;
-            }
+            case ExpressionType.ArrayLength:
+                if (TranslationFailed(unaryExpression.Operand, Visit(unaryExpression.Operand), out var sqlOperand))
+                {
+                    return QueryCompilationContext.NotTranslatedExpression;
+                }
 
-            if (sqlOperand!.Type == typeof(byte[]) && sqlOperand.TypeMapping is DuckDBBlobTypeMapping or null)
-            {
-                return this.Dependencies.SqlExpressionFactory.Function(
-                    "octet_length",
-                    [sqlOperand],
-                    nullable: true,
-                    argumentsPropagateNullability: [true],
-                    typeof(int));
-            }
+                if (sqlOperand!.Type == typeof(byte[]) && sqlOperand.TypeMapping is DuckDBBlobTypeMapping or null)
+                {
+                    return this.Dependencies.SqlExpressionFactory.Function(
+                        "octet_length",
+                        [sqlOperand],
+                        nullable: true,
+                        argumentsPropagateNullability: [true],
+                        typeof(int));
+                }
+
+                break;
+
+            case ExpressionType.Convert
+                when unaryExpression.Type == typeof(ITuple) && unaryExpression.Operand.Type.IsAssignableTo(typeof(ITuple)):
+                return Visit(unaryExpression.Operand);
         }
 
         return base.VisitUnary(unaryExpression);
@@ -122,6 +130,42 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
                     typeMapping: ExpressionExtensions.InferTypeMapping(leftXor, rightXor)!);
             default:
                 return base.VisitBinary(binaryExpression);
+        }
+    }
+
+    protected override Expression VisitNew(NewExpression newExpression)
+    {
+        var visitedNewExpression = base.VisitNew(newExpression);
+
+        if (visitedNewExpression != QueryCompilationContext.NotTranslatedExpression)
+        {
+            return visitedNewExpression;
+        }
+
+        if (newExpression.Type.IsAssignableTo(typeof(ITuple)))
+        {
+            return TryTranslateArguments(out var sqlArguments)
+                ? new DuckDBRowValueExpression(sqlArguments, newExpression.Type)
+                : QueryCompilationContext.NotTranslatedExpression;
+        }
+
+        return visitedNewExpression;
+
+        bool TryTranslateArguments(out SqlExpression[] sqlArguments)
+        {
+            sqlArguments = new SqlExpression[newExpression.Arguments.Count];
+            for (var i = 0; i < sqlArguments.Length; i++)
+            {
+                var argument = newExpression.Arguments[i];
+                if (TranslationFailed(argument, Visit(argument), out var sqlArgument))
+                {
+                    return false;
+                }
+
+                sqlArguments[i] = sqlArgument!;
+            }
+
+            return true;
         }
     }
 

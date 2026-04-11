@@ -1,4 +1,5 @@
 ﻿using DuckDB.EFCore.Query.Expressions.Internal;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Diagnostics;
@@ -71,6 +72,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
             DuckDBBinaryExpression e => VisitBinary(e),
             DuckDBArrayIndexExpression e => VisitArrayIndex(e),
             DuckDBArraySliceExpression e => VisitArraySlice(e),
+            DuckDBRowValueExpression e => VisitRowValue(e),
             _ => base.VisitExtension(extensionExpression)
         };
     }
@@ -195,5 +197,74 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         }
 
         return binaryExpression;
+    }
+    
+    protected virtual Expression VisitRowValue(DuckDBRowValueExpression rowValueExpression)
+    {
+        Sql.Append("(");
+
+        var values = rowValueExpression.Values;
+        var count = values.Count;
+        for (var i = 0; i < count; i++)
+        {
+            Visit(values[i]);
+
+            if (i < count - 1)
+            {
+                Sql.Append(", ");
+            }
+        }
+
+        Sql.Append(")");
+
+        return rowValueExpression;
+    }
+
+    protected override void GenerateValues(ValuesExpression valuesExpression)
+    {
+        if (valuesExpression.RowValues is null)
+        {
+            throw new UnreachableException();
+        }
+
+        if (valuesExpression.RowValues.Count == 0)
+        {
+            throw new InvalidOperationException(RelationalStrings.EmptyCollectionNotSupportedAsInlineQueryRoot);
+        }
+
+        var rowValues = valuesExpression.RowValues;
+
+        Sql.Append("VALUES ");
+
+        for (var i = 0; i < rowValues.Count; i++)
+        {
+            if (i > 0)
+            {
+                Sql.Append(", ");
+            }
+
+            Visit(valuesExpression.RowValues[i]);
+        }
+    }
+
+    protected override Expression VisitValues(ValuesExpression valuesExpression)
+    {
+        base.VisitValues(valuesExpression);
+
+        Sql.Append("(");
+
+        for (var i = 0; i < valuesExpression.ColumnNames.Count; i++)
+        {
+            if (i > 0)
+            {
+                Sql.Append(", ");
+            }
+
+            Sql.Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(valuesExpression.ColumnNames[i]));
+        }
+
+        Sql.Append(")");
+
+        return valuesExpression;
     }
 }

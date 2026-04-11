@@ -3,9 +3,11 @@ using DuckDB.EFCore.Storage.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace DuckDB.EFCore.Query.Internal;
 
@@ -197,13 +199,16 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
     [return: NotNullIfNotNull("sqlExpression")]
     public override SqlExpression? ApplyTypeMapping(SqlExpression? sqlExpression, RelationalTypeMapping? typeMapping)
     {
-        if (sqlExpression is { TypeMapping: null } && typeMapping != null)
+        if (sqlExpression is not null && sqlExpression.TypeMapping is null)
         {
             sqlExpression = sqlExpression switch
             {
+                SqlBinaryExpression e => ApplyTypeMappingOnSqlBinary(e, typeMapping),
+
                 DuckDBAnyExpression e => ApplyTypeMappingOnAny(e),
                 DuckDBArrayIndexExpression e => ApplyTypeMappingOnArrayIndex(e, typeMapping),
                 DuckDBArraySliceExpression e => ApplyTypeMappingOnArraySlice(e, typeMapping),
+                DuckDBRowValueExpression e => ApplyTypeMappingOnRowValue(e, typeMapping),
                 _ => base.ApplyTypeMapping(sqlExpression, typeMapping)
             };
 
@@ -211,6 +216,106 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
         }
 
         return base.ApplyTypeMapping(sqlExpression, typeMapping);
+    }
+
+    private SqlBinaryExpression ApplyTypeMappingOnSqlBinary(SqlBinaryExpression binary, RelationalTypeMapping? typeMapping)
+    {
+        if (IsComparison(binary.OperatorType)
+            && TryGetRowValueValues(binary.Left, out var leftValues)
+            && TryGetRowValueValues(binary.Right, out var rightValues))
+        {
+            if (leftValues.Count != rightValues.Count)
+            {
+                throw new ArgumentException("Tuples are not the same length in row value comparison");
+            }
+
+            var count = leftValues.Count;
+            var updatedLeftValues = new SqlExpression[count];
+            var updatedRightValues = new SqlExpression[count];
+
+            for (var i = 0; i < count; i++)
+            {
+                var updatedElementBinaryExpression = MakeBinary(binary.OperatorType, leftValues[i], rightValues[i], typeMapping: null)!;
+
+                if (updatedElementBinaryExpression is not SqlBinaryExpression
+                    {
+                        Left: var updatedLeft,
+                        Right: var updatedRight,
+                        OperatorType: var updatedOperatorType
+                    }
+                    || updatedOperatorType != binary.OperatorType)
+                {
+                    throw new UnreachableException("MakeBinary modified binary expression type/operator when doing row value comparison");
+                }
+
+                updatedLeftValues[i] = updatedLeft;
+                updatedRightValues[i] = updatedRight;
+            }
+
+            binary = new SqlBinaryExpression(
+                binary.OperatorType,
+                new DuckDBRowValueExpression(updatedLeftValues, binary.Left.Type),
+                new DuckDBRowValueExpression(updatedRightValues, binary.Right.Type),
+                binary.Type,
+                binary.TypeMapping);
+        }
+        
+        return (SqlBinaryExpression)base.ApplyTypeMapping(binary, typeMapping);
+
+        static bool IsComparison(ExpressionType expressionType)
+        {
+            switch (expressionType)
+            {
+                case ExpressionType.Equal:
+                case ExpressionType.NotEqual:
+                case ExpressionType.GreaterThan:
+                case ExpressionType.LessThan:
+                case ExpressionType.GreaterThanOrEqual:
+                case ExpressionType.LessThanOrEqual:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        bool TryGetRowValueValues(SqlExpression e, [NotNullWhen(true)] out IReadOnlyList<SqlExpression>? values)
+        {
+            switch (e)
+            {
+                case DuckDBRowValueExpression rowValueExpression:
+                    values = rowValueExpression.Values;
+                    return true;
+
+                case SqlConstantExpression { Value : ITuple constantTuple }:
+                    var v = new SqlExpression[constantTuple.Length];
+
+                    for (var i = 0; i < v.Length; i++)
+                    {
+                        v[i] = Constant(constantTuple[i], typeof(object));
+                    }
+
+                    values = v;
+                    return true;
+
+                default:
+                    values = null;
+                    return false;
+            }
+        }
+    }
+
+    private SqlExpression ApplyTypeMappingOnRowValue(
+        DuckDBRowValueExpression pgRowValueExpression,
+        RelationalTypeMapping? typeMapping)
+    {
+        var updatedValues = new SqlExpression[pgRowValueExpression.Values.Count];
+
+        for (var i = 0; i < updatedValues.Length; i++)
+        {
+            updatedValues[i] = ApplyDefaultTypeMapping(pgRowValueExpression.Values[i]);
+        }
+
+        return new DuckDBRowValueExpression(updatedValues, pgRowValueExpression.Type, typeMapping);
     }
 
     private SqlExpression ApplyTypeMappingOnAny(DuckDBAnyExpression duckDbAnyExpression)
