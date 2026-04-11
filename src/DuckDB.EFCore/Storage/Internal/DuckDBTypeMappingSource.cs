@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace DuckDB.EFCore.Storage.Internal;
 
@@ -104,10 +105,10 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
     protected override RelationalTypeMapping? FindMapping(in RelationalTypeMappingInfo mappingInfo)
     {
         var mapping = base.FindMapping(mappingInfo)
-                      ?? FindRawMapping(mappingInfo);
+                      ?? FindRawMapping(mappingInfo)
+                      ?? FindRowValueMapping(mappingInfo)?.Clone(mappingInfo);
 
-        return mapping != null
-               && mappingInfo.StoreTypeName != null
+        return mapping != null && mappingInfo.StoreTypeName != null
             ? mapping.WithStoreTypeAndSize(mappingInfo.StoreTypeName, null)
             : mapping;
     }
@@ -243,7 +244,13 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
             return collectionType;
         }
     }
-    
+
+    protected virtual RelationalTypeMapping? FindRowValueMapping(in RelationalTypeMappingInfo mappingInfo)
+        => mappingInfo.ClrType is { } clrType
+           && clrType.IsAssignableTo(typeof(ITuple))
+            ? new DuckDBRowValueTypeMapping(clrType)
+            : null;
+
     private RelationalTypeMapping? FindRawMapping(RelationalTypeMappingInfo mappingInfo)
     {
         var clrType = mappingInfo.ClrType;

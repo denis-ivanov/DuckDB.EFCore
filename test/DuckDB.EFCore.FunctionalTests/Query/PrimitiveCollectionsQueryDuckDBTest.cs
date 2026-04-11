@@ -192,7 +192,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                     SELECT i."unnest"
                     FROM unnest(p."Ints") AS i
                     INTERSECT
-                    SELECT CAST(11 AS INTEGER) AS "Value" UNION ALL VALUES (111)
+                    VALUES (CAST(11 AS INTEGER)), (111)
                 ) AS i0) = 2
             """);
     }
@@ -452,7 +452,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                     SELECT i."unnest"
                     FROM unnest(p."Ints") AS i
                     UNION
-                    SELECT $ints1 AS "Value" UNION ALL VALUES ($ints2)
+                    VALUES ($ints1), ($ints2)
                 ) AS u) = 2
             """);
     }
@@ -560,7 +560,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                     FROM unnest(p."Ints") AS i
                     WHERE i."unnest" > 100
                     UNION
-                    SELECT CAST(50 AS INTEGER) AS "Value"
+                    VALUES (CAST(50 AS INTEGER))
                 ) AS u) = 2
             """);
     }
@@ -669,7 +669,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                 SELECT COUNT(*)
                 FROM (
                     SELECT 1
-                    FROM (SELECT $p1 AS "Value" UNION ALL VALUES ($p2)) AS p0
+                    FROM (VALUES ($p1), ($p2)) AS p0("Value")
                     UNION ALL
                     SELECT 1
                     FROM unnest(p."Ints") AS i
@@ -690,7 +690,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             WHERE (
                 SELECT COUNT(*)
                 FROM (
-                    SELECT $Skip1 AS "Value"
+                    VALUES ($Skip1)
                     UNION
                     SELECT i."unnest" AS "Value"
                     FROM unnest(p."Ints") AS i
@@ -711,7 +711,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             WHERE (
                 SELECT COUNT(*)
                 FROM (
-                    SELECT $Skip1 AS "Value"
+                    VALUES ($Skip1)
                     UNION
                     SELECT i2."unnest" AS "Value"
                     FROM (
@@ -815,7 +815,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                     SELECT i1."Value"
                     FROM (
                         SELECT i."Value"
-                        FROM (SELECT 0 AS _ord, $ints1 AS "Value" UNION ALL VALUES (1, $ints2)) AS i
+                        FROM (VALUES (0, $ints1), (1, $ints2)) AS i(_ord, "Value")
                         ORDER BY i._ord NULLS FIRST
                         OFFSET 1
                     ) AS i1

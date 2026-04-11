@@ -14,7 +14,11 @@ public class DuckDBTypeMappingPostprocessor : RelationalTypeMappingPostprocessor
     private readonly IRelationalTypeMappingSource _typeMappingSource;
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
 
-    public DuckDBTypeMappingPostprocessor(QueryTranslationPostprocessorDependencies dependencies, RelationalQueryTranslationPostprocessorDependencies relationalDependencies, RelationalQueryCompilationContext queryCompilationContext) : base(dependencies, relationalDependencies, queryCompilationContext)
+    public DuckDBTypeMappingPostprocessor(
+        QueryTranslationPostprocessorDependencies dependencies,
+        RelationalQueryTranslationPostprocessorDependencies relationalDependencies,
+        RelationalQueryCompilationContext queryCompilationContext)
+        : base(dependencies, relationalDependencies, queryCompilationContext)
     {
         _model = queryCompilationContext.Model;
         _typeMappingSource = relationalDependencies.TypeMappingSource;
