@@ -64,7 +64,7 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
 
         builder.AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
 
-        EndStatement(builder);
+        EndStatement(builder, true);
     }
 
     protected override void Generate(EnsureSchemaOperation operation, IModel? model, MigrationCommandListBuilder builder)
@@ -270,6 +270,16 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
             .Append(objectName)
             .Append(" IS ")
             .AppendLine(stringTypeMapping.GenerateSqlLiteral(comment))
+            .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+
+        EndStatement(builder);
+    }
+
+    protected override void Generate(DropSequenceOperation operation, IModel? model, MigrationCommandListBuilder builder)
+    {
+        builder
+            .Append("DROP SEQUENCE IF EXISTS ")
+            .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
             .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
 
         EndStatement(builder);
