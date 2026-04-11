@@ -25,22 +25,25 @@ public class NorthwindWhereQueryDuckDBTest : NorthwindWhereQueryRelationalTestBa
         return base.Where_list_object_contains_over_value_type(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Where_compare_constructed_equal(bool async)
+    public override async Task Where_compare_constructed_equal(bool async)
     {
-        return base.Where_compare_constructed_equal(async);
+        await AssertTranslationFailed(() => base.Where_compare_constructed_equal(async));
+
+        AssertSql();
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Where_compare_constructed_multi_value_equal(bool async)
+    public override async Task Where_compare_constructed_multi_value_equal(bool async)
     {
-        return base.Where_compare_constructed_multi_value_equal(async);
+        await AssertTranslationFailed(() => base.Where_compare_constructed_multi_value_equal(async));
+
+        AssertSql();
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Where_compare_constructed_multi_value_not_equal(bool async)
+    public override async Task Where_compare_constructed_multi_value_not_equal(bool async)
     {
-        return base.Where_compare_constructed_multi_value_not_equal(async);
+        await AssertTranslationFailed(() => base.Where_compare_constructed_multi_value_not_equal(async));
+
+        AssertSql();
     }
 
     public override async Task Where_compare_tuple_constructed_equal(bool async)
@@ -79,22 +82,25 @@ public class NorthwindWhereQueryDuckDBTest : NorthwindWhereQueryRelationalTestBa
             """);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Where_compare_tuple_create_constructed_equal(bool async)
+    public override async Task Where_compare_tuple_create_constructed_equal(bool async)
     {
-        return base.Where_compare_tuple_create_constructed_equal(async);
+        await AssertTranslationFailed(() => base.Where_compare_tuple_create_constructed_equal(async));
+
+        AssertSql();
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Where_compare_tuple_create_constructed_multi_value_equal(bool async)
+    public override async Task Where_compare_tuple_create_constructed_multi_value_equal(bool async)
     {
-        return base.Where_compare_tuple_create_constructed_multi_value_equal(async);
+        await AssertTranslationFailed(() => base.Where_compare_tuple_create_constructed_multi_value_equal(async));
+
+        AssertSql();
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Where_compare_tuple_create_constructed_multi_value_not_equal(bool async)
+    public override async Task Where_compare_tuple_create_constructed_multi_value_not_equal(bool async)
     {
-        return base.Where_compare_tuple_create_constructed_multi_value_not_equal(async);
+        await AssertTranslationFailed(() => base.Where_compare_tuple_create_constructed_multi_value_not_equal(async));
+
+        AssertSql();
     }
 
     private void AssertSql(params string[] expected)
