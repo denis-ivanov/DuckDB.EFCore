@@ -12,12 +12,6 @@ public abstract class TransactionInterceptionDuckDBTestBase(TransactionIntercept
     : TransactionInterceptionTestBase(fixture)
 {
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task BeginTransaction_without_interceptor(bool async)
-    {
-        await base.BeginTransaction_without_interceptor(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task UseTransaction_without_interceptor(bool async)
     {
         await base.UseTransaction_without_interceptor(async);
@@ -33,12 +27,6 @@ public abstract class TransactionInterceptionDuckDBTestBase(TransactionIntercept
     public override async Task Intercept_BeginTransaction_with_isolation_level(bool async)
     {
         await base.Intercept_BeginTransaction_with_isolation_level(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Intercept_BeginTransaction_to_suppress(bool async)
-    {
-        await base.Intercept_BeginTransaction_to_suppress(async);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
