@@ -15,7 +15,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
 {
     private readonly DuckDBTypeMappingSource _typeMappingSource;
     private readonly RelationalTypeMapping _boolTypeMapping;
-    
+
     public DuckDBSqlExpressionFactory(SqlExpressionFactoryDependencies dependencies) : base(dependencies)
     {
         _typeMappingSource = (DuckDBTypeMappingSource)dependencies.TypeMappingSource;
@@ -26,8 +26,8 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
     {
         return (DuckDBAnyExpression)ApplyDefaultTypeMapping(new DuckDBAnyExpression(item, array, null));
     }
-    
-    public SqlExpression Year(SqlExpression? expression)
+
+    public virtual SqlExpression Year(SqlExpression? expression)
     {
         return Function(
             name: "year",
@@ -37,7 +37,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(int));
     }
 
-    public SqlExpression Month(SqlExpression? expression)
+    public virtual SqlExpression Month(SqlExpression? expression)
     {
         return Function(
             name: "month",
@@ -47,7 +47,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(int));
     }
 
-    public SqlExpression Day(SqlExpression? expression)
+    public virtual SqlExpression Day(SqlExpression? expression)
     {
         return Function(
             name: "day",
@@ -57,7 +57,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(int));
     }
 
-    public SqlExpression Hour(SqlExpression? expression)
+    public virtual SqlExpression Hour(SqlExpression? expression)
     {
         return Function(
             name: "hour",
@@ -67,7 +67,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(int));
     }
 
-    public SqlExpression Minute(SqlExpression? expression)
+    public virtual SqlExpression Minute(SqlExpression? expression)
     {
         return Function(
             name: "minute",
@@ -77,7 +77,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(int));
     }
 
-    public SqlExpression Second(SqlExpression? expression)
+    public virtual SqlExpression Second(SqlExpression? expression)
     {
         return Function(
             name: "second",
@@ -87,7 +87,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(int));
     }
 
-    public SqlExpression Millisecond(SqlExpression? expression)
+    public virtual SqlExpression Millisecond(SqlExpression? expression)
     {
         return Function(
             name: "millisecond",
@@ -96,8 +96,8 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             nullable: true,
             returnType: typeof(int));
     }
-    
-    public SqlExpression AddYears(SqlExpression timestamp, SqlExpression years, Type returnType)
+
+    public virtual SqlExpression AddYears(SqlExpression timestamp, SqlExpression years, Type returnType)
     {
         return Function(
             name: "date_add",
@@ -107,7 +107,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: returnType);
     }
 
-    public SqlExpression AddMonths(SqlExpression timestamp, SqlExpression months, Type returnType)
+    public virtual SqlExpression AddMonths(SqlExpression timestamp, SqlExpression months, Type returnType)
     {
         return Function(
             name: "date_add",
@@ -117,7 +117,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: returnType);
     }
 
-    public SqlExpression AddDays(SqlExpression timestamp, SqlExpression days, Type returnType)
+    public virtual SqlExpression AddDays(SqlExpression timestamp, SqlExpression days, Type returnType)
     {
         return Function(
             name: "date_add",
@@ -126,8 +126,8 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             nullable: true,
             returnType: returnType);
     }
-    
-    public SqlExpression ToYears(SqlExpression years)
+
+    public virtual SqlExpression ToYears(SqlExpression years)
     {
         return Function(
             name: "to_years",
@@ -137,7 +137,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(TimeSpan));
     }
 
-    public SqlExpression ToMonths(SqlExpression months)
+    public virtual SqlExpression ToMonths(SqlExpression months)
     {
         return Function(
             name: "to_months",
@@ -146,8 +146,8 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             nullable: true,
             returnType: typeof(TimeSpan));
     }
-    
-    public SqlExpression ToDays(SqlExpression days)
+
+    public virtual SqlExpression ToDays(SqlExpression days)
     {
         return Function(
             name: "to_days",
@@ -157,7 +157,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(TimeSpan));
     }
 
-    public SqlExpression DateDiff(string unit, SqlExpression left, SqlExpression right)
+    public virtual SqlExpression DateDiff(string unit, SqlExpression left, SqlExpression right)
     {
         return Convert(
             Function(
@@ -259,7 +259,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
                 binary.Type,
                 binary.TypeMapping);
         }
-        
+
         return (SqlBinaryExpression)base.ApplyTypeMapping(binary, typeMapping);
 
         static bool IsComparison(ExpressionType expressionType)
@@ -357,7 +357,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             slice.Type,
             array.TypeMapping);
     }
-    
+
     internal (SqlExpression, SqlExpression) ApplyTypeMappingsOnItemAndArray(SqlExpression itemExpression, SqlExpression arrayExpression)
     {
         var arrayMapping = arrayExpression.TypeMapping;

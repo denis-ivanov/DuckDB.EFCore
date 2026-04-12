@@ -4,7 +4,6 @@ using DuckDB.EFCore.Storage.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using Xunit;
 
 namespace DuckDB.EFCore.FunctionalTests;
 
@@ -12,12 +11,6 @@ public class DuckDBApiConsistencyTest : ApiConsistencyTestBase<DuckDBApiConsiste
 {
     public DuckDBApiConsistencyTest(DuckDBApiConsistencyFixture fixture) : base(fixture)
     {
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override void Public_inheritable_apis_should_be_virtual()
-    {
-        base.Public_inheritable_apis_should_be_virtual();
     }
 
     protected override void AddServices(ServiceCollection serviceCollection)

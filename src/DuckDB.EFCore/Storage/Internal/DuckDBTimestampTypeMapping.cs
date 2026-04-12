@@ -83,7 +83,7 @@ public class DuckDBTimestampTypeMapping : RelationalTypeMapping
         DuckDbType = duckDbType;
     }
 
-    protected DuckDBType DuckDbType { get; private set; }
+    protected virtual DuckDBType DuckDbType { get; private set; }
 
     protected override RelationalTypeMapping Clone(RelationalTypeMappingParameters parameters)
     {
