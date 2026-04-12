@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
 
 namespace DuckDB.EFCore.Storage.Internal;
 
@@ -73,12 +74,31 @@ public class DuckDBDatabaseCreator : RelationalDatabaseCreator
 
     public override void Delete()
     {
-        var connection = (DuckDBConnection)Dependencies.Connection.DbConnection;
-        connection.Close();
+        string? path = null;
 
-        if (File.Exists(connection.DataSource))
+        Dependencies.Connection.Open();
+        var dbConnection = Dependencies.Connection.DbConnection;
+        try
         {
-            File.Delete(connection.DataSource);
+            path = dbConnection.DataSource;
+        }
+        catch
+        {
+            // any exceptions here can be ignored
+        }
+        finally
+        {
+            Dependencies.Connection.Close();
+        }
+
+        if (!string.IsNullOrEmpty(path))
+        {
+            File.Delete(path);
+        }
+        else if (dbConnection.State == ConnectionState.Open)
+        {
+            dbConnection.Close();
+            dbConnection.Open();
         }
     }
 }
