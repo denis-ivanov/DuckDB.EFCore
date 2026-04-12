@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 namespace DuckDB.EFCore.Storage.Internal;
 
@@ -27,7 +28,12 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
     private static readonly DuckDBUInt16TypeMapping UInt16TypeMapping = new();
     private static readonly DuckDBUInt32TypeMapping UInt32TypeMapping = new();
     private static readonly DuckDBUInt64TypeMapping UInt64TypeMapping = new();
-    private static readonly DuckDBJsonTypeMapping JsonTypeMapping = new();
+
+    // JSON
+    private static readonly DuckDBJsonTypeMapping JsonString = new(typeof(string));
+    private static readonly DuckDBJsonTypeMapping JsonDocument = new(typeof(JsonDocument));
+    private static readonly DuckDBJsonTypeMapping JsonElement = new(typeof(JsonElement));
+    private static readonly DuckDBStructuralJsonTypeMapping JsonOwned = new();
 
     private static readonly Dictionary<Type, RelationalTypeMapping> ClrTypeMappings = new()
     {
@@ -52,7 +58,9 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         { typeof(double), DoubleTypeMapping },
         { typeof(float), FloatTypeMapping },
         { typeof(Guid), GuidTypeMapping },
-        { typeof(JsonTypePlaceholder), JsonTypeMapping }
+        { typeof(JsonDocument), JsonDocument },
+        { typeof(JsonElement), JsonElement },
+        { typeof(JsonTypePlaceholder), JsonOwned }
     };
 
     private static readonly Dictionary<string, RelationalTypeMapping> StoreTypeMappings = new()
@@ -95,7 +103,7 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         { "BPCHAR", StringTypeMapping },
         { "TEXT", StringTypeMapping },
         { "STRING", StringTypeMapping },
-        { "JSON", JsonTypeMapping }
+        { "JSON", JsonString }
     };
 
     public DuckDBTypeMappingSource(TypeMappingSourceDependencies dependencies, RelationalTypeMappingSourceDependencies relationalDependencies) : base(dependencies, relationalDependencies)
