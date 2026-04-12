@@ -12,7 +12,6 @@ public class ToSqlQueryDuckDBTest : ToSqlQueryTestBase
     {
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Entity_type_with_navigation_mapped_to_SqlQuery(bool async)
     {
         return base.Entity_type_with_navigation_mapped_to_SqlQuery(async);

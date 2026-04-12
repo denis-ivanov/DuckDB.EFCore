@@ -61,6 +61,7 @@ public static class DuckDBServiceCollectionExtensions
             .TryAdd<IAggregateMethodCallTranslatorProvider, DuckDBAggregateMethodCallTranslatorProvider>()
             .TryAdd<IMemberTranslatorProvider, DuckDBMemberTranslatorProvider>()
             .TryAdd<IEvaluatableExpressionFilter, DuckDBEvaluatableExpressionFilter>()
+            .TryAdd<IRelationalTransactionFactory, DuckDBRelationalTransactionFactory>()
             .TryAdd<IQuerySqlGeneratorFactory, DuckDBQuerySqlGeneratorFactory>()
             .TryAdd<IQueryableMethodTranslatingExpressionVisitorFactory, DuckDBQueryableMethodTranslatingExpressionVisitorFactory>()
             .TryAdd<IRelationalSqlTranslatingExpressionVisitorFactory, DuckDBSqlTranslatingExpressionVisitorFactory>()
