@@ -51,4 +51,6 @@ jobs:
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+        slug: denis-ivanov/DuckDB.EFCore
+        files: ./**/junit.xml
         report-type: test_results
