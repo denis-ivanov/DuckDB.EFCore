@@ -1,0 +1,32 @@
+name: Publish NuGet
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Pack NuGet
+      run: dotnet pack DuckDB.EFCore.sln -c Release -o ./nupkg
+
+    - name: Publish to GitHub Packages
+      run: dotnet nuget push ./nupkg/*.nupkg --source https://nuget.pkg.github.com/denis-ivanov/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+
+    - name: Publish to NuGet.org
+      run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
