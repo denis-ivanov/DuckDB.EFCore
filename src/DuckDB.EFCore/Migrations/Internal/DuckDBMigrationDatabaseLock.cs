@@ -3,12 +3,24 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DuckDB.EFCore.Migrations.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBMigrationDatabaseLock : IMigrationsDatabaseLock
 {
     private readonly IRelationalCommand _releaseLockCommand;
     private readonly RelationalCommandParameterObject _relationalCommandParameters;
     private readonly CancellationToken _cancellationToken;
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBMigrationDatabaseLock(
         IRelationalCommand releaseLockCommand,
         RelationalCommandParameterObject relationalCommandParameters,
@@ -21,15 +33,33 @@ public class DuckDBMigrationDatabaseLock : IMigrationsDatabaseLock
         HistoryRepository = historyRepository;
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public void Dispose()
     {
         _releaseLockCommand.ExecuteScalar(_relationalCommandParameters);
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         await _releaseLockCommand.ExecuteScalarAsync(_relationalCommandParameters, _cancellationToken);
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public IHistoryRepository HistoryRepository { get; }
 }

@@ -6,10 +6,19 @@ using System.Reflection;
 
 namespace DuckDB.EFCore.Query.Expressions.Internal;
 
+/// <summary>
+///     Represents creating a new DuckDB array.
+/// </summary>
 public class DuckDBNewArrayExpression : SqlExpression
 {
     private static ConstructorInfo? _quotingConstructor;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="DuckDBNewArrayExpression" /> class.
+    /// </summary>
+    /// <param name="expressions">The values to initialize the elements of the new array.</param>
+    /// <param name="type">The <see cref="Type" /> of the expression.</param>
+    /// <param name="typeMapping">The <see cref="RelationalTypeMapping" /> associated with the expression.</param>
     public DuckDBNewArrayExpression(IReadOnlyList<SqlExpression> expressions, Type type, RelationalTypeMapping? typeMapping)
         : base(type, typeMapping)
     {
@@ -23,8 +32,12 @@ public class DuckDBNewArrayExpression : SqlExpression
         Expressions = expressions;
     }
 
+    /// <summary>
+    ///     The values to initialize the elements of the new array.
+    /// </summary>
     public virtual IReadOnlyList<SqlExpression> Expressions { get; }
 
+    /// <inheritdoc />
     protected override Expression VisitChildren(ExpressionVisitor visitor)
     {
         ArgumentNullException.ThrowIfNull(visitor);
@@ -54,6 +67,12 @@ public class DuckDBNewArrayExpression : SqlExpression
             : new DuckDBNewArrayExpression(newExpressions, Type, TypeMapping);
     }
 
+    /// <summary>
+    ///     Creates a new expression that is like this one, but using the supplied children. If all of the children are the same, it will
+    ///     return this expression.
+    /// </summary>
+    /// <param name="expressions">The values to initialize the elements of the new array.</param>
+    /// <returns>This expression if no children changed, or an expression with the updated children.</returns>
     public virtual DuckDBNewArrayExpression Update(IReadOnlyList<SqlExpression> expressions)
     {
         ArgumentNullException.ThrowIfNull(expressions);
@@ -63,6 +82,7 @@ public class DuckDBNewArrayExpression : SqlExpression
             : new DuckDBNewArrayExpression(expressions, Type, TypeMapping);
     }
 
+    /// <inheritdoc />
     public override Expression Quote()
     {
         return New(
@@ -73,6 +93,7 @@ public class DuckDBNewArrayExpression : SqlExpression
             RelationalExpressionQuotingUtilities.QuoteTypeMapping(TypeMapping));
     }
 
+    /// <inheritdoc />
     protected override void Print(ExpressionPrinter expressionPrinter)
     {
         ArgumentNullException.ThrowIfNull(expressionPrinter);
@@ -100,6 +121,7 @@ public class DuckDBNewArrayExpression : SqlExpression
         }
     }
 
+    /// <inheritdoc />
     public override bool Equals(object? obj)
         => obj is not null
            && (ReferenceEquals(this, obj)
@@ -110,6 +132,7 @@ public class DuckDBNewArrayExpression : SqlExpression
         => base.Equals(newArrayExpression)
            && Expressions.SequenceEqual(newArrayExpression.Expressions);
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
         var hash = new HashCode();

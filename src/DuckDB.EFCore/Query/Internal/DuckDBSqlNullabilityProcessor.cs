@@ -7,10 +7,22 @@ using System.Runtime.CompilerServices;
 
 namespace DuckDB.EFCore.Query.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
 {
     private readonly DuckDBSqlExpressionFactory _sqlExpressionFactory;
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBSqlNullabilityProcessor(
         RelationalParameterBasedSqlProcessorDependencies dependencies,
         RelationalParameterBasedSqlProcessorParameters parameters)
@@ -19,6 +31,7 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
         _sqlExpressionFactory = (DuckDBSqlExpressionFactory)dependencies.SqlExpressionFactory;
     }
 
+    /// <inheritdoc />
     protected override SqlExpression VisitSqlBinary(SqlBinaryExpression sqlBinaryExpression, bool allowOptimizedExpansion, out bool nullable)
     {
         return sqlBinaryExpression switch
@@ -158,6 +171,7 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
         }
     }
 
+    /// <inheritdoc />
     protected override SqlExpression VisitCustomSqlExpression(SqlExpression sqlExpression, bool allowOptimizedExpansion, out bool nullable)
     {
         return sqlExpression switch
@@ -171,6 +185,12 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
         };
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected virtual SqlExpression VisitAny(DuckDBAnyExpression anyExpression, bool allowOptimizedExpansion, out bool nullable)
     {
         ArgumentNullException.ThrowIfNull(anyExpression);
@@ -210,7 +230,13 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
                         argumentsPropagateNullability: [false, false],
                         typeof(int)))));
     }
-    
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected virtual SqlExpression VisitBinary(DuckDBBinaryExpression binaryExpression, bool allowOptimizedExpansion, out bool nullable)
     {
         var leftExpression = Visit(binaryExpression.Left, allowOptimizedExpansion, out var leftNullable);
@@ -228,6 +254,12 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
         return updated;
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected virtual SqlExpression VisitArrayIndex(
         DuckDBArrayIndexExpression arrayIndexExpression,
         bool allowOptimizedExpansion,
@@ -241,6 +273,12 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
         return arrayIndexExpression.Update(array, index);
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected virtual SqlExpression VisitArraySlice(
         DuckDBArraySliceExpression arraySliceExpression,
         bool allowOptimizedExpansion,
@@ -256,7 +294,13 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
 
         return arraySliceExpression.Update(array, lowerBound, upperBound);
     }
-    
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected virtual SqlExpression VisitRowValueExpression(
         DuckDBRowValueExpression rowValueExpression,
         bool allowOptimizedExpansion,

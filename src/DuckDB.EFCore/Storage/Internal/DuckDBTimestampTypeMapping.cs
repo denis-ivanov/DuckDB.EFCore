@@ -9,6 +9,12 @@ using System.Reflection;
 
 namespace DuckDB.EFCore.Storage.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBTimestampTypeMapping : RelationalTypeMapping
 {
     private static readonly MethodInfo GetDateTime = typeof(DuckDBDataReader)
@@ -27,6 +33,12 @@ public class DuckDBTimestampTypeMapping : RelationalTypeMapping
         [DuckDBType.TimestampTz] = @"TIMESTAMPTZ '{0:yyyy-MM-dd HH\:mm\:ss.fffffffzzz}'"
     };
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public static readonly DuckDBTimestampTypeMapping TimestampNs = new(
         typeof(DateTime),
         "TIMESTAMP_NS",
@@ -34,6 +46,12 @@ public class DuckDBTimestampTypeMapping : RelationalTypeMapping
         JsonDateTimeReaderWriter.Instance,
         DuckDBType.TimestampNs);
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public static readonly DuckDBTimestampTypeMapping Timestamp = new(
         typeof(DateTime),
         "TIMESTAMP",
@@ -41,6 +59,12 @@ public class DuckDBTimestampTypeMapping : RelationalTypeMapping
         JsonDateTimeReaderWriter.Instance,
         DuckDBType.Timestamp);
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public static readonly DuckDBTimestampTypeMapping TimestampMs = new(
         typeof(DateTime),
         "TIMESTAMP_MS",
@@ -48,6 +72,12 @@ public class DuckDBTimestampTypeMapping : RelationalTypeMapping
         JsonDateTimeReaderWriter.Instance,
         DuckDBType.TimestampMs);
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public static readonly DuckDBTimestampTypeMapping TimestampS = new(
         typeof(DateTime),
         "TIMESTAMP_S",
@@ -55,6 +85,12 @@ public class DuckDBTimestampTypeMapping : RelationalTypeMapping
         JsonDateTimeReaderWriter.Instance,
         DuckDBType.TimestampS);
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public static readonly DuckDBTimestampTypeMapping TimestampTz = new(
         typeof(DateTimeOffset),
         "TIMESTAMPTZ",
@@ -62,6 +98,12 @@ public class DuckDBTimestampTypeMapping : RelationalTypeMapping
         JsonDateTimeOffsetReaderWriter.Instance,
         DuckDBType.TimestampTz);
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBTimestampTypeMapping(
         Type clrType,
         string storeType,
@@ -77,19 +119,33 @@ public class DuckDBTimestampTypeMapping : RelationalTypeMapping
         DuckDbType = duckDbType;
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected DuckDBTimestampTypeMapping(RelationalTypeMappingParameters parameters, DuckDBType duckDbType)
         : base(parameters)
     {
         DuckDbType = duckDbType;
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected virtual DuckDBType DuckDbType { get; private set; }
 
+    /// <inheritdoc />
     protected override RelationalTypeMapping Clone(RelationalTypeMappingParameters parameters)
     {
         return new DuckDBTimestampTypeMapping(parameters, DuckDbType);
     }
 
+    /// <inheritdoc />
     public override MethodInfo GetDataReaderMethod()
     {
         return DbType switch
@@ -100,11 +156,13 @@ public class DuckDBTimestampTypeMapping : RelationalTypeMapping
         };
     }
 
+    /// <inheritdoc />
     protected override void ConfigureParameter(DbParameter parameter)
     {
         ((DuckDBParameter)parameter).RemoveDollarSign();
         base.ConfigureParameter(parameter);
     }
 
+    /// <inheritdoc />
     protected override string SqlLiteralFormatString => Formats[DuckDbType];
 }

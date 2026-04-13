@@ -8,10 +8,25 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
 
 namespace DuckDB.EFCore.Metadata.Conventions;
 
+/// <summary>
+///     A convention that configures store value generation as <see cref="ValueGenerated.OnAdd" /> on properties that are
+///     part of the primary key and not part of any foreign keys, were configured to have a database default value
+///     or were configured to use a <see cref="DuckDBValueGenerationStrategy" />.
+///     It also configures properties as <see cref="ValueGenerated.OnAddOrUpdate" /> if they were configured as computed columns.
+/// </summary>
+/// <remarks>
+///     See <see href="https://aka.ms/efcore-docs-conventions">Model building conventions</see>.
+///     for more information and examples.
+/// </remarks>
 public class DuckDBValueGenerationConvention :
     RelationalValueGenerationConvention,
     IModelFinalizingConvention
 {
+    /// <summary>
+    ///     Creates a new instance of <see cref="DuckDBValueGenerationConvention" />.
+    /// </summary>
+    /// <param name="dependencies">Parameter object containing dependencies for this convention.</param>
+    /// <param name="relationalDependencies">Parameter object containing relational dependencies for this convention.</param>
     public DuckDBValueGenerationConvention(
         ProviderConventionSetBuilderDependencies dependencies,
         RelationalConventionSetBuilderDependencies relationalDependencies)
@@ -19,6 +34,14 @@ public class DuckDBValueGenerationConvention :
     {
     }
 
+    /// <summary>
+    ///     Called after an annotation is changed on a property.
+    /// </summary>
+    /// <param name="propertyBuilder">The builder for the property.</param>
+    /// <param name="name">The annotation name.</param>
+    /// <param name="annotation">The new annotation.</param>
+    /// <param name="oldAnnotation">The old annotation.</param>
+    /// <param name="context">Additional information associated with convention execution.</param>
     public override void ProcessPropertyAnnotationChanged(
         IConventionPropertyBuilder propertyBuilder,
         string name,
@@ -35,6 +58,11 @@ public class DuckDBValueGenerationConvention :
         base.ProcessPropertyAnnotationChanged(propertyBuilder, name, annotation, oldAnnotation, context);
     }
 
+    /// <summary>
+    ///     Returns the store value generation strategy to set for the given property.
+    /// </summary>
+    /// <param name="property">The property.</param>
+    /// <returns>The store value generation strategy to set for the given property.</returns>
     protected override ValueGenerated? GetValueGenerated(IConventionProperty property)
         => GetValueGenerationStrategy(property) switch
         {
@@ -42,6 +70,12 @@ public class DuckDBValueGenerationConvention :
             _ => base.GetValueGenerated(property)
         };
 
+    /// <summary>
+    /// Finalizes the model by configuring value generation strategies for properties
+    /// based on their annotations and characteristics.
+    /// </summary>
+    /// <param name="modelBuilder">The model builder used to build and configure the model.</param>
+    /// <param name="context">The context in which the model finalizing operation is performed.</param>
     public void ProcessModelFinalizing(
         IConventionModelBuilder modelBuilder,
         IConventionContext<IConventionModelBuilder> context)

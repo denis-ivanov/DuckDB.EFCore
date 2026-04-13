@@ -11,22 +11,46 @@ using System.Runtime.CompilerServices;
 
 namespace DuckDB.EFCore.Query.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBSqlExpressionFactory : SqlExpressionFactory
 {
     private readonly DuckDBTypeMappingSource _typeMappingSource;
     private readonly RelationalTypeMapping _boolTypeMapping;
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBSqlExpressionFactory(SqlExpressionFactoryDependencies dependencies) : base(dependencies)
     {
         _typeMappingSource = (DuckDBTypeMappingSource)dependencies.TypeMappingSource;
         _boolTypeMapping = _typeMappingSource.FindMapping(typeof(bool), dependencies.Model)!;
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual DuckDBAnyExpression Any(SqlExpression item, SqlExpression array)
     {
         return (DuckDBAnyExpression)ApplyDefaultTypeMapping(new DuckDBAnyExpression(item, array, null));
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual SqlExpression Year(SqlExpression? expression)
     {
         return Function(
@@ -37,6 +61,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(int));
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual SqlExpression Month(SqlExpression? expression)
     {
         return Function(
@@ -47,6 +77,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(int));
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual SqlExpression Day(SqlExpression? expression)
     {
         return Function(
@@ -57,6 +93,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(int));
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual SqlExpression Hour(SqlExpression? expression)
     {
         return Function(
@@ -67,6 +109,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(int));
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual SqlExpression Minute(SqlExpression? expression)
     {
         return Function(
@@ -77,6 +125,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(int));
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual SqlExpression Second(SqlExpression? expression)
     {
         return Function(
@@ -87,6 +141,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(int));
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual SqlExpression Millisecond(SqlExpression? expression)
     {
         return Function(
@@ -97,6 +157,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(int));
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual SqlExpression AddYears(SqlExpression timestamp, SqlExpression years, Type returnType)
     {
         return Function(
@@ -107,6 +173,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: returnType);
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual SqlExpression AddMonths(SqlExpression timestamp, SqlExpression months, Type returnType)
     {
         return Function(
@@ -117,6 +189,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: returnType);
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual SqlExpression AddDays(SqlExpression timestamp, SqlExpression days, Type returnType)
     {
         return Function(
@@ -127,6 +205,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: returnType);
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual SqlExpression ToYears(SqlExpression years)
     {
         return Function(
@@ -137,6 +221,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(TimeSpan));
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual SqlExpression ToMonths(SqlExpression months)
     {
         return Function(
@@ -147,6 +237,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(TimeSpan));
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual SqlExpression ToDays(SqlExpression days)
     {
         return Function(
@@ -157,6 +253,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(TimeSpan));
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual SqlExpression DateDiff(string unit, SqlExpression left, SqlExpression right)
     {
         return Convert(
@@ -170,6 +272,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
         );
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual DuckDBArrayIndexExpression ArrayIndex(
         SqlExpression array,
         SqlExpression index,
@@ -186,6 +294,12 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             typeMapping);
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual DuckDBArraySliceExpression ArraySlice(
         SqlExpression array,
         SqlExpression? lowerBound,
@@ -195,7 +309,8 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
         => (DuckDBArraySliceExpression)ApplyTypeMapping(
             new DuckDBArraySliceExpression(array, lowerBound, upperBound, nullable, array.Type, typeMapping: null),
             typeMapping);
-    
+
+    /// <inheritdoc />
     [return: NotNullIfNotNull("sqlExpression")]
     public override SqlExpression? ApplyTypeMapping(SqlExpression? sqlExpression, RelationalTypeMapping? typeMapping)
     {

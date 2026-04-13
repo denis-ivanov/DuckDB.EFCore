@@ -8,6 +8,12 @@ using System.Runtime.CompilerServices;
 
 namespace DuckDB.EFCore.Query.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExpressionVisitor
 {
     private static readonly Dictionary<string, string> TimeUnits = new()
@@ -21,10 +27,17 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
         [nameof(TimeSpan.TotalNanoseconds)] = "nanosecond"
     };
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBSqlTranslatingExpressionVisitor(RelationalSqlTranslatingExpressionVisitorDependencies dependencies, QueryCompilationContext queryCompilationContext, QueryableMethodTranslatingExpressionVisitor queryableMethodTranslatingExpressionVisitor) : base(dependencies, queryCompilationContext, queryableMethodTranslatingExpressionVisitor)
     {
     }
 
+    /// <inheritdoc />
     public override SqlExpression? GenerateGreatest(IReadOnlyList<SqlExpression> expressions, Type resultType)
     {
         var resultTypeMapping = ExpressionExtensions.InferTypeMapping(expressions);
@@ -32,6 +45,7 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
         return Dependencies.SqlExpressionFactory.Function("greatest", expressions, nullable: true, Enumerable.Repeat(true, expressions.Count), resultType, resultTypeMapping);
     }
 
+    /// <inheritdoc />
     public override SqlExpression? GenerateLeast(IReadOnlyList<SqlExpression> expressions, Type resultType)
     {
         var resultTypeMapping = ExpressionExtensions.InferTypeMapping(expressions);
@@ -39,6 +53,7 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
         return Dependencies.SqlExpressionFactory.Function("least", expressions, nullable: true, Enumerable.Repeat(true, expressions.Count), resultType, resultTypeMapping);
     }
 
+    /// <inheritdoc />
     protected override Expression VisitMember(MemberExpression memberExpression)
     {
         if (memberExpression.Expression is BinaryExpression { NodeType: ExpressionType.Subtract } binaryExpression)
@@ -61,6 +76,7 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
         return base.VisitMember(memberExpression);
     }
 
+    /// <inheritdoc />
     protected override Expression VisitUnary(UnaryExpression unaryExpression)
     {
         switch (unaryExpression.NodeType)
@@ -91,6 +107,7 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
         return base.VisitUnary(unaryExpression);
     }
 
+    /// <inheritdoc />
     protected override Expression VisitBinary(BinaryExpression binaryExpression)
     {
         switch (binaryExpression.NodeType)
@@ -133,6 +150,7 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
         }
     }
 
+    /// <inheritdoc />
     protected override Expression VisitNew(NewExpression newExpression)
     {
         var visitedNewExpression = base.VisitNew(newExpression);

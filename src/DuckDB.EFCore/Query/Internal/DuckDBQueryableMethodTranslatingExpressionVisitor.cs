@@ -11,6 +11,12 @@ using System.Linq.Expressions;
 
 namespace DuckDB.EFCore.Query.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQueryableMethodTranslatingExpressionVisitor
 {
     private readonly RelationalQueryCompilationContext _queryCompilationContext;
@@ -18,6 +24,12 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
     private readonly DuckDBSqlExpressionFactory _sqlExpressionFactory;
     private RelationalTypeMapping? _ordinalityTypeMapping;
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBQueryableMethodTranslatingExpressionVisitor(
         QueryableMethodTranslatingExpressionVisitorDependencies dependencies,
         RelationalQueryableMethodTranslatingExpressionVisitorDependencies relationalDependencies,
@@ -29,6 +41,12 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         _sqlExpressionFactory = (DuckDBSqlExpressionFactory)relationalDependencies.SqlExpressionFactory;
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected DuckDBQueryableMethodTranslatingExpressionVisitor(DuckDBQueryableMethodTranslatingExpressionVisitor parentVisitor)
         : base(parentVisitor)
     {
@@ -37,11 +55,13 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         _sqlExpressionFactory = parentVisitor._sqlExpressionFactory;
     }
 
+    /// <inheritdoc />
     protected override QueryableMethodTranslatingExpressionVisitor CreateSubqueryVisitor()
     {
         return new DuckDBQueryableMethodTranslatingExpressionVisitor(this);
     }
 
+    /// <inheritdoc />
     protected override ShapedQueryExpression TranslateDistinct(ShapedQueryExpression source)
     {
         if (source.TryExtractArray(out var array, out var projectedColumn, ignoreOrderings: true) ||
@@ -82,6 +102,7 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         return base.TranslateDistinct(source);
     }
 
+    /// <inheritdoc />
     protected override ShapedQueryExpression? TranslatePrimitiveCollection(SqlExpression sqlExpression, IProperty? property, string tableAlias)
     {
         var elementClrType = sqlExpression.Type.GetSequenceType();
@@ -134,16 +155,7 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         return new ShapedQueryExpression(selectExpression, shaperExpression);
     }
 
-    protected override ShapedQueryExpression? TransformJsonQueryToTable(JsonQueryExpression jsonQueryExpression)
-    {
-        return base.TransformJsonQueryToTable(jsonQueryExpression);
-    }
-
-    protected override ShapedQueryExpression? TranslateAll(ShapedQueryExpression source, LambdaExpression predicate)
-    {
-        return base.TranslateAll(source, predicate);
-    }
-
+    /// <inheritdoc />
     protected override ShapedQueryExpression? TranslateAny(ShapedQueryExpression source, LambdaExpression? predicate)
     {
         if (source.QueryExpression is SelectExpression { Tables: [{ Alias: var tableAlias }] })
@@ -172,11 +184,7 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         return base.TranslateAny(source, predicate);
     }
 
-    protected override ShapedQueryExpression TranslateConcat(ShapedQueryExpression source1, ShapedQueryExpression source2)
-    {
-        return base.TranslateConcat(source1, source2);
-    }
-
+    /// <inheritdoc />
     protected override ShapedQueryExpression? TranslateElementAtOrDefault(
         ShapedQueryExpression source,
         Expression index,
@@ -201,6 +209,7 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         return base.TranslateElementAtOrDefault(source, index, returnDefault);
     }
 
+    /// <inheritdoc />
     protected override ShapedQueryExpression? TranslateSkip(ShapedQueryExpression source, Expression count)
     {
         if (source.TryExtractArray(out var array, out var projectedColumn)
@@ -243,6 +252,7 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         return base.TranslateSkip(source, count);
     }
 
+    /// <inheritdoc />
     protected override ShapedQueryExpression? TranslateTake(ShapedQueryExpression source, Expression count)
     {
         if (source.TryExtractArray(out var array, out var projectedColumn)
@@ -308,6 +318,7 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         return base.TranslateTake(source, count);
     }
 
+    /// <inheritdoc />
     protected override ShapedQueryExpression? TranslateWhere(ShapedQueryExpression source, LambdaExpression predicate)
     {
         // Simplify x.Array.Where(i => i != 3) => array_remove(x.Array, 3) instead of subquery
@@ -357,6 +368,7 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         return base.TranslateWhere(source, predicate);
     }
 
+    /// <inheritdoc />
     protected override ShapedQueryExpression? TranslateCount(ShapedQueryExpression source, LambdaExpression? predicate)
     {
         // Simplify x.Array.Count() => array_length(x.Array) instead of SELECT COUNT(*) FROM unnest(x.Array)
@@ -387,6 +399,7 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         return base.TranslateCount(source, predicate);
     }
 
+    /// <inheritdoc />
     protected override bool IsNaturallyOrdered(SelectExpression selectExpression)
     {
         return selectExpression is { Tables: [DuckDBUnnestExpression unnest, ..] }

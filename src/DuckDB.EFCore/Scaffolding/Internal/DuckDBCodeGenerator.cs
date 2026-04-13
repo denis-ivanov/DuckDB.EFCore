@@ -3,12 +3,25 @@ using Microsoft.EntityFrameworkCore.Scaffolding;
 
 namespace DuckDB.EFCore.Scaffolding.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBCodeGenerator : ProviderCodeGenerator
 {
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBCodeGenerator(ProviderCodeGeneratorDependencies dependencies) : base(dependencies)
     {
     }
 
+    /// <inheritdoc />
     public override MethodCallCodeFragment GenerateUseProvider(string connectionString, MethodCallCodeFragment? providerOptions)
     {
         throw new NotImplementedException();

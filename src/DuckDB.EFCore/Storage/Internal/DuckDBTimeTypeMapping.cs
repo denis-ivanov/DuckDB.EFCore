@@ -11,6 +11,12 @@ using System.Reflection;
 
 namespace DuckDB.EFCore.Storage.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBTimeTypeMapping : RelationalTypeMapping
 {
     private static readonly MethodInfo GetTimeOnly = typeof(DuckDBDataReader)
@@ -61,6 +67,12 @@ public class DuckDBTimeTypeMapping : RelationalTypeMapping
         DuckDBTimeSpanToTimeOnlyValueConverter.Instance,
         DuckDBType.Time);
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBTimeTypeMapping(
         string storeType,
         Type clrType,
@@ -80,25 +92,40 @@ public class DuckDBTimeTypeMapping : RelationalTypeMapping
         DuckDbType = duckDbType;
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected DuckDBTimeTypeMapping(RelationalTypeMappingParameters parameters, DuckDBType duckDbType)
         : base(parameters)
     {
         DuckDbType = duckDbType;
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected virtual DuckDBType DuckDbType { get; private set; }
 
+    /// <inheritdoc />
     protected override RelationalTypeMapping Clone(RelationalTypeMappingParameters parameters)
     {
         return new DuckDBTimeTypeMapping(parameters, DuckDbType);
     }
 
+    /// <inheritdoc />
     protected override void ConfigureParameter(DbParameter parameter)
     {
         ((DuckDBParameter)parameter).RemoveDollarSign();
         base.ConfigureParameter(parameter);
     }
 
+    /// <inheritdoc />
     protected override string SqlLiteralFormatString
     {
         get

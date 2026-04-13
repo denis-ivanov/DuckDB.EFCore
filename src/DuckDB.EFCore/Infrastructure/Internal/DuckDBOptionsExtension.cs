@@ -6,33 +6,72 @@ using System.Text;
 
 namespace DuckDB.EFCore.Infrastructure.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBOptionsExtension : RelationalOptionsExtension
 {
     private DbContextOptionsExtensionInfo? _info;
     private bool _loadSpatialite;
-    
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBOptionsExtension()
     {
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected DuckDBOptionsExtension(DuckDBOptionsExtension copyFrom)
         : base(copyFrom)
     {
         ReverseNullOrdering = copyFrom.ReverseNullOrdering;
     }
 
+    /// <summary>
+    /// <see langword="true"/> if reverse null ordering is enabled; otherwise, <see langword="false" />.
+    /// </summary>
     public virtual bool ReverseNullOrdering { get; private set; }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected override RelationalOptionsExtension Clone()
     {
         return new DuckDBOptionsExtension(this);
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public override void ApplyServices(IServiceCollection services)
     {
         services.AddEntityFrameworkDuckDB();
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual DuckDBOptionsExtension WithLoadSpatialite(bool loadSpatialite)
     {
         var clone = (DuckDBOptionsExtension)Clone();
@@ -42,6 +81,10 @@ public class DuckDBOptionsExtension : RelationalOptionsExtension
         return clone;
     }
 
+    /// <summary>
+    ///     Returns a copy of the current instance configured with the specified value.
+    /// </summary>
+    /// <param name="reverseNullOrdering"><see langword="true"/> to enable reverse null ordering; otherwise, <see langword="false"/>.</param>
     internal virtual DuckDBOptionsExtension WithReverseNullOrdering(bool reverseNullOrdering)
     {
         var clone = (DuckDBOptionsExtension)Clone();
@@ -51,6 +94,12 @@ public class DuckDBOptionsExtension : RelationalOptionsExtension
         return clone;
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public override DbContextOptionsExtensionInfo Info => _info ??= new ExtensionInfo(this);
 
     private sealed class ExtensionInfo(IDbContextOptionsExtension extension) : RelationalExtensionInfo(extension)

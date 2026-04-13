@@ -6,12 +6,37 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
 namespace DuckDB.EFCore.Migrations;
 
+/// <summary>
+///     DuckDB-specific implementation of <see cref="MigrationsSqlGenerator" />.
+/// </summary>
+/// <remarks>
+///     <para>
+///         The service lifetime is <see cref="ServiceLifetime.Scoped" />. This means that each
+///         <see cref="DbContext" /> instance will use its own instance of this service.
+///         The implementation may depend on other services registered with any lifetime.
+///         The implementation does not need to be thread-safe.
+///     </para>
+///     <para>
+///         See <see href="https://aka.ms/efcore-docs-migrations">Database migrations</see>.
+///     </para>
+/// </remarks>
 public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
 {
+    /// <summary>
+    ///     Creates a new instance of <see cref="DuckDBMigrationsSqlGenerator" />.
+    /// </summary>
+    /// <param name="dependencies"></param>
     public DuckDBMigrationsSqlGenerator(MigrationsSqlGeneratorDependencies dependencies) : base(dependencies)
     {
     }
 
+    /// <summary>
+    ///     Ignored, DuckDB does not support adding foreign keys.
+    /// </summary>
+    /// <param name="operation">The operation.</param>
+    /// <param name="model">The target model which may be <see langword="null" /> if the operations exist without a model.</param>
+    /// <param name="builder">The command builder to use to build the commands.</param>
+    /// <param name="terminate">Indicates whether or not to terminate the command after generating SQL for the operation.</param>
     protected override void Generate(
         AddForeignKeyOperation operation,
         IModel? model,
@@ -20,6 +45,13 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
     {
     }
 
+    /// <summary>
+    ///     Ignored, DuckDB does not support dropping foreign keys.
+    /// </summary>
+    /// <param name="operation">The operation.</param>
+    /// <param name="model">The target model which may be <see langword="null" /> if the operations exist without a model.</param>
+    /// <param name="builder">The command builder to use to build the commands.</param>
+    /// <param name="terminate">Indicates whether or not to terminate the command after generating SQL for the operation.</param>
     protected override void Generate(
         DropForeignKeyOperation operation,
         IModel? model,
@@ -28,16 +60,37 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
     {
     }
 
+    /// <summary>
+    ///     Ignored due to functional tests issue.
+    /// </summary>
+    /// <param name="operation">The operation.</param>
+    /// <param name="model">The target model which may be <see langword="null" /> if the operations exist without a model.</param>
+    /// <param name="builder">The command builder to use to build the commands.</param>
     protected override void CreateTableForeignKeys(CreateTableOperation operation, IModel? model, MigrationCommandListBuilder builder)
     {
     }
 
+    /// <summary>
+    ///     Builds commands for the given <see cref="RenameTableOperation" />
+    ///     by making calls on the given <see cref="MigrationCommandListBuilder" />.
+    /// </summary>
+    /// <param name="operation">The operation.</param>
+    /// <param name="model">The target model which may be <see langword="null" /> if the operations exist without a model.</param>
+    /// <param name="builder">The command builder to use to build the commands.</param>
     protected override void Generate(RenameTableOperation operation, IModel? model, MigrationCommandListBuilder builder)
     {
         builder.Append("ALTER TABLE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
             .Append(" RENAME TO ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.NewName, operation.NewSchema));
     }
 
+    /// <summary>
+    ///     Builds commands for the given <see cref="DropIndexOperation" />
+    ///     by making calls on the given <see cref="MigrationCommandListBuilder" />.
+    /// </summary>
+    /// <param name="operation">The operation.</param>
+    /// <param name="model">The target model which may be <see langword="null" /> if the operations exist without a model.</param>
+    /// <param name="builder">The command builder to use to build the commands.</param>
+    /// <param name="terminate">Indicates whether or not to terminate the command after generating SQL for the operation.</param>
     protected override void Generate(DropIndexOperation operation, IModel? model, MigrationCommandListBuilder builder, bool terminate = true)
     {
         builder.Append("DROP INDEX ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name));
@@ -48,6 +101,7 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         }
     }
 
+    /// <inheritdoc />
     protected override void Generate(CreateSequenceOperation operation, IModel? model, MigrationCommandListBuilder builder)
     {
         builder
@@ -67,12 +121,14 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         EndStatement(builder, true);
     }
 
+    /// <inheritdoc />
     protected override void Generate(EnsureSchemaOperation operation, IModel? model, MigrationCommandListBuilder builder)
     {
         builder.Append("CREATE SCHEMA IF NOT EXISTS ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name));
         EndStatement(builder);
     }
 
+    /// <inheritdoc />
     protected override void Generate(
         CreateTableOperation operation,
         IModel? model,
@@ -116,6 +172,7 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         }
     }
 
+    /// <inheritdoc />
     protected override void Generate(AlterTableOperation operation, IModel? model, MigrationCommandListBuilder builder)
     {
         base.Generate(operation, model, builder);
@@ -130,6 +187,7 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         }
     }
 
+    /// <inheritdoc />
     protected override void Generate(AlterColumnOperation operation, IModel? model, MigrationCommandListBuilder builder)
     {
         if (operation.OldColumn.ColumnType != operation.ColumnType)
@@ -221,6 +279,7 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         }
     }
 
+    /// <inheritdoc />
     protected override void Generate(AddColumnOperation operation, IModel? model, MigrationCommandListBuilder builder, bool terminate = true)
     {
         base.Generate(operation, model, builder, terminate);
@@ -231,6 +290,7 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         }
     }
 
+    /// <inheritdoc />
     protected override void ComputedColumnDefinition(
         string? schema,
         string table,
@@ -253,6 +313,7 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         }
     }
 
+    /// <inheritdoc />
     protected override void Generate(RenameColumnOperation operation, IModel? model, MigrationCommandListBuilder builder)
     {
         builder.Append("ALTER TABLE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Table, operation.Schema))
@@ -262,7 +323,18 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         EndStatement(builder);
     }
 
-    protected virtual void Comment(MigrationCommandListBuilder builder, string objectType, string objectName, string? comment)
+    /// <summary>
+    /// Appends a SQL command to add a comment on a specified database object.
+    /// </summary>
+    /// <param name="builder">The builder used to construct the list of migration commands.</param>
+    /// <param name="objectType">The type of the object to comment on (e.g., "TABLE", "COLUMN").</param>
+    /// <param name="objectName">The name of the object to comment on.</param>
+    /// <param name="comment">The comment to be added to the object. Can be null.</param>
+    protected virtual void Comment(
+        MigrationCommandListBuilder builder,
+        string objectType,
+        string objectName,
+        string? comment)
     {
         var stringTypeMapping = Dependencies.TypeMappingSource.FindMapping(typeof(string))!;
 
@@ -275,6 +347,7 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         EndStatement(builder);
     }
 
+    /// <inheritdoc />
     protected override void Generate(DropSequenceOperation operation, IModel? model, MigrationCommandListBuilder builder)
     {
         builder
