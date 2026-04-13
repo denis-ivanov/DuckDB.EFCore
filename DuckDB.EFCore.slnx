@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".github/workflows/dotnet.yml" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/DuckDB.EFCore.NTS/DuckDB.EFCore.NTS.csproj" />
+    <Project Path="src/DuckDB.EFCore/DuckDB.EFCore.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/DuckDB.EFCore.FunctionalTests/DuckDB.EFCore.FunctionalTests.csproj" />
+  </Folder>
+</Solution>
