@@ -19,8 +19,19 @@ public class DuckDBApiConsistencyTest : ApiConsistencyTestBase<DuckDBApiConsiste
     protected override Assembly TargetAssembly
         => typeof(DuckDBRelationalConnection).Assembly;
 
-    public class DuckDBApiConsistencyFixture : ApiConsistencyFixtureBase
+    public sealed class DuckDBApiConsistencyFixture : ApiConsistencyFixtureBase
     {
+        private static readonly MethodInfo CloseDbConnection = typeof(DuckDBRelationalConnection)
+            .GetMethod(
+                "CloseDbConnectionAsync",
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+                Type.EmptyTypes)!;
+
+        public DuckDBApiConsistencyFixture()
+        {
+            AsyncMethodExceptions.Add(CloseDbConnection);
+        }
+
         public override HashSet<Type> FluentApiTypes { get; } =
         [
             typeof(DuckDBServiceCollectionExtensions),

@@ -4,6 +4,7 @@ using DuckDB.NET.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.DependencyInjection;
+using System.Data;
 using System.Data.Common;
 
 namespace DuckDB.EFCore.FunctionalTests.TestUtilities;
@@ -112,6 +113,26 @@ public class DuckDBTestStore : RelationalTestStore
         }.ToString();
 
         return new DuckDBConnection(connectionString);
+    }
+
+    public override void OpenConnection()
+    {
+        var connection = (DuckDBConnection)Connection;
+
+        if (connection.State != ConnectionState.Open)
+        {
+            connection.Open();
+        }
+    }
+
+    public override async Task OpenConnectionAsync()
+    {
+        var connection = (DuckDBConnection)Connection;
+
+        if (connection.State != ConnectionState.Open)
+        {
+            await connection.OpenAsync();
+        }
     }
 
     protected override string OpenDelimiter => "\"";

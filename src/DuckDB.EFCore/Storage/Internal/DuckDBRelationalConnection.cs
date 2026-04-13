@@ -3,6 +3,7 @@ using DuckDB.NET.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
 using System.Data.Common;
 
 namespace DuckDB.EFCore.Storage.Internal;
@@ -58,5 +59,45 @@ public class DuckDBRelationalConnection : RelationalConnection, IDuckDBRelationa
         var contextOptions = new DbContextOptionsBuilder().UseDuckDB(connectionStringBuilder.ToString()).Options;
 
         return new DuckDBRelationalConnection(Dependencies with { ContextOptions = contextOptions }, _rawSqlCommandBuilder, _logger);
+    }
+
+    protected override void CloseDbConnection()
+    {
+        var connection = (DuckDBConnection)DbConnection;
+
+        if (connection.State != ConnectionState.Closed)
+        {
+            connection.Close();
+        }
+    }
+
+    protected override async Task CloseDbConnectionAsync()
+    {
+        var connection = (DuckDBConnection)DbConnection;
+
+        if (connection.State != ConnectionState.Closed)
+        {
+            await connection.CloseAsync();
+        }
+    }
+
+    protected override void OpenDbConnection(bool errorsExpected)
+    {
+        var connection = (DuckDBConnection)DbConnection;
+
+        if (connection.State != ConnectionState.Open)
+        {
+            connection.Open();
+        }
+    }
+
+    protected override async Task OpenDbConnectionAsync(bool errorsExpected, CancellationToken cancellationToken)
+    {
+        var connection = (DuckDBConnection)DbConnection;
+
+        if (connection.State != ConnectionState.Open)
+        {
+            await connection.OpenAsync(cancellationToken);
+        }
     }
 }
