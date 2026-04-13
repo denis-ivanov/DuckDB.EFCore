@@ -12,6 +12,7 @@
     <PackageTags>DuckDB; Entity Framework Core; EF Core</PackageTags>
     <PackageIcon>DuckDB_icon-lightmode.png</PackageIcon>
     <NoWarn>$(NoWarn);EF1001;EF9100</NoWarn>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
