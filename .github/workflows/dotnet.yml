@@ -53,4 +53,4 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         slug: denis-ivanov/DuckDB.EFCore
         files: ./**/junit.xml
-        report-type: test_results
+        report_type: test_results
