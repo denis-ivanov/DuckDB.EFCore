@@ -7,16 +7,29 @@ using System.Linq.Expressions;
 
 namespace DuckDB.EFCore.Query.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBQuerySqlGenerator : QuerySqlGenerator
 {
     private readonly bool _reverseNullOrderingEnabled;
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBQuerySqlGenerator(QuerySqlGeneratorDependencies dependencies, bool reverseNullOrderingEnabled)
         : base(dependencies)
     {
         _reverseNullOrderingEnabled = reverseNullOrderingEnabled;
     }
-    
+
+    /// <inheritdoc />
     protected override void GenerateLimitOffset(SelectExpression selectExpression)
     {
         if (selectExpression.Limit is not null)
@@ -41,6 +54,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         }
     }
 
+    /// <inheritdoc />
     protected override string GetOperator(SqlBinaryExpression binaryExpression)
     {
         return binaryExpression.OperatorType switch
@@ -52,6 +66,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         };
     }
 
+    /// <inheritdoc />
     protected override Expression VisitOrdering(OrderingExpression ordering)
     {
         var result = base.VisitOrdering(ordering);
@@ -64,6 +79,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         return result;
     }
 
+    /// <inheritdoc />
     protected override Expression VisitExtension(Expression extensionExpression)
     {
         return extensionExpression switch
@@ -77,6 +93,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         };
     }
 
+    /// <inheritdoc />
     protected override Expression VisitSqlBinary(SqlBinaryExpression sqlBinaryExpression)
     {
         return sqlBinaryExpression.OperatorType switch
@@ -86,6 +103,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         };
     }
 
+    /// <inheritdoc />
     protected override Expression VisitCrossApply(CrossApplyExpression crossApplyExpression)
     {
         Sql.Append("CROSS JOIN LATERAL ");
@@ -94,6 +112,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         return crossApplyExpression;
     }
 
+    /// <inheritdoc />
     protected override Expression VisitOuterApply(OuterApplyExpression outerApplyExpression)
     {
         Sql.Append("LEFT JOIN LATERAL ");
@@ -103,6 +122,12 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         return outerApplyExpression;
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected virtual Expression VisitArrayAny(DuckDBAnyExpression expression)
     {
         Visit(expression.Item);
@@ -112,7 +137,13 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         Sql.Append(")");
         return expression;
     }
-    
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected virtual Expression VisitArrayIndex(SqlBinaryExpression sqlBinaryExpression)
     {
         Visit(sqlBinaryExpression.Left);
@@ -122,6 +153,12 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         return sqlBinaryExpression;
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected virtual Expression VisitArrayIndex(DuckDBArrayIndexExpression expression)
     {
         var requiresParentheses = RequiresParentheses(expression, expression.Array);
@@ -144,6 +181,12 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         return expression;
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected virtual Expression VisitArraySlice(DuckDBArraySliceExpression expression)
     {
         var requiresParentheses = RequiresParentheses(expression, expression.Array);
@@ -168,6 +211,12 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         return expression;
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected virtual Expression VisitBinary(DuckDBBinaryExpression binaryExpression)
     {
         switch (binaryExpression.OperatorType)
@@ -198,7 +247,13 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
 
         return binaryExpression;
     }
-    
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected virtual Expression VisitRowValue(DuckDBRowValueExpression rowValueExpression)
     {
         Sql.Append("(");
@@ -220,6 +275,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         return rowValueExpression;
     }
 
+    /// <inheritdoc />
     protected override void GenerateValues(ValuesExpression valuesExpression)
     {
         if (valuesExpression.RowValues is null)
@@ -247,6 +303,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         }
     }
 
+    /// <inheritdoc />
     protected override Expression VisitValues(ValuesExpression valuesExpression)
     {
         base.VisitValues(valuesExpression);

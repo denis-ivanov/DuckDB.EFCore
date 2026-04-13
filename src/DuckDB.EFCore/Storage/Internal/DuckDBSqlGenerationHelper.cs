@@ -4,10 +4,22 @@ using System.Text;
 
 namespace DuckDB.EFCore.Storage.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBSqlGenerationHelper : RelationalSqlGenerationHelper
 {
     private static readonly HashSet<string> ReservedWords = new(StringComparer.InvariantCultureIgnoreCase);
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     static DuckDBSqlGenerationHelper()
     {
         using var connection = new DuckDBConnection(DuckDBConnectionStringBuilder.InMemorySharedConnectionString);
@@ -28,25 +40,35 @@ public class DuckDBSqlGenerationHelper : RelationalSqlGenerationHelper
         }
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBSqlGenerationHelper(RelationalSqlGenerationHelperDependencies dependencies) : base(dependencies)
     {
     }
 
+    /// <inheritdoc />
     public override string GenerateParameterName(string name)
     {
         return name.StartsWith('$') ? name : '$' + name;
     }
 
+    /// <inheritdoc />
     public override void GenerateParameterName(StringBuilder builder, string name)
     {
         builder.Append('$').Append(name);
     }
 
+    /// <inheritdoc />
     public override string DelimitIdentifier(string identifier)
     {
         return RequiresQuoting(identifier) ? base.DelimitIdentifier(identifier) : identifier;
     }
 
+    /// <inheritdoc />
     public override void DelimitIdentifier(StringBuilder builder, string identifier)
     {
         if (RequiresQuoting(identifier))

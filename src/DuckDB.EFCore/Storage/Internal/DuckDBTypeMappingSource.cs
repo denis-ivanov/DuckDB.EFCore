@@ -6,6 +6,12 @@ using System.Text.Json;
 
 namespace DuckDB.EFCore.Storage.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBTypeMappingSource : RelationalTypeMappingSource
 {
     internal const string VarCharTypeName = "VARCHAR";
@@ -106,10 +112,18 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         { "JSON", JsonString }
     };
 
-    public DuckDBTypeMappingSource(TypeMappingSourceDependencies dependencies, RelationalTypeMappingSourceDependencies relationalDependencies) : base(dependencies, relationalDependencies)
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    public DuckDBTypeMappingSource(TypeMappingSourceDependencies dependencies, RelationalTypeMappingSourceDependencies relationalDependencies)
+        : base(dependencies, relationalDependencies)
     {
     }
 
+    /// <inheritdoc />
     protected override RelationalTypeMapping? FindMapping(in RelationalTypeMappingInfo mappingInfo)
     {
         var mapping = base.FindMapping(mappingInfo)
@@ -121,6 +135,7 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
             : mapping;
     }
 
+    /// <inheritdoc />
     protected override RelationalTypeMapping? FindCollectionMapping(
         RelationalTypeMappingInfo info,
         Type? modelType,
@@ -128,6 +143,12 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         CoreTypeMapping? elementMapping)
         => FindCollectionMapping(info.StoreTypeName, modelType, providerType, elementMapping);
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     [EntityFrameworkInternal]
     public virtual RelationalTypeMapping? FindCollectionMapping(
         string? storeType,
@@ -253,6 +274,12 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         }
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected virtual RelationalTypeMapping? FindRowValueMapping(in RelationalTypeMappingInfo mappingInfo)
         => mappingInfo.ClrType is { } clrType
            && clrType.IsAssignableTo(typeof(ITuple))

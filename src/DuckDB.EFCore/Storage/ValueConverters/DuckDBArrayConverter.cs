@@ -1,5 +1,4 @@
-﻿//using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Collections;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -7,19 +6,43 @@ using static System.Linq.Expressions.Expression;
 
 namespace DuckDB.EFCore.Storage.ValueConverters;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBArrayConverter<TModelCollection, TConcreteModelCollection, TProviderCollection>
     : ValueConverter<TModelCollection, TProviderCollection>
     where TModelCollection: IEnumerable
     where TConcreteModelCollection: IEnumerable
     where TProviderCollection: IEnumerable
 {
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual ValueConverter? ElementConverter { get; }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBArrayConverter()
         : this(elementConverter: null)
     {
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBArrayConverter(ValueConverter? elementConverter)
         : base(
             ArrayConversionExpression<TModelCollection, TProviderCollection, TProviderCollection>(elementConverter?.ConvertToProviderExpression),
@@ -126,9 +149,9 @@ public class DuckDBArrayConverter<TModelCollection, TConcreteModelCollection, TP
                 }
             
             default:
-                throw new NotSupportedException($"Array value converter input type must be an IEnumerable, bit is {typeof(TInput)}");
+                throw new NotSupportedException($"Array value converter input type must be an IEnumerable, but is {typeof(TInput)}");
         }
-        
+
         Expression? instantiateOutput = typeof(TConcreteOutput) switch
         {
             var t when t.IsArray => NewArrayBounds(outputElementType, lengthVariable),

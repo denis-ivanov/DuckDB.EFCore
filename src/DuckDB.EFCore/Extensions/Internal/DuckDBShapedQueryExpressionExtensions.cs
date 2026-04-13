@@ -8,8 +8,24 @@ using System.Linq.Expressions;
 
 namespace DuckDB.EFCore.Extensions.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public static class DuckDBShapedQueryExpressionExtensions
 {
+    /// <summary>
+    ///     If the given <paramref name="source" /> wraps an array-returning expression without any additional clauses (e.g. filter,
+    ///     ordering...), returns that expression.
+    /// </summary>
+    /// <remarks>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </remarks>
     public static bool TryExtractArray(
         this ShapedQueryExpression source,
         [NotNullWhen(true)] out SqlExpression? array,
@@ -17,6 +33,16 @@ public static class DuckDBShapedQueryExpressionExtensions
         bool ignorePredicate = false)
         => TryExtractArray(source, out array, out _, ignoreOrderings, ignorePredicate);
 
+    /// <summary>
+    ///     If the given <paramref name="source" /> wraps an array-returning expression without any additional clauses (e.g. filter,
+    ///     ordering...), returns that expression.
+    /// </summary>
+    /// <remarks>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </remarks>
     public static bool TryExtractArray(
         this ShapedQueryExpression source,
         [NotNullWhen(true)] out SqlExpression? array,
@@ -51,6 +77,16 @@ public static class DuckDBShapedQueryExpressionExtensions
         return false;
     }
 
+    /// <summary>
+    ///     If the given <paramref name="source" /> wraps a JSON-array-returning expression without any additional clauses (e.g. filter,
+    ///     ordering...), returns that expression.
+    /// </summary>
+    /// <remarks>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </remarks>
     public static bool TryExtractJsonArray(
         this ShapedQueryExpression source,
         [NotNullWhen(true)] out SqlExpression? jsonArray,
@@ -109,6 +145,16 @@ public static class DuckDBShapedQueryExpressionExtensions
         return false;
     }
 
+    /// <summary>
+    ///     If the given <paramref name="source" /> wraps a <see cref="ValuesExpression" /> without any additional clauses (e.g. filter,
+    ///     ordering...), converts that to a <see cref="NewArrayExpression" /> and returns that.
+    /// </summary>
+    /// <remarks>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </remarks>
     public static bool TryConvertToArray(
         this ShapedQueryExpression source,
         [NotNullWhen(true)] out SqlExpression? array,
@@ -142,6 +188,9 @@ public static class DuckDBShapedQueryExpressionExtensions
         return false;
     }
 
+    /// <summary>
+    ///     Checks whether the given expression maps to a DuckDB array, as opposed to a multirange type.
+    /// </summary>
     private static bool IsDuckDBArray(SqlExpression expression)
         => expression switch
         {

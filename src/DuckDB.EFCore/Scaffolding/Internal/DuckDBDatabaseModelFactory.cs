@@ -10,14 +10,22 @@ using System.Diagnostics;
 
 namespace DuckDB.EFCore.Scaffolding.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBDatabaseModelFactory : DatabaseModelFactory
 {
+    /// <inheritdoc />
     public override DatabaseModel Create(string connectionString, DatabaseModelFactoryOptions options)
     {
         using var connection = new DuckDBConnection(connectionString);
         return Create(connection, options);
     }
 
+    /// <inheritdoc />
     public override DatabaseModel Create(DbConnection connection, DatabaseModelFactoryOptions options)
     {
         var databaseModel = new DatabaseModel

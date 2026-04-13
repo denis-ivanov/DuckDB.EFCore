@@ -9,27 +9,53 @@ using System.Text.Json;
 
 namespace DuckDB.EFCore.Storage.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBJsonTypeMapping : JsonTypeMapping
 {
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBJsonTypeMapping(Type clrType)
         : base("JSON", clrType, System.Data.DbType.String)
     {
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected DuckDBJsonTypeMapping(RelationalTypeMappingParameters parameters) : base(parameters)
     {
     }
 
+    /// <inheritdoc />
     protected override RelationalTypeMapping Clone(RelationalTypeMappingParameters parameters)
     {
         return new DuckDBJsonTypeMapping(parameters);
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected virtual string EscapeSqlLiteral(string literal)
     {
         return literal.Replace("'", "''");
     }
 
+    /// <inheritdoc />
     protected override string GenerateNonNullSqlLiteral(object value)
     {
         switch (value)
@@ -58,6 +84,7 @@ public class DuckDBJsonTypeMapping : JsonTypeMapping
         }
     }
 
+    /// <inheritdoc />
     public override Expression GenerateCodeLiteral(object value)
         => value switch
         {
@@ -75,11 +102,13 @@ public class DuckDBJsonTypeMapping : JsonTypeMapping
     private static readonly MethodInfo ParseMethod =
         typeof(JsonDocument).GetMethod(nameof(JsonDocument.Parse), [typeof(string), typeof(JsonDocumentOptions)])!;
 
+    /// <inheritdoc />
     public override MethodInfo GetDataReaderMethod()
     {
         return GetDataReaderMethod(typeof(string));
     }
 
+    /// <inheritdoc />
     protected override void ConfigureParameter(DbParameter parameter)
     {
         ((DuckDBParameter)parameter).RemoveDollarSign();

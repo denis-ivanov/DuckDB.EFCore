@@ -8,10 +8,20 @@ using System.Runtime.CompilerServices;
 
 namespace DuckDB.EFCore.Query.Expressions.Internal;
 
+/// <summary>
+///     An expression that represents a DuckDB-specific row value expression in a SQL tree.
+/// </summary>
 public class DuckDBRowValueExpression : SqlExpression, IEquatable<DuckDBRowValueExpression>
 {
     private static ConstructorInfo? _quotingConstructor;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="DuckDBRowValueExpression" /> class.
+    /// </summary>
+    /// <param name="values">The values of this DuckDB row value expression.</param>
+    /// <param name="type"></param>
+    /// <param name="typeMapping"></param>
+    /// <exception cref="ArgumentNullException"></exception>
     public DuckDBRowValueExpression(
         IReadOnlyList<SqlExpression> values,
         Type type,
@@ -24,8 +34,12 @@ public class DuckDBRowValueExpression : SqlExpression, IEquatable<DuckDBRowValue
         Values = values;
     }
 
+    /// <summary>
+    ///     The values of this DuckDB row value expression.
+    /// </summary>
     public virtual IReadOnlyList<SqlExpression> Values { get; }
 
+    /// <inheritdoc />
     protected override Expression VisitChildren(ExpressionVisitor visitor)
     {
         ArgumentNullException.ThrowIfNull(visitor);
@@ -54,11 +68,16 @@ public class DuckDBRowValueExpression : SqlExpression, IEquatable<DuckDBRowValue
         return newRowValues is null ? this : new DuckDBRowValueExpression(newRowValues, Type);
     }
 
+    /// <summary>
+    ///     Creates a new expression that is like this one, but using the supplied children. If all of the children are the same, it will
+    ///     return this expression.
+    /// </summary>
     public virtual DuckDBRowValueExpression Update(IReadOnlyList<SqlExpression> values)
         => values.Count == Values.Count && values.Zip(Values, (x, y) => (x, y)).All(tup => tup.x == tup.y)
             ? this
             : new DuckDBRowValueExpression(values, Type);
 
+    /// <inheritdoc />
     public override Expression Quote()
         => New(
             _quotingConstructor ??= typeof(DuckDBRowValueExpression).GetConstructor(
@@ -67,6 +86,7 @@ public class DuckDBRowValueExpression : SqlExpression, IEquatable<DuckDBRowValue
             Constant(Type),
             RelationalExpressionQuotingUtilities.QuoteTypeMapping(TypeMapping));
 
+    /// <inheritdoc />
     protected override void Print(ExpressionPrinter expressionPrinter)
     {
         expressionPrinter.Append("(");
@@ -85,9 +105,11 @@ public class DuckDBRowValueExpression : SqlExpression, IEquatable<DuckDBRowValue
         expressionPrinter.Append(")");
     }
 
+    /// <inheritdoc />
     public override bool Equals(object? obj)
         => obj is DuckDBRowValueExpression other && Equals(other);
 
+    /// <inheritdoc />
     public virtual bool Equals(DuckDBRowValueExpression? other)
     {
         if (other is null || !base.Equals(other) || other.Values.Count != Values.Count)
@@ -111,6 +133,7 @@ public class DuckDBRowValueExpression : SqlExpression, IEquatable<DuckDBRowValue
         return true;
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
         var hashCode = new HashCode();

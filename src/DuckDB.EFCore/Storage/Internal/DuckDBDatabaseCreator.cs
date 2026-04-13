@@ -6,11 +6,23 @@ using System.Data;
 
 namespace DuckDB.EFCore.Storage.Internal;
 
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
 public class DuckDBDatabaseCreator : RelationalDatabaseCreator
 {
     private readonly IDuckDBRelationalConnection _connection;
     private readonly IRawSqlCommandBuilder _rawSqlCommandBuilder;
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBDatabaseCreator(
         RelationalDatabaseCreatorDependencies dependencies,
         IDuckDBRelationalConnection connection,
@@ -21,6 +33,7 @@ public class DuckDBDatabaseCreator : RelationalDatabaseCreator
         _rawSqlCommandBuilder = rawSqlCommandBuilder;
     }
 
+    /// <inheritdoc />
     public override bool Exists()
     {
         var connectionOptions = new DuckDBConnectionStringBuilder
@@ -47,6 +60,7 @@ public class DuckDBDatabaseCreator : RelationalDatabaseCreator
         return true;
     }
 
+    /// <inheritdoc />
     public override bool HasTables()
     {
         return (bool)_rawSqlCommandBuilder
@@ -66,12 +80,14 @@ public class DuckDBDatabaseCreator : RelationalDatabaseCreator
                 Dependencies.CommandLogger, CommandSource.Migrations))!;
     }
 
+    /// <inheritdoc />
     public override void Create()
     {
         Dependencies.Connection.Open();
         Dependencies.Connection.Close();
     }
 
+    /// <inheritdoc />
     public override void Delete()
     {
         string? path = null;
