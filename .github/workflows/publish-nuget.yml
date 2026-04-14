@@ -25,8 +25,8 @@ jobs:
     - name: Pack NuGet
       run: dotnet pack DuckDB.EFCore.slnx -c Release -o ./nupkg
 
-    - name: Publish to GitHub Packages
-      run: dotnet nuget push ./nupkg/*.nupkg --source https://nuget.pkg.github.com/denis-ivanov/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+#    - name: Publish to GitHub Packages
+#      run: dotnet nuget push ./nupkg/*.nupkg --source https://nuget.pkg.github.com/denis-ivanov/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
 
     - name: Publish to NuGet.org
       run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
