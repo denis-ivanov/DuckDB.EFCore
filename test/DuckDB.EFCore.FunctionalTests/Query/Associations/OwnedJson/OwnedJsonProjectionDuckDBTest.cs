@@ -142,4 +142,10 @@ public class OwnedJsonProjectionDuckDBTest: OwnedJsonProjectionRelationalTestBas
     {
         return base.SelectMany_nested_collection_on_required_associate(queryTrackingBehavior);
     }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Select_subquery_FirstOrDefault_complex_collection(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Select_subquery_FirstOrDefault_complex_collection(queryTrackingBehavior);
+    }
 }

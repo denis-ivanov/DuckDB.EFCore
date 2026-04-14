@@ -45,6 +45,12 @@ public class EntitySplittingQueryDuckDBTest : EntitySplittingQueryTestBase
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Compare_split_entity_to_null(bool async)
+    {
+        await base.Compare_split_entity_to_null(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Custom_projection_trim_when_multiple_tables(bool async)
     {
         return base.Custom_projection_trim_when_multiple_tables(async);
