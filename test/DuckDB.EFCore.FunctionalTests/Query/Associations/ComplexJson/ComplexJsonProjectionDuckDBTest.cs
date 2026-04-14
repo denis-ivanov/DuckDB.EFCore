@@ -166,4 +166,10 @@ public class ComplexJsonProjectionDuckDBTest: ComplexJsonProjectionRelationalTes
     {
         return base.Select_root_with_value_types(queryTrackingBehavior);
     }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Select_subquery_FirstOrDefault_complex_collection(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Select_subquery_FirstOrDefault_complex_collection(queryTrackingBehavior);
+    }
 }

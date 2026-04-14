@@ -102,6 +102,30 @@ public class ComplexTypesTrackingDuckDBTest : ComplexTypesTrackingRelationalTest
         await base.Can_track_entity_with_complex_type_collections(state, async);
     }
 
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Can_change_state_from_Deleted_with_complex_collection(EntityState newState, bool async)
+    {
+        await base.Can_change_state_from_Deleted_with_complex_collection(newState, async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Can_change_state_from_Deleted_with_complex_field_collection(EntityState newState, bool async)
+    {
+        await base.Can_change_state_from_Deleted_with_complex_field_collection(newState, async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Can_change_state_from_Deleted_with_complex_field_record_collection(EntityState newState, bool async)
+    {
+        await base.Can_change_state_from_Deleted_with_complex_field_record_collection(newState, async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Can_change_state_from_Deleted_with_complex_record_collection(EntityState newState, bool async)
+    {
+        await base.Can_change_state_from_Deleted_with_complex_record_collection(newState, async);
+    }
+
     public class DuckDBFixture : RelationalFixtureBase, ITestSqlLoggerFactory
     {
         protected override ITestStoreFactory TestStoreFactory

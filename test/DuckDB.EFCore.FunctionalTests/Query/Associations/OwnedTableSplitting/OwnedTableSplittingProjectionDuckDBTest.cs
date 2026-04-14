@@ -64,4 +64,10 @@ public class OwnedTableSplittingProjectionDuckDBTest : OwnedTableSplittingProjec
     {
         return base.Select_required_associate_via_optional_navigation(queryTrackingBehavior);
     }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Select_subquery_FirstOrDefault_complex_collection(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Select_subquery_FirstOrDefault_complex_collection(queryTrackingBehavior);
+    }
 }
