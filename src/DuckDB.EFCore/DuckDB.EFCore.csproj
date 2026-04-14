@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <PackageVersion>1.0.1</PackageVersion>
-    <FileVersion>1.0.1</FileVersion>
-    <Version>1.0.1</Version>
+    <PackageVersion>1.0.2</PackageVersion>
+    <FileVersion>1.0.2</FileVersion>
+    <Version>1.0.2</Version>
     <Nullable>enable</Nullable>
     <Authors>Denis Ivanov</Authors>
     <Description>DuckDB provider for Entity Framework Core.</Description>
@@ -13,6 +13,43 @@
     <PackageIcon>DuckDB_icon-lightmode.png</PackageIcon>
     <NoWarn>$(NoWarn);EF1001;EF9100</NoWarn>
     <IsPackable>true</IsPackable>
+    <PackageReleaseNotes>
+- Enable `SqlQuery_with_inlined_db_parameter` test #75
+- Enable `Average_over_max_subquery` test #76
+- Enable `Alter_column_make_computed` test #77
+- Enable `Add_primary_key_with_name` test #78
+- Add array slice expression #79
+- Add DuckDBAnyExpression and related SQL expression handling #80
+- Add unnest translations #81
+- Add GrapgUpdates directory tests #82
+- Add / directory unit tests #83
+- Enable `DayNumber_subtraction` test #84
+- Enable `DayOfYear` test #85
+- Enable `Delete_with_outer_apply` test #86
+- Enable `Delete_with_cross_apply` test #87
+- Update dependency Microsoft.NET.Test.Sdk to 18.4.0 #88
+- Add row value expression #89
+- Mute tuple tests #90
+- Auto-increment #91
+- Enable `WithConstructorsDuckDBTest` tests #92
+- Enable `NorthwindSplitIncludeNoTrackingQueryDuckDBTest` tests #93
+- Enable `LazyLoadProxyDuckDBTest` tests #94
+- Enable `LoadDuckDBTest` tests #95
+- Enable `Can_query_from_one_connection_and_save_changes_to_another` test #96
+- Enable `IncludeOneToOneDuckDBTest` tests #97
+- Enable `ConferencePlannerDuckDBTest` tests #98
+- Enable `NorthwindNavigationsQueryDuckDBTest` tests #99
+- Better JSON type mapping #100
+- Add migrations support #101
+- Add code coverage #103
+- Convert sln to slnx #105
+- Publish NuGet package workflow #106
+- Enable `AdHocQueryFiltersQueryDuckDBTest` tests #107
+- Add XML documentation #108
+- Add DuckDB provider checks to DatabaseFacade and MigrationBuilder ext… #109
+- Safe Open* and Close* methods #111
+- Update dotnet monorepo to 10.0.6 #112
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,7 +61,6 @@
 
   <ItemGroup>
     <None Include="..\..\DuckDB_icon-lightmode.png" Pack="true" PackagePath="" />
-    <None Include="..\..\README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>
