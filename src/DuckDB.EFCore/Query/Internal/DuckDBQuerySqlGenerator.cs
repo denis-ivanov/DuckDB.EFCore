@@ -1,7 +1,9 @@
 ﻿using DuckDB.EFCore.Query.Expressions.Internal;
+using DuckDB.EFCore.Storage.Internal;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Diagnostics;
 using System.Linq.Expressions;
 
@@ -337,21 +339,26 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
 
     protected override Expression VisitJsonScalar(JsonScalarExpression jsonScalarExpression)
     {
-        Visit(jsonScalarExpression.Json);
-
-        // TODO: Stop producing empty JsonScalarExpressions, #30768
         var path = jsonScalarExpression.Path;
         if (path.Count == 0)
         {
+            Visit(jsonScalarExpression.Json);
             return jsonScalarExpression;
         }
+
+        var needsCast = jsonScalarExpression.TypeMapping is not (null or StringTypeMapping or DuckDBJsonTypeMapping);
+
+        if (needsCast)
+        {
+            Sql.Append("CAST(");
+        }
+
+        Visit(jsonScalarExpression.Json);
 
         var inJsonpathString = false;
 
         for (var i = 0; i < path.Count; i++)
         {
-            // Note that we don't use GenerateJsonPath() to generate the JSONPATH string here, since we take advantage of SQLite's ->> operator
-            // for JsonScalarExpression.
             var pathSegment = path[i];
             var isLast = i == path.Count - 1;
 
@@ -366,7 +373,6 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
 
                     Sql.Append(" ->> ");
 
-                    // No need to start a $. JSONPATH string if we're the last segment or the next segment isn't a constant
                     if (isLast || path[i + 1] is { ArrayIndex: not null and not SqlConstantExpression })
                     {
                         Sql.Append("'").Append(Dependencies.SqlGenerationHelper.DelimitJsonPathElement(propertyName)).Append("'");
@@ -388,7 +394,6 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
 
                     Sql.Append(" ->> ");
 
-                    // No need to start a $. JSONPATH string if we're the last segment or the next segment isn't a constant
                     if (isLast || path[i + 1] is { ArrayIndex: not null and not SqlConstantExpression })
                     {
                         Visit(arrayIndex);
@@ -432,6 +437,13 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         if (inJsonpathString)
         {
             Sql.Append("'");
+        }
+
+        if (needsCast)
+        {
+            Sql.Append(" AS ");
+            Sql.Append(jsonScalarExpression.TypeMapping!.StoreType);
+            Sql.Append(")");
         }
 
         return jsonScalarExpression;
