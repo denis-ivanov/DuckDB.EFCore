@@ -7,7 +7,8 @@ namespace DuckDB.EFCore.FunctionalTests.Query.Associations.OwnedNavigations;
 
 public class OwnedNavigationsProjectionDuckDBTest : OwnedNavigationsProjectionRelationalTestBase<OwnedNavigationsDuckDBFixture>
 {
-    public OwnedNavigationsProjectionDuckDBTest(OwnedNavigationsDuckDBFixture fixture, ITestOutputHelper testOutputHelper) : base(fixture, testOutputHelper)
+    public OwnedNavigationsProjectionDuckDBTest(OwnedNavigationsDuckDBFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture, testOutputHelper)
     {
     }
 
