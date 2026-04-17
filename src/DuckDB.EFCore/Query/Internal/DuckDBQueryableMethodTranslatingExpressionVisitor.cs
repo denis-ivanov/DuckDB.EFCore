@@ -189,29 +189,8 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         var structuralType = jsonQueryExpression.StructuralType;
         var textTypeMapping = _typeMappingSource.FindMapping(typeof(string));
 
-        // TODO: Refactor this out
-        // Calculate the table alias for the json_each expression based on the last named path segment
-        // (or the JSON column name if there are none)
         var lastNamedPathSegment = jsonQueryExpression.Path.LastOrDefault(ps => ps.PropertyName is not null);
         var tableAlias = _sqlAliasManager.GenerateTableAlias(lastNamedPathSegment.PropertyName ?? jsonQueryExpression.JsonColumn.Name);
-
-        // Handling a non-primitive JSON array is complicated on SQLite; unlike SQL Server OPENJSON and PostgreSQL jsonb_to_recordset,
-        // SQLite's json_each can only project elements of the array, and not properties within those elements. For example:
-        // SELECT value FROM json_each('[{"a":1,"b":"foo"}, {"a":2,"b":"bar"}]')
-        // This will return two rows, each with a string column representing an array element (i.e. {"a":1,"b":"foo"}). To decompose that
-        // into a and b columns, a further extraction is needed:
-        // SELECT value ->> 'a' AS a, value ->> 'b' AS b FROM json_each('[{"a":1,"b":"foo"}, {"a":2,"b":"bar"}]')
-
-        // We therefore generate a minimal subquery projecting out all the properties and navigations, wrapped by a SelectExpression
-        // containing that:
-        // SELECT ...
-        // FROM (SELECT value ->> 'a' AS a, value ->> 'b' AS b FROM json_each(<JSON column>, <path>)) AS j
-        // WHERE j.a = 8;
-
-        // Unfortunately, while the subquery projects the entity, our EntityProjectionExpression currently supports only bare
-        // ColumnExpression (the above requires JsonScalarExpression). So we hack as if the subquery projects an anonymous type instead,
-        // with a member for each JSON property that needs to be projected. We then wrap it with a SelectExpression the projects a proper
-        // EntityProjectionExpression.
 
         var jsonEachExpression = new DuckDBJsonEachExpression(tableAlias, jsonQueryExpression.JsonColumn, jsonQueryExpression.Path);
 
@@ -239,17 +218,10 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         var jsonColumn = selectExpression.CreateColumnExpression(
             jsonEachExpression, JsonEachValueColumnName, typeof(string), _typeMappingSource.FindMapping(typeof(string))); // TODO: nullable?
 
-        // First step: build a SelectExpression that will execute json_each and project all properties and navigations out, e.g.
-        // (SELECT value ->> 'a' AS a, value ->> 'b' AS b FROM json_each(c."JsonColumn", '$.Something.SomeCollection')
-
-        // We're only interested in properties which actually exist in the JSON, filter out uninteresting synthetic keys
         foreach (var property in structuralType.GetPropertiesInHierarchy())
         {
             if (property.GetJsonPropertyName() is { } jsonPropertyName)
             {
-                // HACK: currently the only way to project multiple values from a SelectExpression is to simulate a Select out to an anonymous
-                // type; this requires the MethodInfos of the anonymous type properties, from which the projection alias gets taken.
-                // So we create fake members to hold the JSON property name for the alias.
                 var projectionMember = new ProjectionMember().Append(new FakeMemberInfo(jsonPropertyName));
 
                 propertyJsonScalarExpression[projectionMember] = new JsonScalarExpression(
@@ -299,11 +271,6 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
 
         selectExpression.ReplaceProjection(propertyJsonScalarExpression);
 
-        // Second step: push the above SelectExpression down to a subquery, and project an entity projection from the outer
-        // SelectExpression, i.e.
-        // SELECT "t"."a", "t"."b"
-        // FROM (SELECT value ->> 'a' ... FROM json_each(...))
-
         selectExpression.PushdownIntoSubquery();
         var subquery = selectExpression.Tables[0];
 
@@ -335,11 +302,6 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
                     new ProjectionMember(),
                     typeof(ValueBuffer)),
                 false));
-    }
-
-    protected override ShapedQueryExpression? TranslateAll(ShapedQueryExpression source, LambdaExpression predicate)
-    {
-        return base.TranslateAll(source, predicate);
     }
 
     /// <inheritdoc />
@@ -558,9 +520,9 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
     /// <inheritdoc />
     protected override ShapedQueryExpression? TranslateCount(ShapedQueryExpression source, LambdaExpression? predicate)
     {
-        // Simplify x.Array.Count() => array_length(x.Array) instead of SELECT COUNT(*) FROM unnest(x.Array)
         if (predicate is null)
         {
+            // Simplify x.Array.Count() => array_length(x.Array) instead of SELECT COUNT(*) FROM unnest(x.Array)
             if (source.TryExtractArray(out var array, ignoreOrderings: true))
             {
                 var translation = _sqlExpressionFactory.Function(

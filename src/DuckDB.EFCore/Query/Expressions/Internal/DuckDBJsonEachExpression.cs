@@ -5,15 +5,47 @@ using System.Reflection;
 
 namespace DuckDB.EFCore.Query.Expressions.Internal;
 
+/// <summary>
+///     An expression that represents a DuckDB json_each function call in a SQL tree.
+/// </summary>
+/// <remarks>
+///     <para>
+///         See <see href="https://duckdb.org/docs/lts/data/json/json_functions#json-table-functions">json_each</see> for more information.
+///     </para>
+///     <para>
+///         This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///         the same compatibility standards as public APIs. It may be changed or removed without notice in
+///         any release. You should only use it directly in your code with extreme caution and knowing that
+///         doing so can result in application failures when updating to a new Entity Framework Core release.
+///     </para>
+/// </remarks>
 public class DuckDBJsonEachExpression : TableValuedFunctionExpression
 {
     private static ConstructorInfo? _quotingConstructor;
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual SqlExpression JsonExpression
         => Arguments[0];
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual IReadOnlyList<PathSegment>? Path { get; }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public DuckDBJsonEachExpression(
         string alias,
         SqlExpression jsonExpression,
@@ -21,6 +53,12 @@ public class DuckDBJsonEachExpression : TableValuedFunctionExpression
         : base(alias, "json_each", schema: null, builtIn: true, [jsonExpression])
         => Path = path;
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected override Expression VisitChildren(ExpressionVisitor visitor)
     {
         var visitedJsonExpression = (SqlExpression)visitor.Visit(JsonExpression);
@@ -71,6 +109,12 @@ public class DuckDBJsonEachExpression : TableValuedFunctionExpression
         return Update(visitedJsonExpression, visitedPath ?? Path);
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public virtual DuckDBJsonEachExpression Update(
         SqlExpression jsonExpression,
         IReadOnlyList<PathSegment>? path)
@@ -79,6 +123,12 @@ public class DuckDBJsonEachExpression : TableValuedFunctionExpression
                 ? this
                 : new DuckDBJsonEachExpression(Alias, jsonExpression, path);
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public override TableExpressionBase Clone(string? alias, ExpressionVisitor cloningExpressionVisitor)
     {
         var newJsonExpression = (SqlExpression)cloningExpressionVisitor.Visit(JsonExpression);
@@ -92,9 +142,21 @@ public class DuckDBJsonEachExpression : TableValuedFunctionExpression
         return clone;
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public override DuckDBJsonEachExpression WithAlias(string newAlias)
         => new(newAlias, JsonExpression, Path);
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public override Expression Quote()
         => New(
             _quotingConstructor ??= typeof(DuckDBJsonEachExpression).GetConstructor(
@@ -109,6 +171,12 @@ public class DuckDBJsonEachExpression : TableValuedFunctionExpression
                 ? Constant(null, typeof(IReadOnlyList<PathSegment>))
                 : NewArrayInit(typeof(PathSegment), Path.Select(s => s.Quote())));
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     protected override void Print(ExpressionPrinter expressionPrinter)
     {
         expressionPrinter.Append(Name);
@@ -131,6 +199,12 @@ public class DuckDBJsonEachExpression : TableValuedFunctionExpression
         expressionPrinter.Append(Alias);
     }
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public override bool Equals(object? obj)
         => ReferenceEquals(this, obj) || (obj is DuckDBJsonEachExpression jsonEachExpression && Equals(jsonEachExpression));
 
@@ -139,6 +213,12 @@ public class DuckDBJsonEachExpression : TableValuedFunctionExpression
             && (ReferenceEquals(Path, other.Path)
                 || (Path is not null && other.Path is not null && Path.SequenceEqual(other.Path)));
 
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
     public override int GetHashCode()
         => base.GetHashCode();
 }
