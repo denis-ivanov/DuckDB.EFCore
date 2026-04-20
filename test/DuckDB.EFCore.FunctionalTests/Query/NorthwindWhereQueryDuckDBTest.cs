@@ -7,16 +7,11 @@ namespace DuckDB.EFCore.FunctionalTests.Query;
 
 public class NorthwindWhereQueryDuckDBTest : NorthwindWhereQueryRelationalTestBase<NorthwindQueryDuckDBFixture<NoopModelCustomizer>>
 {
-    public NorthwindWhereQueryDuckDBTest(NorthwindQueryDuckDBFixture<NoopModelCustomizer> fixture, ITestOutputHelper testOutputHelper) : base(fixture)
+    public NorthwindWhereQueryDuckDBTest(NorthwindQueryDuckDBFixture<NoopModelCustomizer> fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
     {
         Fixture.TestSqlLoggerFactory.Clear();
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Where_array_of_object_contains_over_value_type(bool async)
-    {
-        return base.Where_array_of_object_contains_over_value_type(async);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
