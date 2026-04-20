@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestUtilities;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace DuckDB.EFCore.FunctionalTests.Query;
@@ -12,12 +11,6 @@ public class NorthwindWhereQueryDuckDBTest : NorthwindWhereQueryRelationalTestBa
     {
         Fixture.TestSqlLoggerFactory.Clear();
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Where_list_object_contains_over_value_type(bool async)
-    {
-        return base.Where_list_object_contains_over_value_type(async);
     }
 
     public override async Task Where_compare_constructed_equal(bool async)
