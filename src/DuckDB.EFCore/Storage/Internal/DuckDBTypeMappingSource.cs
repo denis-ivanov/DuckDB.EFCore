@@ -141,7 +141,21 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         Type? modelType,
         Type? providerType,
         CoreTypeMapping? elementMapping)
-        => FindCollectionMapping(info.StoreTypeName, modelType, providerType, elementMapping);
+    {
+        var result = FindCollectionMapping(info.StoreTypeName, modelType, providerType, elementMapping);
+
+        if (result is null && modelType is not null)
+        {
+            var elemType = modelType.TryGetElementType(typeof(IEnumerable<>)) ?? modelType.GetElementType();
+
+            if (elemType == typeof(object))
+            {
+                return base.FindCollectionMapping(info, modelType, providerType, elementMapping);
+            }
+        }
+
+        return result;
+    }
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -184,6 +198,11 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
                 }
 
                 Debug.Assert(elementType is not null, "elementClrType is null");
+
+                if (elementType == typeof(object))
+                {
+                    return null;
+                }
 
                 var relationalElementMapping = elementMapping as RelationalTypeMapping ?? FindMapping(elementType);
                 if (relationalElementMapping is not { ElementTypeMapping: null })
