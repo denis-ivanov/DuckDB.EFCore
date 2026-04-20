@@ -11,6 +11,7 @@
     <Description>DuckDB provider for Entity Framework Core.</Description>
     <PackageTags>DuckDB; Entity Framework Core; EF Core</PackageTags>
     <PackageIcon>DuckDB_icon-lightmode.png</PackageIcon>
+    <RepositoryUrl>https://github.com/denis-ivanov/DuckDB.EFCore</RepositoryUrl>
     <NoWarn>$(NoWarn);EF1001;EF9100</NoWarn>
     <IsPackable>true</IsPackable>
     <PackageReleaseNotes>

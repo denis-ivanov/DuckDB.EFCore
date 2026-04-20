@@ -11,60 +11,6 @@ public class ComplexJsonBulkUpdateDuckDBTest : ComplexJsonBulkUpdateRelationalTe
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_associate_to_another_associate()
-    {
-        return base.Update_associate_to_another_associate();
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_associate_to_inline()
-    {
-        return base.Update_associate_to_inline();
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_associate_to_inline_with_lambda()
-    {
-        return base.Update_associate_to_inline_with_lambda();
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_associate_to_null()
-    {
-        return base.Update_associate_to_null();
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_associate_to_null_parameter()
-    {
-        return base.Update_associate_to_null_parameter();
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_associate_to_null_with_lambda()
-    {
-        return base.Update_associate_to_null_with_lambda();
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_associate_to_parameter()
-    {
-        return base.Update_associate_to_parameter();
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_associate_with_null_required_property()
-    {
-        return base.Update_associate_with_null_required_property();
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_collection_to_parameter()
-    {
-        return base.Update_collection_to_parameter();
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Update_inside_primitive_collection()
     {
         return base.Update_inside_primitive_collection();

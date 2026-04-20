@@ -1,9 +1,12 @@
 ﻿using DuckDB.EFCore.Query.Expressions.Internal;
+using DuckDB.EFCore.Storage.Internal;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace DuckDB.EFCore.Query.Internal;
@@ -42,6 +45,13 @@ public class DuckDBTypeMappingPostprocessor : RelationalTypeMappingPostprocessor
     {
         switch (expression)
         {
+            case DuckDBJsonEachExpression jsonEachExpression
+                when TryGetInferredTypeMapping(
+                    jsonEachExpression.Alias,
+                    DuckDBQueryableMethodTranslatingExpressionVisitor.JsonEachValueColumnName,
+                    out var typeMapping):
+                return ApplyTypeMappingsOnJsonEachExpression(jsonEachExpression, typeMapping);
+
             case DuckDBUnnestExpression unnestExpression
                 when TryGetInferredTypeMapping(unnestExpression.Alias, unnestExpression.ColumnName, out var elementTypeMapping):
                 {
@@ -59,5 +69,27 @@ public class DuckDBTypeMappingPostprocessor : RelationalTypeMappingPostprocessor
             default:
                 return base.VisitExtension(expression);
         }
+    }
+
+    protected virtual DuckDBJsonEachExpression ApplyTypeMappingsOnJsonEachExpression(
+        DuckDBJsonEachExpression jsonEachExpression,
+        RelationalTypeMapping inferredTypeMapping)
+    {
+        if (jsonEachExpression.Arguments[0] is not SqlParameterExpression parameterExpression)
+        {
+            return jsonEachExpression;
+        }
+
+        if (_typeMappingSource.FindMapping(parameterExpression.Type, _model, inferredTypeMapping) is not DuckDBStringTypeMapping
+            parameterTypeMapping)
+        {
+            throw new InvalidOperationException("Type mapping for 'string' could not be found or was not a DuckDBStringTypeMapping");
+        }
+
+        Debug.Assert(parameterTypeMapping.ElementTypeMapping != null, "Collection type mapping missing element mapping.");
+
+        return jsonEachExpression.Update(
+            parameterExpression.ApplyTypeMapping(parameterTypeMapping),
+            jsonEachExpression.Path);
     }
 }
