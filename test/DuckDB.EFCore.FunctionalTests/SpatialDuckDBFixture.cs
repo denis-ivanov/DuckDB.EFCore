@@ -1,12 +1,10 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using DuckDB.EFCore.Infrastructure;
+﻿using DuckDB.EFCore.Infrastructure;
 using DuckDB.EFCore.NTS.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.TestModels.SpatialModel;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class SpatialDuckDBFixture  : SpatialFixtureBase
 {

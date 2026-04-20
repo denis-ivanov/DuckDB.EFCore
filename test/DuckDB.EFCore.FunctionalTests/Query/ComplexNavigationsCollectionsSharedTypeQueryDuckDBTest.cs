@@ -1,7 +1,6 @@
-using Microsoft.EntityFrameworkCore.Query;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class ComplexNavigationsCollectionsSharedTypeQueryDuckDBTest : ComplexNavigationsCollectionsSharedTypeQueryRelationalTestBase<ComplexNavigationsSharedTypeQueryDuckDBFixture>
 {

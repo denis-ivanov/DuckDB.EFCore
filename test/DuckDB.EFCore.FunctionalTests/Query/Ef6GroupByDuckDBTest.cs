@@ -1,9 +1,7 @@
-using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class Ef6GroupByDuckDBTest : Ef6GroupByTestBase<Ef6GroupByDuckDBTest.Ef6GroupByDuckDBFixture>
 {

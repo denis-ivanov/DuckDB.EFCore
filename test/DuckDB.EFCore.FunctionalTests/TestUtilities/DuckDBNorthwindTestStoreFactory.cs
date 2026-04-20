@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.TestUtilities;
-
-namespace DuckDB.EFCore.FunctionalTests.TestUtilities;
+﻿namespace Microsoft.EntityFrameworkCore.TestUtilities;
 
 public class DuckDBNorthwindTestStoreFactory : DuckDBTestStoreFactory
 {

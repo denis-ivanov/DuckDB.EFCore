@@ -1,8 +1,6 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore.Query.Associations.ComplexTableSplitting;
-using Microsoft.EntityFrameworkCore.TestUtilities;
+﻿using Microsoft.EntityFrameworkCore.TestUtilities;
 
-namespace DuckDB.EFCore.FunctionalTests.Query.Associations.ComplexTableSplitting;
+namespace Microsoft.EntityFrameworkCore.Query.Associations.ComplexTableSplitting;
 
 public class ComplexTableSplittingDuckDBFixture : ComplexTableSplittingRelationalFixtureBase
 {

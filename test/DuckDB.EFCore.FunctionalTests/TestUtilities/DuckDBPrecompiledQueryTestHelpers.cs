@@ -1,9 +1,8 @@
 ﻿using DuckDB.EFCore.Infrastructure.Internal;
 using Microsoft.CodeAnalysis;
-using Microsoft.EntityFrameworkCore.TestUtilities;
 using System.Reflection;
 
-namespace DuckDB.EFCore.FunctionalTests.TestUtilities;
+namespace Microsoft.EntityFrameworkCore.TestUtilities;
 
 public class DuckDBPrecompiledQueryTestHelpers : PrecompiledQueryTestHelpers
 {

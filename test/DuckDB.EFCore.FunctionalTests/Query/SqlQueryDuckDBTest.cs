@@ -1,11 +1,10 @@
 ﻿using DuckDB.NET.Data;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using System.Data.Common;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class SqlQueryDuckDBTest : SqlQueryTestBase<NorthwindQueryDuckDBFixture<NoopModelCustomizer>>
 {

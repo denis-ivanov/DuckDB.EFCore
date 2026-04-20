@@ -1,8 +1,7 @@
 ﻿using DuckDB.EFCore.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class ModelBuilding101DuckDBTest : ModelBuilding101RelationalTestBase
 {

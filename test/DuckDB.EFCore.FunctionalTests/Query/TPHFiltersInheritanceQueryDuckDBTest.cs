@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
-using Xunit;
+﻿using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class TPHFiltersInheritanceQueryDuckDBTest : FiltersInheritanceQueryTestBase<TPHFiltersInheritanceQueryDuckDBFixture>
 {

@@ -1,9 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Associations.Navigations;
-using Xunit;
+﻿using Xunit;
 using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.Query.Associations.Navigations;
+namespace Microsoft.EntityFrameworkCore.Query.Associations.Navigations;
 
 public class NavigationsProjectionDuckDBTest : NavigationsProjectionRelationalTestBase<NavigationsDuckDBFixture>
 {

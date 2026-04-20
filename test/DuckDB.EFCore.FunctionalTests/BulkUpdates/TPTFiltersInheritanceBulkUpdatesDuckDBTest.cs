@@ -1,8 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.BulkUpdates;
-using Xunit;
+﻿using Xunit;
 using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.BulkUpdates;
+namespace Microsoft.EntityFrameworkCore.BulkUpdates;
 
 public class TPTFiltersInheritanceBulkUpdatesDuckDBTest : TPTFiltersInheritanceBulkUpdatesTestBase<TPTFiltersInheritanceBulkUpdatesDuckDBFixture>
 {

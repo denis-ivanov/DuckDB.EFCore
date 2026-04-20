@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.TestModels.Northwind;
-
-namespace DuckDB.EFCore.FunctionalTests.TestModels.Northwind;
+﻿namespace Microsoft.EntityFrameworkCore.TestModels.Northwind;
 
 public class NorthwindDuckDBContext(DbContextOptions options) : NorthwindRelationalContext(options)
 {

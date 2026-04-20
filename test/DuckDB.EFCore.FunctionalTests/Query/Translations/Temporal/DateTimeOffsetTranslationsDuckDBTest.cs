@@ -1,8 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Query.Translations.Temporal;
-using Xunit;
+﻿using Xunit;
 using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.Query.Translations.Temporal;
+namespace Microsoft.EntityFrameworkCore.Query.Translations.Temporal;
 
 public class DateTimeOffsetTranslationsDuckDBTest : DateTimeOffsetTranslationsTestBase<BasicTypesQueryDuckDBFixture>
 {

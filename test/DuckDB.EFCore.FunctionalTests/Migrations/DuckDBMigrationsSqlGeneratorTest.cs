@@ -1,13 +1,11 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using DuckDB.EFCore.Infrastructure;
+﻿using DuckDB.EFCore.Infrastructure;
 using DuckDB.EFCore.NTS.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Migrations;
+namespace Microsoft.EntityFrameworkCore.Migrations;
 
 public class DuckDBMigrationsSqlGeneratorTest : MigrationsSqlGeneratorTestBase
 {

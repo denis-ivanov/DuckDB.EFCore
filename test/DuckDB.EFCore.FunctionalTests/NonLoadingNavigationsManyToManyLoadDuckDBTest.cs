@@ -1,12 +1,10 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.TestModels.ManyToManyModel;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore.TestModels.ManyToManyModel;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class NonLoadingNavigationsManyToManyLoadDuckDBTest : ManyToManyLoadTestBase<NonLoadingNavigationsManyToManyLoadDuckDBTest.NonLoadingNavigationsManyToManyLoadDuckDBFixture>
 {

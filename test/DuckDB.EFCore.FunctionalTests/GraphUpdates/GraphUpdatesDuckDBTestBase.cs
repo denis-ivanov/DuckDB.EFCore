@@ -1,10 +1,8 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 
-namespace DuckDB.EFCore.FunctionalTests.GraphUpdates;
+namespace Microsoft.EntityFrameworkCore.GraphUpdates;
 
 public abstract class GraphUpdatesDuckDBTestBase<TFixture> : GraphUpdatesTestBase<TFixture>
     where TFixture : GraphUpdatesDuckDBTestBase<TFixture>.GraphUpdatesDuckDBFixtureBase, new()

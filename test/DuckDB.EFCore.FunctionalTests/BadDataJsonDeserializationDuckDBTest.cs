@@ -1,9 +1,8 @@
 ﻿using DuckDB.EFCore.Extensions;
 using DuckDB.EFCore.NTS.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class BadDataJsonDeserializationDuckDBTest : BadDataJsonDeserializationTestBase
 {

@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Query.Translations;
-using Xunit;
-using Xunit.Abstractions;
+﻿using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.Query.Translations;
+namespace Microsoft.EntityFrameworkCore.Query.Translations;
 
 public class GuidTranslationsDuckDBTest : GuidTranslationsTestBase<BasicTypesQueryDuckDBFixture>
 {

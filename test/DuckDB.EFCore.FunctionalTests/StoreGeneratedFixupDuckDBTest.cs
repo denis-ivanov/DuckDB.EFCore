@@ -1,14 +1,11 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
-public class StoreGeneratedFixupDuckDBTest : StoreGeneratedFixupRelationalTestBase<
-    StoreGeneratedFixupDuckDBTest.StoreGeneratedFixupDuckDBFixture>
+public class StoreGeneratedFixupDuckDBTest : StoreGeneratedFixupRelationalTestBase<StoreGeneratedFixupDuckDBTest.StoreGeneratedFixupDuckDBFixture>
 {
     public StoreGeneratedFixupDuckDBTest(StoreGeneratedFixupDuckDBFixture fixture) : base(fixture)
     {

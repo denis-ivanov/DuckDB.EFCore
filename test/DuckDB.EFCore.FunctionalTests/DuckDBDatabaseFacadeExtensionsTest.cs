@@ -1,9 +1,8 @@
 ﻿using DuckDB.EFCore.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class DuckDBDatabaseFacadeExtensionsTest
 {

@@ -1,4 +1,4 @@
-﻿namespace DuckDB.EFCore.FunctionalTests;
+﻿namespace Microsoft.EntityFrameworkCore;
 
 internal static class DuckDBSkipReasons
 {

@@ -1,4 +1,4 @@
-﻿namespace DuckDB.EFCore.FunctionalTests.Query;
+﻿namespace Microsoft.EntityFrameworkCore.Query;
 
 public class IncompleteMappingInheritanceQueryDuckDBFixture : TPHInheritanceQueryDuckDBFixture
 {

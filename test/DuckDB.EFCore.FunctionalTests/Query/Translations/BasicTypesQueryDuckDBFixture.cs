@@ -1,11 +1,9 @@
 ﻿using AwesomeAssertions;
-using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore.Query.Translations;
 using Microsoft.EntityFrameworkCore.TestModels.BasicTypesModel;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Query.Translations;
+namespace Microsoft.EntityFrameworkCore.Query.Translations;
 
 public class BasicTypesQueryDuckDBFixture : BasicTypesQueryFixtureBase, ITestSqlLoggerFactory
 {

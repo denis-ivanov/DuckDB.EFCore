@@ -1,9 +1,8 @@
 ﻿using DuckDB.EFCore.Extensions;
 using DuckDB.EFCore.NTS.Extensions;
-using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DuckDB.EFCore.FunctionalTests.TestUtilities;
+namespace Microsoft.EntityFrameworkCore.TestUtilities;
 
 public class DuckDBTestStoreFactory : RelationalTestStoreFactory
 {

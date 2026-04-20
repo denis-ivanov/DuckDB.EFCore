@@ -1,10 +1,8 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.TestUtilities;
+﻿using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class ComplexTypesTrackingDuckDBTest : ComplexTypesTrackingRelationalTestBase<ComplexTypesTrackingDuckDBTest.DuckDBFixture>
 {

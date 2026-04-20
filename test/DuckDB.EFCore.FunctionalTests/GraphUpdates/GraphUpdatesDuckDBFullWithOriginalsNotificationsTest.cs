@@ -1,10 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.GraphUpdates;
+namespace Microsoft.EntityFrameworkCore.GraphUpdates;
 
 public class GraphUpdatesDuckDBFullWithOriginalsNotificationsTest : GraphUpdatesDuckDBTestBase<GraphUpdatesDuckDBFullWithOriginalsNotificationsTest.DuckDBFixture>
 {

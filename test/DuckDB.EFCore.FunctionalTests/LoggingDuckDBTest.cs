@@ -2,13 +2,12 @@
 using DuckDB.EFCore.Extensions;
 using DuckDB.EFCore.Infrastructure;
 using DuckDB.EFCore.Infrastructure.Internal;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class LoggingDuckDBTest : LoggingRelationalTestBase<DuckDBDbContextOptionsBuilder, DuckDBOptionsExtension>
 {

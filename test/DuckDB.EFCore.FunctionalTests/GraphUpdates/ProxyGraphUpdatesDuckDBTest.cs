@@ -1,13 +1,11 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.GraphUpdates;
+namespace Microsoft.EntityFrameworkCore.GraphUpdates;
 
 public class ProxyGraphUpdatesDuckDBTest
 {

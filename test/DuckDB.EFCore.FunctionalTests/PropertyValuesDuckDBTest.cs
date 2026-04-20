@@ -1,10 +1,8 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 // TODO
 public abstract class PropertyValuesDuckDBTest : PropertyValuesRelationalTestBase<PropertyValuesDuckDBTest.PropertyValuesDuckDBFixture>

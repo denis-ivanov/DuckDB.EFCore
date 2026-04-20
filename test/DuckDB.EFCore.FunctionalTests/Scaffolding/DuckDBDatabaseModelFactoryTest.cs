@@ -1,9 +1,7 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.TestUtilities;
+﻿using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Scaffolding;
+namespace Microsoft.EntityFrameworkCore.Scaffolding;
 
 public class DuckDBDatabaseModelFactoryTest : IClassFixture<DuckDBDatabaseModelFactoryTest.DuckDBDatabaseModelFixture>
 {

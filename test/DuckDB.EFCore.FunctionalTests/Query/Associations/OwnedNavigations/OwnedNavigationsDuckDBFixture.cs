@@ -1,8 +1,6 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore.Query.Associations.OwnedNavigations;
-using Microsoft.EntityFrameworkCore.TestUtilities;
+﻿using Microsoft.EntityFrameworkCore.TestUtilities;
 
-namespace DuckDB.EFCore.FunctionalTests.Query.Associations.OwnedNavigations;
+namespace Microsoft.EntityFrameworkCore.Query.Associations.OwnedNavigations;
 
 public class OwnedNavigationsDuckDBFixture : OwnedNavigationsRelationalFixtureBase
 {

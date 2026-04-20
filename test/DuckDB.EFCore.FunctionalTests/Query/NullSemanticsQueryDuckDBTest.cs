@@ -1,10 +1,8 @@
 ﻿using DuckDB.EFCore.Infrastructure;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestModels.NullSemanticsModel;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class NullSemanticsQueryDuckDBTest : NullSemanticsQueryTestBase<NullSemanticsQueryDuckDBFixture>
 {

@@ -1,10 +1,8 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestModels.Northwind;
-using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore.BulkUpdates;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.TestModels.Northwind;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 
-namespace DuckDB.EFCore.FunctionalTests.BulkUpdates;
+namespace Microsoft.EntityFrameworkCore.BulkUpdates;
 
 public class NorthwindBulkUpdatesDuckDBFixture<TModelCustomizer> : NorthwindBulkUpdatesRelationalFixture<TModelCustomizer>
     where TModelCustomizer : ITestModelCustomizer, new()

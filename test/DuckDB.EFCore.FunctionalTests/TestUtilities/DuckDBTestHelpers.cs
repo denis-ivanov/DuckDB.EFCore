@@ -1,12 +1,10 @@
 ﻿using DuckDB.EFCore.Diagnostics.Internal;
 using DuckDB.EFCore.Extensions;
 using DuckDB.NET.Data;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DuckDB.EFCore.FunctionalTests.TestUtilities;
+namespace Microsoft.EntityFrameworkCore.TestUtilities;
 
 public class DuckDBTestHelpers : RelationalTestHelpers
 {

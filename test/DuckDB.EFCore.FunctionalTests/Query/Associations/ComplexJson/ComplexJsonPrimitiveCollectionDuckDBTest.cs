@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Query.Associations.ComplexJson;
-using Xunit.Abstractions;
+﻿using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.Query.Associations.ComplexJson;
+namespace Microsoft.EntityFrameworkCore.Query.Associations.ComplexJson;
 
 public class ComplexJsonPrimitiveCollectionDuckDBTest: ComplexJsonPrimitiveCollectionRelationalTestBase<ComplexJsonDuckDBFixture>
 {
