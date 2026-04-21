@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.BulkUpdates;
+﻿using DuckDB.EFCore.FunctionalTests;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.BulkUpdates;
+namespace Microsoft.EntityFrameworkCore.BulkUpdates;
 
 public class NorthwindBulkUpdatesDuckDBTest : NorthwindBulkUpdatesRelationalTestBase<NorthwindBulkUpdatesDuckDBFixture<NoopModelCustomizer>>
 {

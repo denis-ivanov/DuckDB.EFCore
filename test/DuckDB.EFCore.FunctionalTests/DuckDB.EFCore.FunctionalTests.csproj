@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <IsPackable>false</IsPackable>
+    <AssemblyName>DuckDB.EFCore.FunctionalTests</AssemblyName>
+    <RootNamespace>Microsoft.EntityFrameworkCore</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
