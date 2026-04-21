@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.BulkUpdates;
+﻿using DuckDB.EFCore.FunctionalTests;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.BulkUpdates;
+namespace Microsoft.EntityFrameworkCore.BulkUpdates;
 
 public class TPTInheritanceBulkUpdatesDuckDBTest : TPTInheritanceBulkUpdatesTestBase<TPTInheritanceBulkUpdatesDuckDBFixture>
 {

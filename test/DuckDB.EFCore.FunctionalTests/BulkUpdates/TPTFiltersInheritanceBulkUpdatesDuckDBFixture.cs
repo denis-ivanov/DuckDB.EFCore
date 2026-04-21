@@ -1,4 +1,4 @@
-﻿namespace DuckDB.EFCore.FunctionalTests.BulkUpdates;
+﻿namespace Microsoft.EntityFrameworkCore.BulkUpdates;
 
 public class TPTFiltersInheritanceBulkUpdatesDuckDBFixture : TPTInheritanceBulkUpdatesDuckDBFixture
 {
