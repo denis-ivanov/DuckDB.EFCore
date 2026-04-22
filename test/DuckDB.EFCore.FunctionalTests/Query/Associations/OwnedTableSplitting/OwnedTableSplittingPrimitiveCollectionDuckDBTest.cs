@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Query.Associations.OwnedTableSplitting;
+﻿using DuckDB.EFCore.FunctionalTests;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.Query.Associations.OwnedTableSplitting;
+namespace Microsoft.EntityFrameworkCore.Query.Associations.OwnedTableSplitting;
 
 public class OwnedTableSplittingPrimitiveCollectionDuckDBTest : OwnedTableSplittingPrimitiveCollectionRelationalTestBase<OwnedTableSplittingDuckDBFixture>
 {

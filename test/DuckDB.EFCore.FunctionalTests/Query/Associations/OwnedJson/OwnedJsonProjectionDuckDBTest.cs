@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Associations.OwnedJson;
+﻿using DuckDB.EFCore.FunctionalTests;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.Query.Associations.OwnedJson;
+namespace Microsoft.EntityFrameworkCore.Query.Associations.OwnedJson;
 
 public class OwnedJsonProjectionDuckDBTest: OwnedJsonProjectionRelationalTestBase<OwnedJsonDuckDBFixture>
 {

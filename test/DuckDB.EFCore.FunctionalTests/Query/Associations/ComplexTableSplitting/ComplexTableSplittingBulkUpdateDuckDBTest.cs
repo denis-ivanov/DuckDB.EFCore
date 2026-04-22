@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Query.Associations.ComplexTableSplitting;
+﻿using DuckDB.EFCore.FunctionalTests;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.Query.Associations.ComplexTableSplitting;
+namespace Microsoft.EntityFrameworkCore.Query.Associations.ComplexTableSplitting;
 
 public class ComplexTableSplittingBulkUpdateDuckDBTest: ComplexTableSplittingBulkUpdateRelationalTestBase<ComplexTableSplittingDuckDBFixture>
 {
