@@ -1,8 +1,7 @@
 ﻿using DuckDB.EFCore.Extensions;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Migrations;
+namespace Microsoft.EntityFrameworkCore.Migrations;
 
 public class DuckDBMigrationBuilderTest
 {

@@ -1,15 +1,14 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
+﻿using DuckDB.EFCore.FunctionalTests;
+using DuckDB.EFCore.FunctionalTests.TestUtilities;
 using DuckDB.EFCore.Scaffolding.Internal;
 using DuckDB.NET.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Scaffolding;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.Migrations;
+namespace Microsoft.EntityFrameworkCore.Migrations;
 
 public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.MigrationsDuckDBFixture>
 {
