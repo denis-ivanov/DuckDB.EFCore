@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Query.Translations.Operators;
-using Xunit.Abstractions;
+﻿using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.Query.Translations.Operators;
+namespace Microsoft.EntityFrameworkCore.Query.Translations.Operators;
 
 public class MiscellaneousOperatorTranslationsDuckDBTest : MiscellaneousOperatorTranslationsTestBase<BasicTypesQueryDuckDBFixture>
 {
