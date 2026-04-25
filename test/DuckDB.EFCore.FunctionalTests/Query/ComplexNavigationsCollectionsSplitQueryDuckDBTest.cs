@@ -53,12 +53,6 @@ public class ComplexNavigationsCollectionsSplitQueryDuckDBTest : ComplexNavigati
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Complex_query_issue_21665(bool async)
-    {
-        return base.Complex_query_issue_21665(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Skip_Take_on_grouping_element_inside_collection_projection(bool async)
     {
         return base.Skip_Take_on_grouping_element_inside_collection_projection(async);

@@ -11,12 +11,6 @@ public class ComplexNavigationsCollectionsQueryDuckDBTest : ComplexNavigationsCo
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Complex_query_issue_21665(bool async)
-    {
-        return base.Complex_query_issue_21665(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Complex_query_with_let_collection_projection_FirstOrDefault(bool async)
     {
         return base.Complex_query_with_let_collection_projection_FirstOrDefault(async);
