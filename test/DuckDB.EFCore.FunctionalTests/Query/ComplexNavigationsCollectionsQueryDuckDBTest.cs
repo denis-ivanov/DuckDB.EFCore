@@ -161,12 +161,6 @@ public class ComplexNavigationsCollectionsQueryDuckDBTest : ComplexNavigationsCo
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Skip_Take_Select_collection_Skip_Take(bool async)
-    {
-        return base.Skip_Take_Select_collection_Skip_Take(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Projecting_collection_with_group_by_after_optional_reference_correlated_with_parent(bool async)
     {
         return base.Projecting_collection_with_group_by_after_optional_reference_correlated_with_parent(async);
