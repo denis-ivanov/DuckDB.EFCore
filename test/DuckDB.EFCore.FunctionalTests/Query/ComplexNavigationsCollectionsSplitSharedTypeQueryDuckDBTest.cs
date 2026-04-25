@@ -1,7 +1,8 @@
-using Microsoft.EntityFrameworkCore.Query;
+using DuckDB.EFCore.FunctionalTests;
+using DuckDB.EFCore.FunctionalTests.Query;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class ComplexNavigationsCollectionsSplitSharedTypeQueryDuckDBTest : ComplexNavigationsCollectionsSplitSharedTypeQueryRelationalTestBase<ComplexNavigationsSharedTypeQueryDuckDBFixture>
 {
@@ -91,12 +92,6 @@ public class ComplexNavigationsCollectionsSplitSharedTypeQueryDuckDBTest : Compl
     public override Task Skip_Take_on_grouping_element_with_reference_include(bool async)
     {
         return base.Skip_Take_on_grouping_element_with_reference_include(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Take_Select_collection_Take(bool async)
-    {
-        return base.Take_Select_collection_Take(async);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
