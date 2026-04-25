@@ -89,12 +89,6 @@ public class ComplexNavigationsCollectionsSplitQueryDuckDBTest : ComplexNavigati
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Skip_Take_Select_collection_Skip_Take(bool async)
-    {
-        return base.Skip_Take_Select_collection_Skip_Take(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task SelectMany_DefaultIfEmpty_multiple_times_with_joins_projecting_a_collection(bool async)
     {
         return base.SelectMany_DefaultIfEmpty_multiple_times_with_joins_projecting_a_collection(async);

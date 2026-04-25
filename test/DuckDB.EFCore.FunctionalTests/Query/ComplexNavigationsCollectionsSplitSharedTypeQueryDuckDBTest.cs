@@ -17,12 +17,6 @@ public class ComplexNavigationsCollectionsSplitSharedTypeQueryDuckDBTest : Compl
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Skip_Take_Select_collection_Skip_Take(bool async)
-    {
-        return base.Skip_Take_Select_collection_Skip_Take(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Filtered_include_multiple_multi_level_includes_with_first_level_using_filter_include_on_one_of_the_chains_only(bool async)
     {
         return base.Filtered_include_multiple_multi_level_includes_with_first_level_using_filter_include_on_one_of_the_chains_only(async);
