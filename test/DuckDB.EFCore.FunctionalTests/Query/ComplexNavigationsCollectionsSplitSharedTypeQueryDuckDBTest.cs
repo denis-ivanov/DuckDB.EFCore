@@ -41,12 +41,6 @@ public class ComplexNavigationsCollectionsSplitSharedTypeQueryDuckDBTest : Compl
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Complex_query_with_let_collection_projection_FirstOrDefault(bool async)
-    {
-        return base.Complex_query_with_let_collection_projection_FirstOrDefault(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Projecting_collection_with_group_by_after_optional_reference_correlated_with_parent(bool async)
     {
         return base.Projecting_collection_with_group_by_after_optional_reference_correlated_with_parent(async);
@@ -68,12 +62,6 @@ public class ComplexNavigationsCollectionsSplitSharedTypeQueryDuckDBTest : Compl
     public override Task Filtered_include_Skip_Take_with_another_Skip_Take_on_top_level(bool async)
     {
         return base.Filtered_include_Skip_Take_with_another_Skip_Take_on_top_level(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Complex_query_with_let_collection_projection_FirstOrDefault_with_ToList_on_inner_and_outer(bool async)
-    {
-        return base.Complex_query_with_let_collection_projection_FirstOrDefault_with_ToList_on_inner_and_outer(async);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]

@@ -11,18 +11,6 @@ public class ComplexNavigationsCollectionsSplitQueryDuckDBTest : ComplexNavigati
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Complex_query_with_let_collection_projection_FirstOrDefault_with_ToList_on_inner_and_outer(bool async)
-    {
-        return base.Complex_query_with_let_collection_projection_FirstOrDefault_with_ToList_on_inner_and_outer(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Complex_query_with_let_collection_projection_FirstOrDefault(bool async)
-    {
-        return base.Complex_query_with_let_collection_projection_FirstOrDefault(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Filtered_include_outer_parameter_used_inside_filter(bool async)
     {
         return base.Filtered_include_outer_parameter_used_inside_filter(async);
