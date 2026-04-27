@@ -445,10 +445,10 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         Assert.Equal("Not implemented Error: No support for that ALTER TABLE option yet!", exception.Message);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Move_sequence()
+    public override async Task Move_sequence()
     {
-        return base.Move_sequence();
+        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Move_sequence());
+        Assert.Equal("Not implemented Error: T_AlterObjectSchemaStmt", exception.Message);  
     }
 
     public override async Task Move_table()
@@ -475,10 +475,10 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         return base.Rename_index();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Rename_sequence()
+    public override async Task Rename_sequence()
     {
-        return base.Rename_sequence();
+        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Rename_sequence());
+        Assert.Equal("Not implemented Error: Schema element not supported yet!", exception.Message);
     }
 
     public override async Task Rename_table()
