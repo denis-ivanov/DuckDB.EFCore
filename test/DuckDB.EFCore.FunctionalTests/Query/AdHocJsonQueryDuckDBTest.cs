@@ -1,10 +1,9 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
+﻿using DuckDB.EFCore.FunctionalTests;
+using DuckDB.EFCore.FunctionalTests.TestUtilities;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class AdHocJsonQueryDuckDBTest : AdHocJsonQueryRelationalTestBase
 {
@@ -71,12 +70,6 @@ public class AdHocJsonQueryDuckDBTest : AdHocJsonQueryRelationalTestBase
     public override Task Entity_splitting_with_owned_json()
     {
         return base.Entity_splitting_with_owned_json();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task HasJsonPropertyName()
-    {
-        return base.HasJsonPropertyName();
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
