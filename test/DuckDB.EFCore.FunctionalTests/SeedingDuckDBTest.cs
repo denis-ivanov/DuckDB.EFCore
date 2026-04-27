@@ -1,19 +1,11 @@
 ﻿using DuckDB.EFCore.Extensions;
 using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.TestUtilities;
-using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class SeedingDuckDBTest : SeedingTestBase
 {
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Seeding_does_not_leave_context_contaminated(bool async)
-    {
-        await base.Seeding_does_not_leave_context_contaminated(async);
-    }
-
     protected override TestStore TestStore
         => DuckDBTestStore.Create("SeedingTest");
 

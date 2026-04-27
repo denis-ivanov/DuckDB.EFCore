@@ -1,11 +1,11 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
+﻿using DuckDB.EFCore.FunctionalTests;
+using DuckDB.EFCore.FunctionalTests.TestUtilities;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class StoreGeneratedFixupDuckDBTest : StoreGeneratedFixupRelationalTestBase<
     StoreGeneratedFixupDuckDBTest.StoreGeneratedFixupDuckDBFixture>
@@ -477,18 +477,6 @@ public class StoreGeneratedFixupDuckDBTest : StoreGeneratedFixupRelationalTestBa
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_dependent_but_not_principal_one_to_many_dep_uni_FK_set_dependent_nav_set()
-    {
-        await base.Add_dependent_but_not_principal_one_to_many_dep_uni_FK_set_dependent_nav_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_dependent_but_not_principal_one_to_many_dep_uni_FK_not_set_dependent_nav_set()
-    {
-        await base.Add_dependent_but_not_principal_one_to_many_dep_uni_FK_not_set_dependent_nav_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Add_principal_but_not_dependent_one_to_many_dep_uni_FK_set_no_navs_set()
     {
         await base.Add_principal_but_not_dependent_one_to_many_dep_uni_FK_set_no_navs_set();
@@ -573,45 +561,9 @@ public class StoreGeneratedFixupDuckDBTest : StoreGeneratedFixupRelationalTestBa
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_principal_but_not_dependent_one_to_one_FK_set_no_navs_set()
-    {
-        await base.Add_principal_but_not_dependent_one_to_one_FK_set_no_navs_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_principal_but_not_dependent_one_to_one_FK_set_principal_nav_set()
-    {
-        await base.Add_principal_but_not_dependent_one_to_one_FK_set_principal_nav_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_principal_but_not_dependent_one_to_one_FK_set_dependent_nav_set()
-    {
-        await base.Add_principal_but_not_dependent_one_to_one_FK_set_dependent_nav_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_principal_but_not_dependent_one_to_one_FK_not_set_principal_nav_set()
-    {
-        await base.Add_principal_but_not_dependent_one_to_one_FK_not_set_principal_nav_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_principal_but_not_dependent_one_to_one_FK_not_set_dependent_nav_set()
-    {
-        await base.Add_principal_but_not_dependent_one_to_one_FK_not_set_dependent_nav_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Add_dependent_but_not_principal_one_to_one_prin_uni_FK_set_no_navs_set()
     {
         await base.Add_dependent_but_not_principal_one_to_one_prin_uni_FK_set_no_navs_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_principal_but_not_dependent_one_to_one_prin_uni_FK_set_no_navs_set()
-    {
-        await base.Add_principal_but_not_dependent_one_to_one_prin_uni_FK_set_no_navs_set();
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -627,93 +579,15 @@ public class StoreGeneratedFixupDuckDBTest : StoreGeneratedFixupRelationalTestBa
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_principal_but_not_dependent_one_to_one_prin_uni_FK_set_principal_nav_set()
-    {
-        await base.Add_principal_but_not_dependent_one_to_one_prin_uni_FK_set_principal_nav_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_principal_but_not_dependent_one_to_one_prin_uni_FK_not_set_principal_nav_set()
-    {
-        await base.Add_principal_but_not_dependent_one_to_one_prin_uni_FK_not_set_principal_nav_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Add_dependent_but_not_principal_one_to_one_dep_uni_FK_set_no_navs_set()
     {
         await base.Add_dependent_but_not_principal_one_to_one_dep_uni_FK_set_no_navs_set();
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_dependent_but_not_principal_one_to_one_dep_uni_FK_set_dependent_nav_set()
-    {
-        await base.Add_dependent_but_not_principal_one_to_one_dep_uni_FK_set_dependent_nav_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_dependent_but_not_principal_one_to_one_dep_uni_FK_not_set_dependent_nav_set()
-    {
-        await base.Add_dependent_but_not_principal_one_to_one_dep_uni_FK_not_set_dependent_nav_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_principal_but_not_dependent_one_to_one_dep_uni_FK_set_no_navs_set()
-    {
-        await base.Add_principal_but_not_dependent_one_to_one_dep_uni_FK_set_no_navs_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_principal_but_not_dependent_one_to_one_dep_uni_FK_set_dependent_nav_set()
-    {
-        await base.Add_principal_but_not_dependent_one_to_one_dep_uni_FK_set_dependent_nav_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_principal_but_not_dependent_one_to_one_dep_uni_FK_not_set_dependent_nav_set()
-    {
-        await base.Add_principal_but_not_dependent_one_to_one_dep_uni_FK_not_set_dependent_nav_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Add_dependent_but_not_principal_one_to_one_no_navs_FK_set_no_navs_set()
     {
         await base.Add_dependent_but_not_principal_one_to_one_no_navs_FK_set_no_navs_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_principal_but_not_dependent_one_to_one_no_navs_FK_set_no_navs_set()
-    {
-        await base.Add_principal_but_not_dependent_one_to_one_no_navs_FK_set_no_navs_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_overlapping_graph_from_level()
-    {
-        await base.Add_overlapping_graph_from_level();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_overlapping_graph_from_game()
-    {
-        await base.Add_overlapping_graph_from_game();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Add_overlapping_graph_from_item()
-    {
-        await base.Add_overlapping_graph_from_item();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override void Temporary_value_equals_database_generated_value()
-    {
-        base.Temporary_value_equals_database_generated_value();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override void Remove_overlapping_principal()
-    {
-        base.Remove_overlapping_principal();
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]

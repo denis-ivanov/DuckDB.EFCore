@@ -1,7 +1,8 @@
-using Microsoft.EntityFrameworkCore.Query;
+using DuckDB.EFCore.FunctionalTests;
+using DuckDB.EFCore.FunctionalTests.Query;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class ComplexNavigationsSharedTypeQueryDuckDBTest : ComplexNavigationsSharedTypeQueryRelationalTestBase<ComplexNavigationsSharedTypeQueryDuckDBFixture>
 {
@@ -25,12 +26,6 @@ public class ComplexNavigationsSharedTypeQueryDuckDBTest : ComplexNavigationsSha
     public override Task GroupJoin_client_method_in_OrderBy(bool async)
     {
         return base.GroupJoin_client_method_in_OrderBy(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Single_select_many_in_projection_with_take(bool async)
-    {
-        return base.Single_select_many_in_projection_with_take(async);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
