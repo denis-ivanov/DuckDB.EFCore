@@ -2,6 +2,7 @@
 
 DuckDB provider for Entity Framework Core.
 
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/denis-ivanov/DuckDB.EFCore/dotnet.yml?branch=master&logo=GitHub&style=for-the-badge)](https://github.com/denis-ivanov/DuckDB.EFCore/actions/workflows/dotnet.yml)
 [![NuGet](https://img.shields.io/nuget/v/DuckDB.EFCore.svg)](https://www.nuget.org/packages/DuckDB.EFCore)
 
 ## Installation
