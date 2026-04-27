@@ -71,7 +71,7 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_column_with_defaultValueSql());
         Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
     }
-    
+
     public override async Task Add_column_with_required()
     {
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_column_with_required());
