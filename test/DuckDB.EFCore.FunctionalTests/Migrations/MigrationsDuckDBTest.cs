@@ -451,10 +451,10 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         return base.Move_sequence();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Move_table()
+    public override async Task Move_table()
     {
-        return base.Move_table();
+        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Move_table());
+        Assert.Equal("Not implemented Error: T_AlterObjectSchemaStmt", exception.Message);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
