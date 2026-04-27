@@ -79,17 +79,19 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
     /// <param name="builder">The command builder to use to build the commands.</param>
     protected override void Generate(RenameTableOperation operation, IModel? model, MigrationCommandListBuilder builder)
     {
-        if (operation.Schema != operation.NewSchema)
+        if (operation.NewSchema != null && operation.Schema != operation.NewSchema)
         {
             builder.Append("ALTER TABLE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
                 .Append(" SET SCHEMA ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.NewSchema))
                 .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
             EndStatement(builder, true);
         }
-        else
+
+        if (operation.NewName != null && operation.Name != operation.NewName)
         {
             builder.Append("ALTER TABLE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
                 .Append(" RENAME TO ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.NewName, operation.NewSchema));
+            EndStatement(builder, true);
         }
     }
 
