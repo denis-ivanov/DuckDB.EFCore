@@ -369,4 +369,23 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
 
         EndStatement(builder);
     }
+
+    protected override void Generate(RenameSequenceOperation operation, IModel? model, MigrationCommandListBuilder builder)
+    {
+        if (operation.NewSchema != null && operation.Schema != operation.NewSchema)
+        {
+            builder.Append("ALTER SEQUENCE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
+                .Append(" SET SCHEMA ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.NewSchema))
+                .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+            EndStatement(builder, true);
+        }
+
+        if (operation.NewName != null && operation.Name != operation.NewName)
+        {
+            builder.Append("ALTER SEQUENCE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
+                .Append(" RENAME TO ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.NewName, operation.NewSchema))
+                .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+            EndStatement(builder, true);
+        }
+    }
 }
