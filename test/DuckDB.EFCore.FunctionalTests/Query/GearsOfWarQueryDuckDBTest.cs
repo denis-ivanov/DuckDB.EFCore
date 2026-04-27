@@ -53,18 +53,6 @@ public class GearsOfWarQueryDuckDBTest : GearsOfWarQueryRelationalTestBase<Gears
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Outer_parameter_in_join_key(bool async)
-    {
-        return base.Outer_parameter_in_join_key(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Outer_parameter_in_join_key_inner_and_outer(bool async)
-    {
-        return base.Outer_parameter_in_join_key_inner_and_outer(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Projecting_property_converted_to_nullable_into_member_access(bool async)
     {
         return base.Projecting_property_converted_to_nullable_into_member_access(async);
