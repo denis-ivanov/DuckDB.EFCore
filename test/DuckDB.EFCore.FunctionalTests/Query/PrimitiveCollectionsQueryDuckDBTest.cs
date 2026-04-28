@@ -35,9 +35,9 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE 11 IN (
-                SELECT i."unnest"
-                FROM unnest(p."Ints") AS i
-                WHERE i."unnest" > 1
+                SELECT i."value"
+                FROM unnest(p."Ints") AS i("value")
+                WHERE i."value" > 1
             )
             """);
     }
@@ -65,8 +65,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE (
                 SELECT COUNT(*)
-                FROM unnest(p."Ints") AS i
-                WHERE i."unnest" > 1) = 2
+                FROM unnest(p."Ints") AS i("value")
+                WHERE i."value" > 1) = 2
             """);
     }
 
@@ -103,8 +103,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE (
-                SELECT i."unnest"
-                FROM unnest(p."Ints") AS i
+                SELECT i."value"
+                FROM unnest(p."Ints") AS i("value")
                 LIMIT 1) = 1
             """);
     }
@@ -118,8 +118,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE COALESCE((
-                SELECT i."unnest"
-                FROM unnest(p."Ints") AS i
+                SELECT i."value"
+                FROM unnest(p."Ints") AS i("value")
                 LIMIT 1), 0) = 1
             """);
     }
@@ -189,8 +189,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             WHERE (
                 SELECT COUNT(*)
                 FROM (
-                    SELECT i."unnest"
-                    FROM unnest(p."Ints") AS i
+                    SELECT i."value"
+                    FROM unnest(p."Ints") AS i("value")
                     INTERSECT
                     VALUES (CAST(11 AS INTEGER)), (111)
                 ) AS i0) = 2
@@ -225,8 +225,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE true IN (
-                SELECT b."unnest"
-                FROM unnest(p."Bools") AS b
+                SELECT b."value"
+                FROM unnest(p."Bools") AS b("value")
             )
             """);
     }
@@ -241,8 +241,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE 10 IN (
-                SELECT i."unnest"
-                FROM unnest(p."Ints") AS i
+                SELECT i."value"
+                FROM unnest(p."Ints") AS i("value")
             )
             """);
     }
@@ -257,8 +257,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE 10 IN (
-                SELECT n."unnest"
-                FROM unnest(p."NullableInts") AS n
+                SELECT n."value"
+                FROM unnest(p."NullableInts") AS n("value")
             )
             """);
     }
@@ -274,8 +274,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE EXISTS (
                 SELECT 1
-                FROM unnest(p."NullableInts") AS n
-                WHERE n."unnest" IS NULL)
+                FROM unnest(p."NullableInts") AS n("value")
+                WHERE n."value" IS NULL)
             """);
     }
 
@@ -289,8 +289,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE EXISTS (
                 SELECT 1
-                FROM unnest(p."NullableStrings") AS n
-                WHERE n."unnest" IS NULL)
+                FROM unnest(p."NullableStrings") AS n("value")
+                WHERE n."value" IS NULL)
             """);
     }
 
@@ -316,9 +316,9 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE (
-                SELECT i."unnest"
-                FROM unnest(p."Ints") AS i
-                ORDER BY i."unnest" DESC NULLS LAST
+                SELECT i."value"
+                FROM unnest(p."Ints") AS i("value")
+                ORDER BY i."value" DESC NULLS LAST
                 LIMIT 1 OFFSET 0) = 111
             """);
     }
@@ -329,9 +329,9 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
 
         AssertSql(
             """
-            SELECT i."unnest"
+            SELECT i."value"
             FROM "PrimitiveCollectionsEntity" AS p
-            CROSS JOIN LATERAL unnest(p."Ints") AS i
+            CROSS JOIN LATERAL unnest(p."Ints") AS i("value")
             """);
     }
 
@@ -341,12 +341,12 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
 
         AssertSql(
             """
-            SELECT i0."unnest"
+            SELECT i0."value"
             FROM "PrimitiveCollectionsEntity" AS p
             CROSS JOIN LATERAL (
-                SELECT i."unnest"
-                FROM unnest(p."Ints") AS i
-                WHERE i."unnest" > 1
+                SELECT i."value"
+                FROM unnest(p."Ints") AS i("value")
+                WHERE i."value" > 1
             ) AS i0
             """);
     }
@@ -357,9 +357,9 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
 
         AssertSql(
             """
-            SELECT i."unnest" AS "Original", i."unnest" + 1 AS "Incremented"
+            SELECT i."value" AS "Original", i."value" + 1 AS "Incremented"
             FROM "PrimitiveCollectionsEntity" AS p
-            CROSS JOIN LATERAL unnest(p."Ints") AS i
+            CROSS JOIN LATERAL unnest(p."Ints") AS i("value")
             """);
     }
 
@@ -372,8 +372,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE (
-                SELECT i."unnest"
-                FROM unnest(p."Ints") AS i
+                SELECT i."value"
+                FROM unnest(p."Ints") AS i("value")
                 LIMIT 1) = 1
             """);
     }
@@ -387,8 +387,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE COALESCE((
-                SELECT i."unnest"
-                FROM unnest(p."Ints") AS i
+                SELECT i."value"
+                FROM unnest(p."Ints") AS i("value")
                 LIMIT 1), 0) = 1
             """);
     }
@@ -414,8 +414,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE 11 IN (
-                SELECT i."unnest"
-                FROM unnest(p."Ints"[2:3]) AS i
+                SELECT i."value"
+                FROM unnest(p."Ints"[2:3]) AS i("value")
             )
             """);
     }
@@ -429,8 +429,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE 11 IN (
-                SELECT i."unnest"
-                FROM unnest(p."Ints"[:2]) AS i
+                SELECT i."value"
+                FROM unnest(p."Ints"[:2]) AS i("value")
             )
             """);
     }
@@ -449,8 +449,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             WHERE (
                 SELECT COUNT(*)
                 FROM (
-                    SELECT i."unnest"
-                    FROM unnest(p."Ints") AS i
+                    SELECT i."value"
+                    FROM unnest(p."Ints") AS i("value")
                     UNION
                     VALUES ($ints1), ($ints2)
                 ) AS u) = 2
@@ -467,8 +467,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE (
                 SELECT COUNT(*)
-                FROM unnest(p."Ints") AS i
-                WHERE i."unnest" > 1) = 2
+                FROM unnest(p."Ints") AS i("value")
+                WHERE i."value" > 1) = 2
             """);
     }
 
@@ -481,9 +481,9 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
             WHERE (
-                SELECT i."unnest"
-                FROM unnest(p."Ints") AS i
-                WHERE i."unnest" > 1
+                SELECT i."value"
+                FROM unnest(p."Ints") AS i("value")
+                WHERE i."value" > 1
                 LIMIT 1 OFFSET 0) = 11
             """);
     }
@@ -500,8 +500,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                 SELECT COUNT(*)
                 FROM (
                     SELECT 1
-                    FROM unnest(p."Ints") AS i
-                    WHERE i."unnest" > 1
+                    FROM unnest(p."Ints") AS i("value")
+                    WHERE i."value" > 1
                     OFFSET 1
                 ) AS i0) = 3
             """);
@@ -519,8 +519,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                 SELECT COUNT(*)
                 FROM (
                     SELECT 1
-                    FROM unnest(p."Ints") AS i
-                    WHERE i."unnest" > 1
+                    FROM unnest(p."Ints") AS i("value")
+                    WHERE i."value" > 1
                     LIMIT 2 OFFSET 1
                 ) AS i0) = 1
             """);
@@ -538,8 +538,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                 SELECT COUNT(*)
                 FROM (
                     SELECT 1
-                    FROM unnest(p."Ints") AS i
-                    WHERE i."unnest" > 1
+                    FROM unnest(p."Ints") AS i("value")
+                    WHERE i."value" > 1
                     LIMIT 2
                 ) AS i0) = 2
             """);
@@ -556,9 +556,9 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             WHERE (
                 SELECT COUNT(*)
                 FROM (
-                    SELECT i."unnest"
-                    FROM unnest(p."Ints") AS i
-                    WHERE i."unnest" > 100
+                    SELECT i."value"
+                    FROM unnest(p."Ints") AS i("value")
+                    WHERE i."value" > 100
                     UNION
                     VALUES (CAST(50 AS INTEGER))
                 ) AS u) = 2
@@ -672,7 +672,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                     FROM (VALUES ($p1), ($p2)) AS p0("Value")
                     UNION ALL
                     SELECT 1
-                    FROM unnest(p."Ints") AS i
+                    FROM unnest(p."Ints") AS i("value")
                 ) AS u) = 2
             """);
     }
@@ -692,8 +692,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                 FROM (
                     VALUES ($Skip1)
                     UNION
-                    SELECT i."unnest" AS "Value"
-                    FROM unnest(p."Ints") AS i
+                    SELECT i."value" AS "Value"
+                    FROM unnest(p."Ints") AS i("value")
                 ) AS u) = 3
             """);
     }
@@ -713,19 +713,19 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                 FROM (
                     VALUES ($Skip1)
                     UNION
-                    SELECT i2."unnest" AS "Value"
+                    SELECT i2."value" AS "Value"
                     FROM (
-                        SELECT i1."unnest"
+                        SELECT i1."value"
                         FROM (
-                            SELECT DISTINCT i0."unnest"
+                            SELECT DISTINCT i0."value"
                             FROM (
-                                SELECT i."unnest"
-                                FROM unnest(p."Ints") AS i
-                                ORDER BY i."unnest" NULLS FIRST
+                                SELECT i."value"
+                                FROM unnest(p."Ints") AS i("value")
+                                ORDER BY i."value" NULLS FIRST
                                 OFFSET 1
                             ) AS i0
                         ) AS i1
-                        ORDER BY i1."unnest" DESC NULLS LAST
+                        ORDER BY i1."value" DESC NULLS LAST
                         LIMIT 20
                     ) AS i2
                 ) AS u) = 3
@@ -820,8 +820,8 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
                         OFFSET 1
                     ) AS i1
                     UNION
-                    SELECT i0."unnest" AS "Value"
-                    FROM unnest(p."Ints") AS i0
+                    SELECT i0."value" AS "Value"
+                    FROM unnest(p."Ints") AS i0("value")
                 ) AS u) = 3
             """);
     }

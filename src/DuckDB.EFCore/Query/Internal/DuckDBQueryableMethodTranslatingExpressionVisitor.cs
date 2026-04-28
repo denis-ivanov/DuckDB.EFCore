@@ -90,8 +90,8 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
 
                 var tableAlias = ((SelectExpression)source.QueryExpression).Tables[0].Alias!;
                 var selectExpression = new SelectExpression(
-                    [new DuckDBUnnestExpression(tableAlias, listDistinct, "unnest")],
-                    new ColumnExpression("unnest", tableAlias, projectedColumn!.Type, projectedColumn.TypeMapping, projectedColumn.IsNullable),
+                    [new DuckDBUnnestExpression(tableAlias, listDistinct, "value")],
+                    new ColumnExpression("value", tableAlias, projectedColumn!.Type, projectedColumn.TypeMapping, projectedColumn.IsNullable),
                     [GenerateOrdinalityIdentifier(tableAlias)],
                     _queryCompilationContext.SqlAliasManager);
 
@@ -129,9 +129,9 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
             {
                 var (ordinalityColumn, ordinalityComparer) = GenerateOrdinalityIdentifier(tableAlias);
                 selectExpression = new SelectExpression(
-                    [new DuckDBUnnestExpression(tableAlias, sqlExpression, "unnest")],
+                    [new DuckDBUnnestExpression(tableAlias, sqlExpression, "value")],
                     new ColumnExpression(
-                        "unnest",
+                        "value",
                         tableAlias,
                         elementClrType.UnwrapNullableType(),
                         elementTypeMapping,
@@ -443,8 +443,8 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
 #pragma warning disable EF1001 // SelectExpression constructors are currently internal
             var tableAlias = ((SelectExpression)source.QueryExpression).Tables[0].Alias!;
             var selectExpression = new SelectExpression(
-                [new DuckDBUnnestExpression(tableAlias, sliceExpression, "unnest")],
-                new ColumnExpression("unnest", tableAlias, projectedColumn.Type, projectedColumn.TypeMapping, projectedColumn.IsNullable),
+                [new DuckDBUnnestExpression(tableAlias, sliceExpression, "value")],
+                new ColumnExpression("value", tableAlias, projectedColumn.Type, projectedColumn.TypeMapping, projectedColumn.IsNullable),
                 [GenerateOrdinalityIdentifier(tableAlias)],
                 ((RelationalQueryCompilationContext)QueryCompilationContext).SqlAliasManager);
 #pragma warning restore EF1001 // Internal EF Core API usage.
@@ -492,8 +492,8 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
 #pragma warning disable EF1001 // SelectExpression constructors are currently internal
             var tableAlias = ((SelectExpression)source.QueryExpression).Tables[0].Alias!;
             var selectExpression = new SelectExpression(
-                [new DuckDBUnnestExpression(tableAlias, simplifiedTranslation, "unnest")],
-                new ColumnExpression("unnest", tableAlias, projectedColumn.Type, projectedColumn.TypeMapping, projectedColumn.IsNullable),
+                [new DuckDBUnnestExpression(tableAlias, simplifiedTranslation, "value")],
+                new ColumnExpression("value", tableAlias, projectedColumn.Type, projectedColumn.TypeMapping, projectedColumn.IsNullable),
                 [GenerateOrdinalityIdentifier(tableAlias)],
                 _queryCompilationContext.SqlAliasManager);
 #pragma warning restore EF1001 // Internal EF Core API usage.
@@ -571,37 +571,34 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
 
     /// <inheritdoc />
     protected override bool IsNaturallyOrdered(SelectExpression selectExpression)
+        => IsNaturallyOrderedUnnest(selectExpression) || IsNaturallyOrderedJsonEach(selectExpression);
+
+    private static bool IsNaturallyOrderedUnnest(SelectExpression selectExpression)
     {
-        var result1 = selectExpression is { Tables: [DuckDBUnnestExpression unnest, ..] }
-               && (selectExpression.Orderings is []
-                   || selectExpression.Orderings is
-                       [{ Expression: ColumnExpression { Name: "ordinality", TableAlias: var orderingTableAlias } }]
-                   && orderingTableAlias == unnest.Alias);
+        if (selectExpression.Tables is not [DuckDBUnnestExpression unnest, ..])
+            return false;
 
-        var result2 = selectExpression is
-                      {
-                          Tables: [var mainTable, ..],
-                          Orderings:
-                          [
-                              {
-                                  Expression: ColumnExpression { Name: JsonEachKeyColumnName } orderingColumn,
-                                  IsAscending: true
-                              }
-                          ]
-                      }
-                      && orderingColumn.TableAlias == mainTable.Alias
-                      && IsJsonEachKeyColumn(selectExpression, orderingColumn);
+        return selectExpression.Orderings is []
+               || selectExpression.Orderings is [{ Expression: ColumnExpression { Name: "ordinality" } orderingColumn }]
+               && orderingColumn.TableAlias == unnest.Alias;
+    }
 
-        // TODO Refactor.
-        return result1 || result2;
-        
-        bool IsJsonEachKeyColumn(SelectExpression selectExpression, ColumnExpression orderingColumn)
-            => selectExpression.Tables.FirstOrDefault(t => t.Alias == orderingColumn.TableAlias)?.UnwrapJoin() is { } table
-               && (table is DuckDBJsonEachExpression
-                   || (table is SelectExpression subquery
-                       && subquery.Projection.FirstOrDefault(p => p.Alias == JsonEachKeyColumnName)?.Expression is ColumnExpression
-                           projectedColumn
-                       && IsJsonEachKeyColumn(subquery, projectedColumn)));
+    private static bool IsNaturallyOrderedJsonEach(SelectExpression selectExpression)
+        => selectExpression is
+           {
+               Tables: [var mainTable, ..],
+               Orderings: [{ Expression: ColumnExpression { Name: JsonEachKeyColumnName } orderingColumn, IsAscending: true }]
+           }
+           && orderingColumn.TableAlias == mainTable.Alias
+           && IsJsonEachOrWrappedJsonEach(selectExpression, orderingColumn);
+
+    private static bool IsJsonEachOrWrappedJsonEach(SelectExpression selectExpression, ColumnExpression orderingColumn)
+    {
+        var table = selectExpression.Tables.FirstOrDefault(t => t.Alias == orderingColumn.TableAlias)?.UnwrapJoin();
+        return table is DuckDBJsonEachExpression
+               || table is SelectExpression subquery
+               && subquery.Projection.FirstOrDefault(p => p.Alias == JsonEachKeyColumnName)?.Expression is ColumnExpression projectedColumn
+               && IsJsonEachOrWrappedJsonEach(subquery, projectedColumn);
     }
 
     private (ColumnExpression, ValueComparer) GenerateOrdinalityIdentifier(string tableAlias)
