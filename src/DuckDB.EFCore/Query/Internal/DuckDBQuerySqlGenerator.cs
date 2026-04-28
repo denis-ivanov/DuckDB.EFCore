@@ -107,6 +107,77 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
     }
 
     /// <inheritdoc />
+    protected override Expression VisitTableValuedFunction(TableValuedFunctionExpression tableValuedFunctionExpression)
+    {
+        if (tableValuedFunctionExpression is DuckDBUnnestExpression unnestExpression)
+        {
+            return VisitUnnest(unnestExpression);
+        }
+
+        return base.VisitTableValuedFunction(tableValuedFunctionExpression);
+    }
+
+    /// <summary>
+    ///     Generates SQL for a DuckDB <c>unnest</c> expression.
+    ///     <para>
+    ///         Without ordinality: <c>unnest(array) AS "alias"("colname")</c>
+    ///     </para>
+    ///     <para>
+    ///         With ordinality: <c>(SELECT unnest(array) AS "colname", generate_subscripts(array, 1) AS "ordinality") AS "alias"</c>
+    ///     </para>
+    /// </summary>
+    protected virtual Expression VisitUnnest(DuckDBUnnestExpression expression)
+    {
+        if (expression.WithOrdinality)
+        {
+            // DuckDB does not support WITH ORDINALITY; use generate_subscripts instead.
+            // Wrap in a subquery so that the ordinality column can be referenced by the outer query.
+            Sql.Append("(SELECT unnest(");
+            Visit(expression.Array);
+            Sql.Append(")");
+
+            if (expression.ColumnInfos is { Count: > 0 } colInfosOrd)
+            {
+                Sql.Append(" AS ")
+                    .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(colInfosOrd[0].Name));
+            }
+
+            Sql.Append(", generate_subscripts(");
+            Visit(expression.Array);
+            Sql.Append(", 1) AS ")
+                .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier("ordinality"))
+                .Append(")");
+        }
+        else
+        {
+            Sql.Append("unnest(");
+            Visit(expression.Array);
+            Sql.Append(")");
+        }
+
+        Sql.Append(AliasSeparator)
+            .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(expression.Alias));
+
+        if (!expression.WithOrdinality && expression.ColumnInfos is { Count: > 0 } colInfos)
+        {
+            Sql.Append("(");
+            for (var i = 0; i < colInfos.Count; i++)
+            {
+                if (i > 0)
+                {
+                    Sql.Append(", ");
+                }
+
+                Sql.Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(colInfos[i].Name));
+            }
+
+            Sql.Append(")");
+        }
+
+        return expression;
+    }
+
+    /// <inheritdoc />
     protected override Expression VisitCrossApply(CrossApplyExpression crossApplyExpression)
     {
         Sql.Append("CROSS JOIN LATERAL ");
