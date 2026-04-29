@@ -72,12 +72,20 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
     {
         if (method == StartsWith || method == StartsWithChar)
         {
-            return _sqlExpressionFactory.Function(
+            _boolTypeMapping ??= (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(bool))!;
+
+            var startsWithFunction = _sqlExpressionFactory.Function(
                 name: "starts_with",
                 arguments: [instance!, arguments[0]],
                 nullable: true,
                 argumentsPropagateNullability: [true, true],
-                returnType: typeof(bool));
+                returnType: typeof(bool),
+                typeMapping: _boolTypeMapping);
+
+            return _sqlExpressionFactory.Coalesce(
+                startsWithFunction,
+                _sqlExpressionFactory.Constant(false, typeof(bool), _boolTypeMapping),
+                _boolTypeMapping);
         }
 
         if (method == Contains || method == ContainsChar)
@@ -100,12 +108,20 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
 
         if (method == EndsWith || method == EndsWithChar)
         {
-            return _sqlExpressionFactory.Function(
+            _boolTypeMapping ??= (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(bool))!;
+
+            var endsWithFunction = _sqlExpressionFactory.Function(
                 name: "ends_with",
                 arguments: [instance!, arguments[0]],
                 nullable: true,
                 argumentsPropagateNullability: [true, true],
-                returnType: typeof(bool));
+                returnType: typeof(bool),
+                typeMapping: _boolTypeMapping);
+
+            return _sqlExpressionFactory.Coalesce(
+                endsWithFunction,
+                _sqlExpressionFactory.Constant(false, typeof(bool), _boolTypeMapping),
+                _boolTypeMapping);
         }
 
         if (method == Substring)
