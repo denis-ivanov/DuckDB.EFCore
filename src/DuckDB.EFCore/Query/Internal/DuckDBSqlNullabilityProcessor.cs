@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
@@ -29,6 +30,22 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
         : base(dependencies, parameters)
     {
         _sqlExpressionFactory = (DuckDBSqlExpressionFactory)dependencies.SqlExpressionFactory;
+    }
+
+    protected override bool IsCollectionTable(TableExpressionBase table, [NotNullWhen(true)] out Expression? collection)
+    {
+        switch (table)
+        {
+            case TableValuedFunctionExpression { Name: "json_each", Schema: null, IsBuiltIn: true, Arguments: [var jsonArgument] }:
+                collection = jsonArgument;
+                return true;
+
+            case DuckDBUnnestExpression unnest:
+                collection = unnest.Array;
+                return true;
+        }
+
+        return base.IsCollectionTable(table, out collection);
     }
 
     /// <inheritdoc />
