@@ -1,32 +1,17 @@
+using DuckDB.EFCore.FunctionalTests;
 using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
+using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class FunkyDataQueryDuckDBTest : FunkyDataQueryTestBase<FunkyDataQueryDuckDBTest.FunkyDataQueryDuckDBFixture>
 {
-    public FunkyDataQueryDuckDBTest(FunkyDataQueryDuckDBFixture fixture) : base(fixture)
+    public FunkyDataQueryDuckDBTest(FunkyDataQueryDuckDBFixture fixture, ITestOutputHelper testOutputHelper) : base(fixture)
     {
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task String_contains_on_argument_with_wildcard_column_negated(bool async)
-    {
-        return base.String_contains_on_argument_with_wildcard_column_negated(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task String_contains_on_argument_with_wildcard_constant(bool async)
-    {
-        return base.String_contains_on_argument_with_wildcard_constant(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task String_contains_on_argument_with_wildcard_parameter(bool async)
-    {
-        return base.String_contains_on_argument_with_wildcard_parameter(async);
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]

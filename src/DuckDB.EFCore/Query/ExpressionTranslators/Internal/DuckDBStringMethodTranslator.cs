@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Reflection;
 
 namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
@@ -42,6 +43,8 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
     private static readonly MethodInfo IsNullOrWhiteSpace = typeof(string).GetRuntimeMethod(nameof(string.IsNullOrWhiteSpace), [typeof(string)])!;
 
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
+    private readonly ITypeMappingSource _typeMappingSource;
+    private RelationalTypeMapping? _boolTypeMapping;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -49,9 +52,10 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public DuckDBStringMethodTranslator(ISqlExpressionFactory sqlExpressionFactory)
+    public DuckDBStringMethodTranslator(ISqlExpressionFactory sqlExpressionFactory, ITypeMappingSource typeMappingSource)
     {
         _sqlExpressionFactory = sqlExpressionFactory;
+        _typeMappingSource = typeMappingSource;
     }
 
     /// <summary>
@@ -78,12 +82,20 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
 
         if (method == Contains || method == ContainsChar)
         {
-            return _sqlExpressionFactory.Function(
+            _boolTypeMapping ??= (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(bool))!;
+
+            var containsFunction = _sqlExpressionFactory.Function(
                 name: "contains",
                 arguments: [instance!, arguments[0]],
                 nullable: true,
                 argumentsPropagateNullability: [true, true],
-                returnType: typeof(bool));
+                returnType: typeof(bool),
+                typeMapping: _boolTypeMapping);
+
+            return _sqlExpressionFactory.Coalesce(
+                containsFunction,
+                _sqlExpressionFactory.Constant(false, typeof(bool), _boolTypeMapping),
+                _boolTypeMapping);
         }
 
         if (method == EndsWith || method == EndsWithChar)
