@@ -35,12 +35,6 @@ public class GearsOfWarQueryDuckDBTest : GearsOfWarQueryRelationalTestBase<Gears
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Group_by_on_StartsWith_with_null_parameter_as_argument(bool async)
-    {
-        return base.Group_by_on_StartsWith_with_null_parameter_as_argument(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Non_string_concat_uses_appropriate_type_mapping(bool async)
     {
         return base.Non_string_concat_uses_appropriate_type_mapping(async);
@@ -74,12 +68,6 @@ public class GearsOfWarQueryDuckDBTest : GearsOfWarQueryRelationalTestBase<Gears
     public override Task Select_null_propagation_negative4(bool async)
     {
         return base.Select_null_propagation_negative4(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Select_StartsWith_with_null_parameter_as_argument(bool async)
-    {
-        return base.Select_StartsWith_with_null_parameter_as_argument(async);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
