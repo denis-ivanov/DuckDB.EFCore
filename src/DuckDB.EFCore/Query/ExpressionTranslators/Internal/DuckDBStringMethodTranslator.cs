@@ -45,6 +45,7 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
     private readonly ITypeMappingSource _typeMappingSource;
     private RelationalTypeMapping? _boolTypeMapping;
+    private RelationalTypeMapping? _charTypeMapping;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -353,6 +354,36 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
             );
         }
 
+        if (method.Name == nameof(Enumerable.FirstOrDefault) &&
+            method.DeclaringType == typeof(Enumerable) &&
+            arguments is [{ Type: var firstArgType }] && firstArgType == typeof(string))
+        {
+            _charTypeMapping ??= (RelationalTypeMapping?)_typeMappingSource.FindMapping(typeof(char));
+
+            return _sqlExpressionFactory.Function(
+                name: "left",
+                arguments: [arguments[0], _sqlExpressionFactory.Constant(1)],
+                nullable: true,
+                argumentsPropagateNullability: [true, false],
+                returnType: typeof(char),
+                typeMapping: _charTypeMapping);
+        }
+
+        if (method.Name == nameof(Enumerable.LastOrDefault) &&
+            method.DeclaringType == typeof(Enumerable) &&
+            arguments is [{ Type: var lastArgType }] && lastArgType == typeof(string))
+        {
+            _charTypeMapping ??= (RelationalTypeMapping?)_typeMappingSource.FindMapping(typeof(char));
+
+            return _sqlExpressionFactory.Function(
+                name: "right",
+                arguments: [arguments[0], _sqlExpressionFactory.Constant(1)],
+                nullable: true,
+                argumentsPropagateNullability: [true, false],
+                returnType: typeof(char),
+                typeMapping: _charTypeMapping);
+        }
+        
         return null;
     }
 }
