@@ -37,6 +37,7 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
     private static readonly MethodInfo IndexOf = typeof(string).GetRuntimeMethod(nameof(string.IndexOf), [typeof(string)])!;
     private static readonly MethodInfo IndexOfChar = typeof(string).GetRuntimeMethod(nameof(string.IndexOf), [typeof(char)])!;
     private static readonly MethodInfo IndexOfWithPosition = typeof(string).GetRuntimeMethod(nameof(string.IndexOf), [typeof(string), typeof(int)])!;
+    private static readonly MethodInfo IndexOfCharWithPosition = typeof(string).GetRuntimeMethod(nameof(string.IndexOf), [typeof(char), typeof(int)])!;
     private static readonly MethodInfo Replace = typeof(string).GetRuntimeMethod(nameof(string.Replace), [typeof(string), typeof(string)])!;
     private static readonly MethodInfo ReplaceChar = typeof(string).GetRuntimeMethod(nameof(string.Replace), [typeof(char), typeof(char)])!;
     private static readonly MethodInfo IsNullOrEmpty = typeof(string).GetRuntimeMethod(nameof(string.IsNullOrEmpty), [typeof(string)])!;
@@ -206,7 +207,7 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
                 _sqlExpressionFactory.Constant(1));
         }
 
-        if (method == IndexOfWithPosition)
+        if (method == IndexOfWithPosition || method == IndexOfCharWithPosition)
         {
             var substringFromStart = _sqlExpressionFactory.Function(
                 name: "substring",
