@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace DuckDB.EFCore.Query.Internal;
@@ -26,6 +27,18 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
         [nameof(TimeSpan.TotalMicroseconds)] = "microsecond",
         [nameof(TimeSpan.TotalNanoseconds)] = "nanosecond"
     };
+
+    private static readonly MethodInfo StringJoinWithStringArray =
+        typeof(string).GetMethod(nameof(string.Join), [typeof(string), typeof(string[])])!;
+
+    private static readonly MethodInfo StringJoinWithObjectArray =
+        typeof(string).GetMethod(nameof(string.Join), [typeof(string), typeof(object[])])!;
+
+    private static readonly MethodInfo StringJoinWithCharStringArray =
+        typeof(string).GetMethod(nameof(string.Join), [typeof(char), typeof(string[])])!;
+
+    private static readonly MethodInfo StringJoinWithCharObjectArray =
+        typeof(string).GetMethod(nameof(string.Join), [typeof(char), typeof(object[])])!;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -51,6 +64,57 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
         var resultTypeMapping = ExpressionExtensions.InferTypeMapping(expressions);
 
         return Dependencies.SqlExpressionFactory.Function("least", expressions, nullable: true, Enumerable.Repeat(true, expressions.Count), resultType, resultTypeMapping);
+    }
+
+    /// <inheritdoc />
+    protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression)
+    {
+        var method = methodCallExpression.Method;
+
+        if (method.DeclaringType == typeof(string)
+            && (method == StringJoinWithStringArray
+                || method == StringJoinWithObjectArray
+                || method == StringJoinWithCharStringArray
+                || method == StringJoinWithCharObjectArray)
+            && methodCallExpression.Arguments[1] is NewArrayExpression newArrayExpression)
+        {
+            if (TranslationFailed(methodCallExpression.Arguments[0], Visit(methodCallExpression.Arguments[0]), out var separator))
+            {
+                return QueryCompilationContext.NotTranslatedExpression;
+            }
+
+            var elements = newArrayExpression.Expressions;
+            var rewrittenArgs = new SqlExpression[elements.Count + 1];
+            rewrittenArgs[0] = separator!;
+
+            for (var i = 0; i < elements.Count; i++)
+            {
+                var element = elements[i];
+                if (TranslationFailed(element, Visit(element), out var sqlElement))
+                {
+                    return QueryCompilationContext.NotTranslatedExpression;
+                }
+
+                rewrittenArgs[i + 1] = sqlElement switch
+                {
+                    SqlConstantExpression { Value: null } => Dependencies.SqlExpressionFactory.Constant(string.Empty, typeof(string)),
+                    ColumnExpression { IsNullable: false } => sqlElement,
+                    _ => Dependencies.SqlExpressionFactory.Coalesce(sqlElement!, Dependencies.SqlExpressionFactory.Constant(string.Empty, typeof(string)))
+                };
+            }
+
+            var argumentsPropagateNullability = new bool[rewrittenArgs.Length];
+            argumentsPropagateNullability[0] = true;
+
+            return Dependencies.SqlExpressionFactory.Function(
+                "concat_ws",
+                rewrittenArgs,
+                nullable: true,
+                argumentsPropagateNullability,
+                typeof(string));
+        }
+
+        return base.VisitMethodCall(methodCallExpression);
     }
 
     /// <inheritdoc />
