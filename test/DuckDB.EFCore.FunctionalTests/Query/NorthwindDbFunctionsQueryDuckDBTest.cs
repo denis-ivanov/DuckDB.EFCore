@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore.TestUtilities;
+﻿using DuckDB.EFCore.FunctionalTests;
+using DuckDB.EFCore.FunctionalTests.Query;
 using Microsoft.EntityFrameworkCore.TestModels.Northwind;
+using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class NorthwindDbFunctionsQueryDuckDBTest : NorthwindDbFunctionsQueryRelationalTestBase<
     NorthwindQueryDuckDBFixture<NoopModelCustomizer>>
