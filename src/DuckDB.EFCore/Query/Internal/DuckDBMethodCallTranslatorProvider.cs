@@ -21,7 +21,7 @@ public class DuckDBMethodCallTranslatorProvider : RelationalMethodCallTranslator
     {
         AddTranslators([
             new DuckDBMathTranslator(dependencies.SqlExpressionFactory),
-            new DuckDBStringMethodTranslator(dependencies.SqlExpressionFactory),
+            new DuckDBStringMethodTranslator(dependencies.SqlExpressionFactory, dependencies.RelationalTypeMappingSource),
             new DuckDBDateOnlyMethodTranslator(dependencies.SqlExpressionFactory),
             new DuckDBDateTimeMethodTranslator(dependencies.SqlExpressionFactory),
             new DuckDBDateTimeOffsetMethodTranslator(dependencies.SqlExpressionFactory),
@@ -29,6 +29,7 @@ public class DuckDBMethodCallTranslatorProvider : RelationalMethodCallTranslator
             new DuckDBCharMethodTranslator(),
             new DuckDBGuidMethodTranslator(dependencies.SqlExpressionFactory, dependencies.RelationalTypeMappingSource),
             new DuckDBConvertMethodTranslator(dependencies.SqlExpressionFactory),
+            new DuckDBObjectToStringTranslator(dependencies.RelationalTypeMappingSource, dependencies.SqlExpressionFactory),
             new DuckDBRandomMethodTranslator(dependencies.SqlExpressionFactory),
             new DuckDBRegexMethodTranslator(dependencies.SqlExpressionFactory),
             new DuckDBRowValueTranslator(dependencies.SqlExpressionFactory)

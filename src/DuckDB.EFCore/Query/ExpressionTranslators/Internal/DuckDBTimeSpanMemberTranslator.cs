@@ -18,6 +18,7 @@ public class DuckDBTimeSpanMemberTranslator : IMemberTranslator
     private static readonly MemberInfo Hour = typeof(TimeSpan).GetRuntimeProperty(nameof(TimeSpan.Hours))!;
     private static readonly MemberInfo Minute = typeof(TimeSpan).GetRuntimeProperty(nameof(TimeSpan.Minutes))!;
     private static readonly MemberInfo Second = typeof(TimeSpan).GetRuntimeProperty(nameof(TimeSpan.Seconds))!;
+    private static readonly MemberInfo Microseconds = typeof(TimeSpan).GetRuntimeProperty(nameof(TimeSpan.Microseconds))!;
     
     private readonly DuckDBSqlExpressionFactory _sqlExpressionFactory;
 
@@ -53,6 +54,11 @@ public class DuckDBTimeSpanMemberTranslator : IMemberTranslator
         if (member == Second)
         {
             return _sqlExpressionFactory.Second(instance);
+        }
+
+        if (member == Microseconds)
+        {
+            return _sqlExpressionFactory.MicrosecondComponent(instance);
         }
 
         return null;

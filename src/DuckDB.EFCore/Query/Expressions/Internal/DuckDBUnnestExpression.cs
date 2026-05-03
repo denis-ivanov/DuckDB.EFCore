@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+﻿using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
 
 namespace DuckDB.EFCore.Query.Expressions.Internal;
@@ -6,99 +8,165 @@ namespace DuckDB.EFCore.Query.Expressions.Internal;
 /// <summary>
 ///     An expression that represents a DuckDB <c>unnest</c> function call in a SQL tree.
 /// </summary>
-public class DuckDBUnnestExpression : DuckDBTableValuedFunctionExpression
+/// <remarks>
+///     When <see cref="WithOrdinality" /> is <see langword="true" />, the expression is translated to a subquery that includes
+///     both the unnested values and their 1-based subscripts via <c>generate_subscripts(array, 1) AS ordinality</c>,
+///     since DuckDB does not support the <c>WITH ORDINALITY</c> clause.
+/// </remarks>
+public class DuckDBUnnestExpression : TableValuedFunctionExpression, IEquatable<DuckDBUnnestExpression>
 {
     /// <summary>
     ///     The array to be un-nested into a table.
     /// </summary>
-    /// <remarks>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </remarks>
     public virtual SqlExpression Array => Arguments[0];
+
+    /// <summary>
+    ///     Column information for the output of the <c>unnest</c> call.
+    /// </summary>
+    public virtual IReadOnlyList<ColumnInfo>? ColumnInfos { get; }
 
     /// <summary>
     ///     The name of the column to be projected out from the <c>unnest</c> call.
     /// </summary>
-    /// <remarks>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </remarks>
     public virtual string ColumnName => ColumnInfos![0].Name;
 
     /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    ///     Whether to project an additional ordinality column containing the 1-based index of each element.
+    ///     When <see langword="true" />, a <c>generate_subscripts</c> call is emitted alongside <c>unnest</c>.
     /// </summary>
-    public DuckDBUnnestExpression(string alias, SqlExpression array, string columnName, bool withOrdinality = true)
+    public virtual bool WithOrdinality { get; }
+
+    /// <summary>
+    ///     Creates a new <see cref="DuckDBUnnestExpression" />.
+    /// </summary>
+    public DuckDBUnnestExpression(
+        string alias,
+        SqlExpression array,
+        string columnName,
+        bool withOrdinality = true)
         : this(alias, array, new ColumnInfo(columnName), withOrdinality)
     {
     }
 
-    private DuckDBUnnestExpression(string alias, SqlExpression array, ColumnInfo? columnInfo,
+    private DuckDBUnnestExpression(
+        string alias,
+        SqlExpression array,
+        ColumnInfo? columnInfo,
         bool withOrdinality = true)
-        : base(alias, "unnest", [array], columnInfo is null ? null : [columnInfo.Value], withOrdinality)
+        : base(alias, "unnest", schema: null, builtIn: true, [array])
     {
+        ColumnInfos = columnInfo is null ? null : [columnInfo.Value];
+        WithOrdinality = withOrdinality;
     }
 
     /// <inheritdoc />
     protected override Expression VisitChildren(ExpressionVisitor visitor)
-    {
-        return visitor.Visit(Array) is var visitedArray && visitedArray == Array
+        => visitor.Visit(Array) is var visitedArray && visitedArray == Array
             ? this
             : new DuckDBUnnestExpression(Alias, (SqlExpression)visitedArray, ColumnName, WithOrdinality);
-    }
 
     /// <inheritdoc />
     public override TableValuedFunctionExpression Update(IReadOnlyList<SqlExpression> arguments)
-    {
-        return arguments is [var singleArgument]
+        => arguments is [var singleArgument]
             ? Update(singleArgument)
             : throw new ArgumentException();
-    }
 
     /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    ///     Creates a new expression that is like this one, but using the supplied array. If the array is the same,
+    ///     it will return this expression.
     /// </summary>
     public virtual DuckDBUnnestExpression Update(SqlExpression array)
-    {
-        return array == Array
+        => array == Array
             ? this
             : new DuckDBUnnestExpression(Alias, array, ColumnName, WithOrdinality);
-    }
 
     /// <inheritdoc />
     public override TableExpressionBase Clone(string? alias, ExpressionVisitor cloningExpressionVisitor)
-    {
-        return new DuckDBUnnestExpression(alias!, (SqlExpression)cloningExpressionVisitor.Visit(Array), ColumnName, WithOrdinality);
-    }
+        => new DuckDBUnnestExpression(
+            alias ?? Alias,
+            (SqlExpression)cloningExpressionVisitor.Visit(Array),
+            ColumnName,
+            WithOrdinality);
 
     /// <inheritdoc />
     public override TableValuedFunctionExpression WithAlias(string newAlias)
-    {
-        return new DuckDBUnnestExpression(newAlias, Array, ColumnName, WithOrdinality);
-    }
+        => new DuckDBUnnestExpression(newAlias, Array, ColumnName, WithOrdinality);
 
-    /// <inheritdoc />
-    public override DuckDBTableValuedFunctionExpression WithColumnInfos(IReadOnlyList<ColumnInfo>? columnInfos)
-    {
-        return new DuckDBUnnestExpression(Alias,
+    /// <summary>
+    ///     Returns a new expression with the given column infos applied.
+    /// </summary>
+    public virtual DuckDBUnnestExpression WithColumnInfos(IReadOnlyList<ColumnInfo>? columnInfos)
+        => new DuckDBUnnestExpression(
+            Alias,
             Array,
             columnInfos switch
             {
-                [] => null,
+                null or [] => null,
                 [var columnInfo] => columnInfo,
                 _ => throw new ArgumentException()
             },
             WithOrdinality);
+
+    /// <inheritdoc />
+    protected override void Print(ExpressionPrinter expressionPrinter)
+    {
+        expressionPrinter.Append("unnest(");
+        expressionPrinter.Visit(Array);
+        expressionPrinter.Append(")");
+
+        if (WithOrdinality)
+        {
+            expressionPrinter.Append(" [WITH generate_subscripts]");
+        }
+
+        expressionPrinter.Append(" AS ").Append(Alias);
+
+        if (ColumnInfos is not null)
+        {
+            expressionPrinter.Append("(");
+
+            var isFirst = true;
+            foreach (var column in ColumnInfos)
+            {
+                if (isFirst)
+                {
+                    isFirst = false;
+                }
+                else
+                {
+                    expressionPrinter.Append(", ");
+                }
+
+                expressionPrinter.Append(column.Name);
+
+                if (column.TypeMapping is not null)
+                {
+                    expressionPrinter.Append(" ").Append(column.TypeMapping.StoreType);
+                }
+            }
+
+            expressionPrinter.Append(")");
+        }
     }
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj)
+        => ReferenceEquals(obj, this) || obj is DuckDBUnnestExpression e && Equals(e);
+
+    /// <inheritdoc />
+    public bool Equals(DuckDBUnnestExpression? expression)
+        => base.Equals(expression)
+           && (expression.ColumnInfos is null && ColumnInfos is null
+               || expression.ColumnInfos is not null && ColumnInfos is not null
+               && expression.ColumnInfos.SequenceEqual(ColumnInfos))
+           && WithOrdinality == expression.WithOrdinality;
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+        => base.GetHashCode();
+
+    /// <summary>
+    ///     Column descriptor for the output of a table-valued function.
+    /// </summary>
+    public readonly record struct ColumnInfo(string Name, RelationalTypeMapping? TypeMapping = null);
 }

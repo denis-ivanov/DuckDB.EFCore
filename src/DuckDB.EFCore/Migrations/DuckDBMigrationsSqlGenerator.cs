@@ -79,8 +79,20 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
     /// <param name="builder">The command builder to use to build the commands.</param>
     protected override void Generate(RenameTableOperation operation, IModel? model, MigrationCommandListBuilder builder)
     {
-        builder.Append("ALTER TABLE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
-            .Append(" RENAME TO ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.NewName, operation.NewSchema));
+        if (operation.NewSchema != null && operation.Schema != operation.NewSchema)
+        {
+            builder.Append("ALTER TABLE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
+                .Append(" SET SCHEMA ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.NewSchema))
+                .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+            EndStatement(builder, true);
+        }
+
+        if (operation.NewName != null && operation.Name != operation.NewName)
+        {
+            builder.Append("ALTER TABLE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
+                .Append(" RENAME TO ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.NewName, operation.NewSchema));
+            EndStatement(builder, true);
+        }
     }
 
     /// <summary>
@@ -356,5 +368,24 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
             .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
 
         EndStatement(builder);
+    }
+
+    protected override void Generate(RenameSequenceOperation operation, IModel? model, MigrationCommandListBuilder builder)
+    {
+        if (operation.NewSchema != null && operation.Schema != operation.NewSchema)
+        {
+            builder.Append("ALTER SEQUENCE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
+                .Append(" SET SCHEMA ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.NewSchema))
+                .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+            EndStatement(builder, true);
+        }
+
+        if (operation.NewName != null && operation.Name != operation.NewName)
+        {
+            builder.Append("ALTER SEQUENCE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
+                .Append(" RENAME TO ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.NewName, operation.NewSchema))
+                .AppendLine(Dependencies.SqlGenerationHelper.StatementTerminator);
+            EndStatement(builder, true);
+        }
     }
 }

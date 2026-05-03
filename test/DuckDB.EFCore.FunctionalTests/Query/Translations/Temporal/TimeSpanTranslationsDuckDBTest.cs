@@ -14,12 +14,6 @@ public class TimeSpanTranslationsDuckDBTest : TimeSpanTranslationsTestBase<Basic
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Microseconds()
-    {
-        return base.Microseconds();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Milliseconds()
     {
         return base.Milliseconds();

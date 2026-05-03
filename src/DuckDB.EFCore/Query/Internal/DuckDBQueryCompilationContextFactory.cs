@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace DuckDB.EFCore.Query.Internal;
 
@@ -34,5 +35,16 @@ public class DuckDBQueryCompilationContextFactory : IQueryCompilationContextFact
             _compilationContextDependencies,
             _relationalQueryCompilationContextDependencies,
             async);
+    }
+
+    /// <inheritdoc />
+    [Experimental("EF9100")]
+    public QueryCompilationContext CreatePrecompiled(bool async)
+    {
+        return new DuckDBQueryCompilationContext(
+            _compilationContextDependencies,
+            _relationalQueryCompilationContextDependencies,
+            async,
+            precompiling: true);
     }
 }

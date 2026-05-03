@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Reflection;
 
 namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
@@ -36,12 +37,16 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
     private static readonly MethodInfo IndexOf = typeof(string).GetRuntimeMethod(nameof(string.IndexOf), [typeof(string)])!;
     private static readonly MethodInfo IndexOfChar = typeof(string).GetRuntimeMethod(nameof(string.IndexOf), [typeof(char)])!;
     private static readonly MethodInfo IndexOfWithPosition = typeof(string).GetRuntimeMethod(nameof(string.IndexOf), [typeof(string), typeof(int)])!;
+    private static readonly MethodInfo IndexOfCharWithPosition = typeof(string).GetRuntimeMethod(nameof(string.IndexOf), [typeof(char), typeof(int)])!;
     private static readonly MethodInfo Replace = typeof(string).GetRuntimeMethod(nameof(string.Replace), [typeof(string), typeof(string)])!;
     private static readonly MethodInfo ReplaceChar = typeof(string).GetRuntimeMethod(nameof(string.Replace), [typeof(char), typeof(char)])!;
     private static readonly MethodInfo IsNullOrEmpty = typeof(string).GetRuntimeMethod(nameof(string.IsNullOrEmpty), [typeof(string)])!;
     private static readonly MethodInfo IsNullOrWhiteSpace = typeof(string).GetRuntimeMethod(nameof(string.IsNullOrWhiteSpace), [typeof(string)])!;
 
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
+    private readonly ITypeMappingSource _typeMappingSource;
+    private RelationalTypeMapping? _boolTypeMapping;
+    private RelationalTypeMapping? _charTypeMapping;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -49,9 +54,10 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public DuckDBStringMethodTranslator(ISqlExpressionFactory sqlExpressionFactory)
+    public DuckDBStringMethodTranslator(ISqlExpressionFactory sqlExpressionFactory, ITypeMappingSource typeMappingSource)
     {
         _sqlExpressionFactory = sqlExpressionFactory;
+        _typeMappingSource = typeMappingSource;
     }
 
     /// <summary>
@@ -68,32 +74,56 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
     {
         if (method == StartsWith || method == StartsWithChar)
         {
-            return _sqlExpressionFactory.Function(
+            _boolTypeMapping ??= (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(bool))!;
+
+            var startsWithFunction = _sqlExpressionFactory.Function(
                 name: "starts_with",
                 arguments: [instance!, arguments[0]],
                 nullable: true,
                 argumentsPropagateNullability: [true, true],
-                returnType: typeof(bool));
+                returnType: typeof(bool),
+                typeMapping: _boolTypeMapping);
+
+            return _sqlExpressionFactory.Coalesce(
+                startsWithFunction,
+                _sqlExpressionFactory.Constant(false, typeof(bool), _boolTypeMapping),
+                _boolTypeMapping);
         }
 
         if (method == Contains || method == ContainsChar)
         {
-            return _sqlExpressionFactory.Function(
+            _boolTypeMapping ??= (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(bool))!;
+
+            var containsFunction = _sqlExpressionFactory.Function(
                 name: "contains",
                 arguments: [instance!, arguments[0]],
                 nullable: true,
                 argumentsPropagateNullability: [true, true],
-                returnType: typeof(bool));
+                returnType: typeof(bool),
+                typeMapping: _boolTypeMapping);
+
+            return _sqlExpressionFactory.Coalesce(
+                containsFunction,
+                _sqlExpressionFactory.Constant(false, typeof(bool), _boolTypeMapping),
+                _boolTypeMapping);
         }
 
         if (method == EndsWith || method == EndsWithChar)
         {
-            return _sqlExpressionFactory.Function(
+            _boolTypeMapping ??= (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(bool))!;
+
+            var endsWithFunction = _sqlExpressionFactory.Function(
                 name: "ends_with",
                 arguments: [instance!, arguments[0]],
                 nullable: true,
                 argumentsPropagateNullability: [true, true],
-                returnType: typeof(bool));
+                returnType: typeof(bool),
+                typeMapping: _boolTypeMapping);
+
+            return _sqlExpressionFactory.Coalesce(
+                endsWithFunction,
+                _sqlExpressionFactory.Constant(false, typeof(bool), _boolTypeMapping),
+                _boolTypeMapping);
         }
 
         if (method == Substring)
@@ -177,7 +207,7 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
                 _sqlExpressionFactory.Constant(1));
         }
 
-        if (method == IndexOfWithPosition)
+        if (method == IndexOfWithPosition || method == IndexOfCharWithPosition)
         {
             var substringFromStart = _sqlExpressionFactory.Function(
                 name: "substring",
@@ -325,6 +355,36 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
             );
         }
 
+        if (method.Name == nameof(Enumerable.FirstOrDefault) &&
+            method.DeclaringType == typeof(Enumerable) &&
+            arguments is [{ Type: var firstArgType }] && firstArgType == typeof(string))
+        {
+            _charTypeMapping ??= (RelationalTypeMapping?)_typeMappingSource.FindMapping(typeof(char));
+
+            return _sqlExpressionFactory.Function(
+                name: "left",
+                arguments: [arguments[0], _sqlExpressionFactory.Constant(1)],
+                nullable: true,
+                argumentsPropagateNullability: [true, false],
+                returnType: typeof(char),
+                typeMapping: _charTypeMapping);
+        }
+
+        if (method.Name == nameof(Enumerable.LastOrDefault) &&
+            method.DeclaringType == typeof(Enumerable) &&
+            arguments is [{ Type: var lastArgType }] && lastArgType == typeof(string))
+        {
+            _charTypeMapping ??= (RelationalTypeMapping?)_typeMappingSource.FindMapping(typeof(char));
+
+            return _sqlExpressionFactory.Function(
+                name: "right",
+                arguments: [arguments[0], _sqlExpressionFactory.Constant(1)],
+                nullable: true,
+                argumentsPropagateNullability: [true, false],
+                returnType: typeof(char),
+                typeMapping: _charTypeMapping);
+        }
+        
         return null;
     }
 }

@@ -71,7 +71,7 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_column_with_defaultValueSql());
         Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
     }
-    
+
     public override async Task Add_column_with_required()
     {
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_column_with_required());
@@ -380,12 +380,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Create_table_with_json_column()
-    {
-        return base.Create_table_with_json_column();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Create_table_with_json_column_explicit_json_column_names()
     {
         return base.Create_table_with_json_column_explicit_json_column_names();
@@ -445,16 +439,16 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         Assert.Equal("Not implemented Error: No support for that ALTER TABLE option yet!", exception.Message);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Move_sequence()
+    public override async Task Move_sequence()
     {
-        return base.Move_sequence();
+        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Move_sequence());
+        Assert.Equal("Not implemented Error: T_AlterObjectSchemaStmt", exception.Message);  
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Move_table()
+    public override async Task Move_table()
     {
-        return base.Move_table();
+        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Move_table());
+        Assert.Equal("Not implemented Error: T_AlterObjectSchemaStmt", exception.Message);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -475,10 +469,10 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         return base.Rename_index();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Rename_sequence()
+    public override async Task Rename_sequence()
     {
-        return base.Rename_sequence();
+        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Rename_sequence());
+        Assert.Equal("Not implemented Error: Schema element not supported yet!", exception.Message);
     }
 
     public override async Task Rename_table()
@@ -487,16 +481,16 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
         Assert.Equal("Not implemented Error: No support for that ALTER TABLE option yet!", exception.Message);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Rename_table_with_json_column()
+    public override async Task Rename_table_with_json_column()
     {
-        return base.Rename_table_with_json_column();
+        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Rename_table_with_json_column());
+        Assert.Equal("Not implemented Error: No support for that ALTER TABLE option yet!", exception.Message);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Rename_table_with_primary_key()
+    public override async Task Rename_table_with_primary_key()
     {
-        return base.Rename_table_with_primary_key();
+        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Rename_table_with_primary_key());
+        Assert.Equal("Not implemented Error: No support for that ALTER TABLE option yet!", exception.Message);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
