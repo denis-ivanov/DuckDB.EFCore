@@ -1,11 +1,10 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
+﻿using DuckDB.EFCore.FunctionalTests;
+using DuckDB.EFCore.FunctionalTests.TestUtilities;
 using DuckDB.EFCore.Infrastructure;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class NonSharedPrimitiveCollectionsQueryDuckDBTest : NonSharedPrimitiveCollectionsQueryRelationalTestBase
 {
