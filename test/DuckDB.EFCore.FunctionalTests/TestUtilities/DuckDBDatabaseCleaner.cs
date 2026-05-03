@@ -1,11 +1,11 @@
 ﻿using DuckDB.EFCore.Design.Internal;
 using DuckDB.EFCore.Extensions;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Scaffolding;
-using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace DuckDB.EFCore.FunctionalTests.TestUtilities;
+namespace Microsoft.EntityFrameworkCore.TestUtilities;
 
 public class DuckDBDatabaseCleaner : RelationalDatabaseCleaner
 {
@@ -19,5 +19,11 @@ public class DuckDBDatabaseCleaner : RelationalDatabaseCleaner
         return services
             .BuildServiceProvider()
             .GetRequiredService<IDatabaseModelFactory>();
+    }
+
+    public override void Clean(DatabaseFacade facade)
+    {
+        base.Clean(facade);
+        facade.EnsureCreated();
     }
 }

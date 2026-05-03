@@ -1,10 +1,9 @@
+using DuckDB.EFCore.FunctionalTests;
 using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class EntitySplittingQueryDuckDBTest : EntitySplittingQueryTestBase
 {
@@ -13,84 +12,6 @@ public class EntitySplittingQueryDuckDBTest : EntitySplittingQueryTestBase
     }
 
     protected override ITestStoreFactory TestStoreFactory => DuckDBTestStoreFactory.Instance;
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Can_query_entity_which_is_split_in_three(bool async)
-    {
-        return base.Can_query_entity_which_is_split_in_three(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Can_query_entity_which_is_split_in_two(bool async)
-    {
-        return base.Can_query_entity_which_is_split_in_two(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Can_query_entity_which_is_split_selecting_only_main_properties(bool async)
-    {
-        return base.Can_query_entity_which_is_split_selecting_only_main_properties(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Can_query_entity_which_is_split_selecting_only_part_2_properties(bool async)
-    {
-        return base.Can_query_entity_which_is_split_selecting_only_part_2_properties(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Can_query_entity_which_is_split_selecting_only_part_3_properties(bool async)
-    {
-        return base.Can_query_entity_which_is_split_selecting_only_part_3_properties(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Compare_split_entity_to_null(bool async)
-    {
-        await base.Compare_split_entity_to_null(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Custom_projection_trim_when_multiple_tables(bool async)
-    {
-        return base.Custom_projection_trim_when_multiple_tables(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Include_collection_on_split_entity(bool async)
-    {
-        return base.Include_collection_on_split_entity(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Include_collection_to_split_entity(bool async)
-    {
-        return base.Include_collection_to_split_entity(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Include_collection_to_split_entity_including_collection(bool async)
-    {
-        return base.Include_collection_to_split_entity_including_collection(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Include_reference_on_split_entity(bool async)
-    {
-        return base.Include_reference_on_split_entity(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Include_reference_to_split_entity(bool async)
-    {
-        return base.Include_reference_to_split_entity(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Include_reference_to_split_entity_including_reference(bool async)
-    {
-        return base.Include_reference_to_split_entity_including_reference(async);
-    }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Normal_entity_owning_a_split_collection(bool async)
@@ -105,21 +26,9 @@ public class EntitySplittingQueryDuckDBTest : EntitySplittingQueryTestBase
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Normal_entity_owning_a_split_reference_with_main_fragment_not_sharing_custom_projection(bool async)
-    {
-        return base.Normal_entity_owning_a_split_reference_with_main_fragment_not_sharing_custom_projection(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Normal_entity_owning_a_split_reference_with_main_fragment_sharing(bool async)
     {
         return base.Normal_entity_owning_a_split_reference_with_main_fragment_sharing(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Normal_entity_owning_a_split_reference_with_main_fragment_sharing_custom_projection(bool async)
-    {
-        return base.Normal_entity_owning_a_split_reference_with_main_fragment_sharing_custom_projection(async);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
