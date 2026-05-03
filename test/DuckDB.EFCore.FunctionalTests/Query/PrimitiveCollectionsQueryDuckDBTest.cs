@@ -757,12 +757,6 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Project_collection_of_ints_ordered()
-    {
-        await base.Project_collection_of_ints_ordered();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Project_collection_of_nullable_ints_with_paging2()
     {
         await base.Project_collection_of_nullable_ints_with_paging2();
