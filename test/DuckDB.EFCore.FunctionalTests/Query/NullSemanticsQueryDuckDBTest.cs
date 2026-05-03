@@ -1,21 +1,13 @@
-﻿using DuckDB.EFCore.Infrastructure;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
+﻿using DuckDB.EFCore.FunctionalTests.Query;
+using DuckDB.EFCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.TestModels.NullSemanticsModel;
-using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class NullSemanticsQueryDuckDBTest : NullSemanticsQueryTestBase<NullSemanticsQueryDuckDBFixture>
 {
     public NullSemanticsQueryDuckDBTest(NullSemanticsQueryDuckDBFixture fixture) : base(fixture)
     {
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Nullable_string_FirstOrDefault_compared_to_nullable_string_LastOrDefault(bool async)
-    {
-        return base.Nullable_string_FirstOrDefault_compared_to_nullable_string_LastOrDefault(async);
     }
 
     protected override NullSemanticsContext CreateContext(bool useRelationalNulls = false)
