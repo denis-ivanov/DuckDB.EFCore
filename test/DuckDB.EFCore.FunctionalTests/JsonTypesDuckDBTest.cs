@@ -178,12 +178,6 @@ public class JsonTypesDuckDBTest : JsonTypesRelationalTestBase
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Can_read_write_char_JSON_values(char value, string json)
-    {
-        await base.Can_read_write_char_JSON_values(value, json);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_collection_of_binary_JSON_values(string expected)
     {
         await base.Can_read_write_collection_of_binary_JSON_values(expected);
