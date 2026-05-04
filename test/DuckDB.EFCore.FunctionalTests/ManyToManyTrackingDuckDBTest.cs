@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Microsoft.EntityFrameworkCore;
 
-// TODO
+// TODO Many_to_many_delete_behaviors_are_set - is not virtual
 public abstract class ManyToManyTrackingDuckDBTest : ManyToManyTrackingRelationalTestBase<ManyToManyTrackingDuckDBTest.ManyToManyTrackingDuckDBFixture>
 {
     protected ManyToManyTrackingDuckDBTest(ManyToManyTrackingDuckDBFixture fixture) : base(fixture)

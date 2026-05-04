@@ -1,23 +1,34 @@
-﻿namespace Microsoft.EntityFrameworkCore.Query;
-/*
-public class AdHocMiscellaneousQueryDuckDBTest : AdHocMiscellaneousQueryRelationalTestBase
+﻿using DuckDB.EFCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.TestUtilities;
+using Xunit;
+
+namespace Microsoft.EntityFrameworkCore.Query;
+
+// TODO Query_when_null_key_in_database_should_throw - is not virtual
+public abstract class AdHocMiscellaneousQueryDuckDBTest : AdHocMiscellaneousQueryRelationalTestBase
 {
-    public AdHocMiscellaneousQueryDuckDBTest(NonSharedFixture fixture) : base(fixture)
+    protected AdHocMiscellaneousQueryDuckDBTest(NonSharedFixture fixture) : base(fixture)
     {
     }
-    
+
     protected override ITestStoreFactory TestStoreFactory => DuckDBTestStoreFactory.Instance;
 
     protected override DbContextOptionsBuilder SetParameterizedCollectionMode(
         DbContextOptionsBuilder optionsBuilder,
         ParameterTranslationMode parameterizedCollectionMode)
     {
-        throw new NotImplementedException();
+        new DuckDBDbContextOptionsBuilder(optionsBuilder).UseParameterizedCollectionMode(parameterizedCollectionMode);
+
+        return optionsBuilder;
     }
 
-    protected override Task Seed2951(Context2951 context)
+    protected override async Task Seed2951(Context2951 context)
     {
-        throw new NotImplementedException();
+        await context.Database.ExecuteSqlRawAsync(
+            """
+            CREATE TABLE ZeroKey (Id int);
+            INSERT INTO ZeroKey VALUES (NULL)
+            """);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -157,5 +168,10 @@ public class AdHocMiscellaneousQueryDuckDBTest : AdHocMiscellaneousQueryRelation
     {
         return base.Unwrap_convert_node_over_projection_when_translating_contains_over_subquery_3(async);
     }
+
+    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Mapping_JsonElement_property_throws_a_meaningful_exception()
+    {
+        return base.Mapping_JsonElement_property_throws_a_meaningful_exception();
+    }
 }
-*/
