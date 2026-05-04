@@ -7,8 +7,6 @@ namespace Microsoft.EntityFrameworkCore.Query.Translations;
 
 public class BasicTypesQueryDuckDBFixture : BasicTypesQueryFixtureBase, ITestSqlLoggerFactory
 {
-    private static readonly DateTime DuckDbMinDateTime = DateTime.Parse("1754-08-30T22:43:41.1388553");
-
     public BasicTypesQueryDuckDBFixture()
     {
         var entityAsserters = (Dictionary<Type, object>)EntityAsserters;
@@ -22,11 +20,6 @@ public class BasicTypesQueryDuckDBFixture : BasicTypesQueryFixtureBase, ITestSql
             {
                 var ee = (BasicTypesEntity)e!;
                 var aa = (BasicTypesEntity)a;
-
-                if (ee.DateTime < DuckDbMinDateTime)
-                {
-                    ee.DateTime = DuckDbMinDateTime;
-                }
 
                 Assert.Equal(ee.Id, aa.Id);
 
@@ -63,11 +56,6 @@ public class BasicTypesQueryDuckDBFixture : BasicTypesQueryFixtureBase, ITestSql
             {
                 var ee = (NullableBasicTypesEntity)e!;
                 var aa = (NullableBasicTypesEntity)a;
-
-                if (ee.DateTime.HasValue && ee.DateTime < DuckDbMinDateTime)
-                {
-                    ee.DateTime = DuckDbMinDateTime;
-                }
 
                 Assert.Equal(ee.Id, aa.Id);
 

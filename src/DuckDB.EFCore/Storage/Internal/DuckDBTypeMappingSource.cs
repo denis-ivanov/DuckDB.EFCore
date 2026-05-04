@@ -55,7 +55,7 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         { typeof(uint), UInt32TypeMapping },
         { typeof(ulong), UInt64TypeMapping },
         { typeof(ushort), UInt16TypeMapping },
-        { typeof(DateTime), DuckDBTimestampTypeMapping.TimestampNs },
+        { typeof(DateTime), DuckDBTimestampTypeMapping.Timestamp },
         { typeof(DateTimeOffset), DuckDBTimestampTypeMapping.TimestampTz },
         { typeof(DateOnly), DateTypeMapping },
         { typeof(TimeSpan), DuckDBTimeTypeMapping.TimeSpan },

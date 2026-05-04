@@ -148,7 +148,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
-            WHERE p."DateTimes"[2] = TIMESTAMP_NS '2020-01-10 12:30:00.0000000'
+            WHERE p."DateTimes"[2] = TIMESTAMP '2020-01-10 12:30:00.000000'
             """);
     }
 
