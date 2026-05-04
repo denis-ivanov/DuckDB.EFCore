@@ -1,4 +1,3 @@
-using DuckDB.EFCore.FunctionalTests.TestUtilities;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit.Abstractions;
 

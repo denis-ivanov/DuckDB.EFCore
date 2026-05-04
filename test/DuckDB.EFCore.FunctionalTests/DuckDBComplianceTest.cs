@@ -1,8 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+﻿using System.Reflection;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class DuckDBComplianceTest : RelationalComplianceTestBase
 {

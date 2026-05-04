@@ -1,10 +1,7 @@
-﻿using System.Threading.Tasks;
-using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.TestUtilities;
+﻿using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 // TODO
 internal abstract class MonsterFixupChangedOnlyDuckDBTest : MonsterFixupTestBase<MonsterFixupChangedOnlyDuckDBTest.MonsterFixupChangedOnlyDuckDBFixture>

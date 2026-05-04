@@ -1,7 +1,7 @@
 ﻿using DuckDB.NET.Data;
 using Microsoft.EntityFrameworkCore.TestUtilities.Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.TestUtilities;
+namespace Microsoft.EntityFrameworkCore.TestUtilities;
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
 public sealed class SpatialiteRequiredAttribute : Attribute, ITestCondition

@@ -1,4 +1,3 @@
-using DuckDB.EFCore.FunctionalTests;
 using DuckDB.NET.Data;
 using Microsoft.EntityFrameworkCore.TestModels.Northwind;
 using Microsoft.EntityFrameworkCore.TestUtilities;

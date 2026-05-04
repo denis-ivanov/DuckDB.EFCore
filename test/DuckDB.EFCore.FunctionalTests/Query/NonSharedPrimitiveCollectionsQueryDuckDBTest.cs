@@ -1,6 +1,4 @@
-﻿using DuckDB.EFCore.FunctionalTests;
-using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using DuckDB.EFCore.Infrastructure;
+﻿using DuckDB.EFCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 

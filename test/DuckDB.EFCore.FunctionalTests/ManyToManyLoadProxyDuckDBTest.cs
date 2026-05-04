@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class ManyToManyLoadProxyDuckDBTest(ManyToManyLoadProxyDuckDBTest.ManyToManyLoadProxyDuckDBFixture fixture) : ManyToManyLoadDuckDBTestBase<ManyToManyLoadProxyDuckDBTest.ManyToManyLoadProxyDuckDBFixture>(fixture)
 {

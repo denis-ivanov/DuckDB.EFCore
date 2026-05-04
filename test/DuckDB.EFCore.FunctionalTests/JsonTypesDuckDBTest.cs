@@ -1,9 +1,7 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.TestUtilities;
+﻿using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class JsonTypesDuckDBTest : JsonTypesRelationalTestBase
 {

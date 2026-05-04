@@ -1,9 +1,7 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.TestModels.ManyToManyModel;
+﻿using Microsoft.EntityFrameworkCore.TestModels.ManyToManyModel;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public abstract class ManyToManyLoadDuckDBTestBase<TFixture>(TFixture fixture) : ManyToManyLoadTestBase<TFixture>(fixture)
     where TFixture : ManyToManyLoadDuckDBTestBase<TFixture>.ManyToManyLoadDuckDBFixtureBase
