@@ -7,6 +7,10 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore;
 
 // TODO
+/*
+ * Change_state_of_entity_with_temp_non_key_does_not_throw
+ * Clearing_optional_FK_does_not_leave_temporary_value
+ */
 public abstract class StoreGeneratedDuckDBTest : StoreGeneratedTestBase<StoreGeneratedDuckDBTest.StoreGeneratedDuckDBFixture>
 {
     protected StoreGeneratedDuckDBTest(StoreGeneratedDuckDBFixture fixture) : base(fixture)

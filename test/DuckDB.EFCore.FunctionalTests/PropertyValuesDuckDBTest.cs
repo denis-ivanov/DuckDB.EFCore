@@ -5,6 +5,12 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore;
 
 // TODO
+/*
+ * Reload_when_entity_deleted_in_store_can_happen_for_any_state
+ * Store_values_really_are_store_values_not_current_or_original_values
+ * Store_values_really_are_store_values_not_current_or_original_values_async
+ * Values_can_be_reloaded_from_database_for_entity_in_any_state
+ */
 public abstract class PropertyValuesDuckDBTest : PropertyValuesRelationalTestBase<PropertyValuesDuckDBTest.PropertyValuesDuckDBFixture>
 {
     protected PropertyValuesDuckDBTest(PropertyValuesDuckDBFixture fixture) : base(fixture)
@@ -527,7 +533,7 @@ public abstract class PropertyValuesDuckDBTest : PropertyValuesRelationalTestBas
         await base.Store_values_can_be_read_or_set_for_a_Detached_object_asynchronously();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Values_can_be_reloaded_from_database_for_entity_in_any_state_with_inheritance(EntityState state, bool async)
     {
         await base.Values_can_be_reloaded_from_database_for_entity_in_any_state_with_inheritance(state, async);

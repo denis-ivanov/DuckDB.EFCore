@@ -2,7 +2,7 @@
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
-public class AdHocComplexTypeQueryDuckDBTest : AdHocComplexTypeQueryTestBase
+public class AdHocComplexTypeQueryDuckDBTest : AdHocComplexTypeQueryRelationalTestBase
 {
     public AdHocComplexTypeQueryDuckDBTest(NonSharedFixture fixture) : base(fixture)
     {
