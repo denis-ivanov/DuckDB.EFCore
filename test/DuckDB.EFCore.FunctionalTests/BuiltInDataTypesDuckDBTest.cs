@@ -61,7 +61,7 @@ public class BuiltInDataTypesDuckDBTest : BuiltInDataTypesTestBase<BuiltInDataTy
 
         public override bool SupportsDecimalComparisons { get; }
 
-        public override DateTime DefaultDateTime => DateTime.Parse("1754-08-30T22:43:41.1286549");
+        public override DateTime DefaultDateTime => new();
 
         public override bool PreservesDateTimeKind { get; }
 
