@@ -189,18 +189,6 @@ public class JsonTypesDuckDBTest : JsonTypesRelationalTestBase
         await base.Can_read_write_collection_of_char_JSON_values();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Can_read_write_collection_of_DateOnly_JSON_values()
-    {
-        await base.Can_read_write_collection_of_DateOnly_JSON_values();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Can_read_write_collection_of_char_values_with_converter_as_JSON_string()
-    {
-        await base.Can_read_write_collection_of_char_values_with_converter_as_JSON_string();
-    }
-
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_collection_of_Guid_converted_to_bytes_JSON_values(string expected)
     {
@@ -211,18 +199,6 @@ public class JsonTypesDuckDBTest : JsonTypesRelationalTestBase
     public override async Task Can_read_write_collection_of_nullable_binary_JSON_values(string expected)
     {
         await base.Can_read_write_collection_of_nullable_binary_JSON_values(expected);
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Can_read_write_collection_of_nullable_char_JSON_values()
-    {
-        await base.Can_read_write_collection_of_nullable_char_JSON_values();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Can_read_write_collection_of_nullable_char_values_with_converter_as_JSON_string()
-    {
-        await base.Can_read_write_collection_of_nullable_char_values_with_converter_as_JSON_string();
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
