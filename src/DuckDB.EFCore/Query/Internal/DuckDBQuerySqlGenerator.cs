@@ -1,6 +1,8 @@
-﻿using DuckDB.EFCore.Query.Expressions.Internal;
+﻿using DuckDB.EFCore.Extensions;
+using DuckDB.EFCore.Query.Expressions.Internal;
 using DuckDB.EFCore.Storage.Internal;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -115,6 +117,31 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         }
 
         return base.VisitTableValuedFunction(tableValuedFunctionExpression);
+    }
+
+    /// <inheritdoc />
+    protected override Expression VisitTable(TableExpression tableExpression)
+    {
+        var parquetPath = tableExpression.Table.EntityTypeMappings
+            .Select(m => m.TypeBase)
+            .OfType<IEntityType>()
+            .Select(e => e.GetParquetPath())
+            .FirstOrDefault(p => !string.IsNullOrEmpty(p));
+
+        if (string.IsNullOrEmpty(parquetPath))
+        {
+            return base.VisitTable(tableExpression);
+        }
+
+        var quotedParquetPath = $"'{parquetPath.Replace("'", "''")}'";
+
+        Sql.Append("read_parquet(")
+            .Append(quotedParquetPath)
+            .Append(")")
+            .Append(AliasSeparator)
+            .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(tableExpression.Alias));
+
+        return tableExpression;
     }
 
     /// <summary>

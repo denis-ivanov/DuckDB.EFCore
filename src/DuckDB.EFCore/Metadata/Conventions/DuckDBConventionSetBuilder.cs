@@ -43,6 +43,7 @@ public class DuckDBConventionSetBuilder : RelationalConventionSetBuilder
         conventionSet.ModelFinalizingConventions.Add(valueGenerationConvention);
 
         conventionSet.Replace<RuntimeModelConvention>(new DuckDBRuntimeModelConvention(Dependencies, RelationalDependencies));
+        conventionSet.EntityTypeAddedConventions.Add(new DuckDBParquetConvention());
 
         return conventionSet;
     }

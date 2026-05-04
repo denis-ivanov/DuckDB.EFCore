@@ -23,4 +23,5 @@ public static class DuckDBAnnotationNames
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     public const string ValueGenerationStrategy = Prefix + "ValueGenerationStrategy";
+    public const string ParquetPath = Prefix + "ParquetPath";
 }
