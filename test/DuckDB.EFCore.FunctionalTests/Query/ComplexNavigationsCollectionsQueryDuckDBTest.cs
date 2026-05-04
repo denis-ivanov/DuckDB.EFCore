@@ -1,6 +1,4 @@
-﻿using DuckDB.EFCore.FunctionalTests.Query;
-
-namespace Microsoft.EntityFrameworkCore.Query;
+﻿namespace Microsoft.EntityFrameworkCore.Query;
 
 public class ComplexNavigationsCollectionsQueryDuckDBTest : ComplexNavigationsCollectionsQueryRelationalTestBase<ComplexNavigationsQueryDuckDBFixture>
 {
