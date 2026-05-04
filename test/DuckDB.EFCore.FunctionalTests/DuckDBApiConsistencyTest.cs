@@ -1,11 +1,10 @@
 ﻿using DuckDB.EFCore.Extensions;
 using DuckDB.EFCore.Infrastructure;
 using DuckDB.EFCore.Storage.Internal;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class DuckDBApiConsistencyTest : ApiConsistencyTestBase<DuckDBApiConsistencyTest.DuckDBApiConsistencyFixture>
 {

@@ -1,5 +1,4 @@
-﻿using DuckDB.EFCore.FunctionalTests;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Xunit;
 using Xunit.Abstractions;

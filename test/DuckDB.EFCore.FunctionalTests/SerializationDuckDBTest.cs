@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Xunit;
+﻿using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class SerializationDuckDBTest : SerializationTestBase<F1DuckDBFixture>
 {

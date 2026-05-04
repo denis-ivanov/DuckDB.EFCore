@@ -1,5 +1,4 @@
-﻿using DuckDB.EFCore.FunctionalTests;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Xunit;
 
 namespace Microsoft.EntityFrameworkCore;

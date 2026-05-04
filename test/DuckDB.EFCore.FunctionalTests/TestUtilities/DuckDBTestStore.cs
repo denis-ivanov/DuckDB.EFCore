@@ -1,13 +1,11 @@
 ﻿using DuckDB.EFCore.Extensions;
 using DuckDB.EFCore.Infrastructure;
 using DuckDB.NET.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using System.Data;
 using System.Data.Common;
 
-namespace DuckDB.EFCore.FunctionalTests.TestUtilities;
+namespace Microsoft.EntityFrameworkCore.TestUtilities;
 
 public class DuckDBTestStore : RelationalTestStore
 {

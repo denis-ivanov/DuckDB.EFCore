@@ -1,5 +1,4 @@
-﻿using DuckDB.EFCore.FunctionalTests;
-using Xunit;
+﻿using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query.Associations.ComplexTableSplitting;

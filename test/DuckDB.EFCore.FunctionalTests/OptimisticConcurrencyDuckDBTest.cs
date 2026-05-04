@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class OptimisticConcurrencyULongDuckDBTest(F1ULongDuckDBFixture fixture)
     : OptimisticConcurrencyDuckDBTestBase<F1ULongDuckDBFixture, ulong?>(fixture)
