@@ -1,5 +1,4 @@
-﻿using DuckDB.EFCore.FunctionalTests.Query;
-using DuckDB.EFCore.FunctionalTests.TestModels.Northwind;
+﻿using DuckDB.EFCore.FunctionalTests.TestModels.Northwind;
 using Microsoft.EntityFrameworkCore.TestModels.Northwind;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 

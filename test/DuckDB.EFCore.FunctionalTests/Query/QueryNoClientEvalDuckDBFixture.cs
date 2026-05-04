@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.TestUtilities;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class QueryNoClientEvalDuckDBFixture : NorthwindQueryDuckDBFixture<NoopModelCustomizer>
 {

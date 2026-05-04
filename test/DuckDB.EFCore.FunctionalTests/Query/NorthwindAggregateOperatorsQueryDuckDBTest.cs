@@ -1,6 +1,5 @@
 ﻿using AwesomeAssertions;
 using DuckDB.EFCore.FunctionalTests;
-using DuckDB.EFCore.FunctionalTests.Query;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 using Xunit.Abstractions;

@@ -1,5 +1,4 @@
-﻿using DuckDB.EFCore.FunctionalTests.Query;
-using DuckDB.NET.Data;
+﻿using DuckDB.NET.Data;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using System.Data.Common;
 

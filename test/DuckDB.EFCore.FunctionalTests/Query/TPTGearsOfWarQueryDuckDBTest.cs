@@ -1,8 +1,8 @@
-using Microsoft.EntityFrameworkCore.Query;
+using DuckDB.EFCore.FunctionalTests;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class TPTGearsOfWarQueryDuckDBTest : TPTGearsOfWarQueryRelationalTestBase<TPTGearsOfWarQueryDuckDBFixture>
 {
