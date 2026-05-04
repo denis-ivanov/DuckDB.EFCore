@@ -598,10 +598,16 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
         await base.Inline_collection_Except_column_collection();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Inline_collection_index_Column()
     {
         await base.Inline_collection_index_Column();
+
+        AssertSql(
+            """
+            SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
+            FROM "PrimitiveCollectionsEntity" AS p
+            WHERE list_value(CAST(1 AS INTEGER), 2, 3)[p."Int" + 1] = 1
+            """);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
