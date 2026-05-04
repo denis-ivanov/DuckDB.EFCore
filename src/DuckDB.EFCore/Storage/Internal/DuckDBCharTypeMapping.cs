@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Data.Common;
+using System.Reflection;
 
 namespace DuckDB.EFCore.Storage.Internal;
 
@@ -13,7 +14,7 @@ namespace DuckDB.EFCore.Storage.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public class DuckDBCharTypeMapping : StringTypeMapping
+public class DuckDBCharTypeMapping : CharTypeMapping
 {
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -31,7 +32,8 @@ public class DuckDBCharTypeMapping : StringTypeMapping
                 providerValueComparer: null,
                 valueGeneratorFactory: null,
                 elementMapping: null,
-                jsonValueReaderWriter: JsonStringReaderWriter.Instance),
+                jsonValueReaderWriter: new JsonConvertedValueReaderWriter<char, string>(
+                    JsonStringReaderWriter.Instance, new CharToStringConverter())),
             "VARCHAR",
             StoreTypePostfix.Size,
             System.Data.DbType.StringFixedLength,
@@ -49,6 +51,12 @@ public class DuckDBCharTypeMapping : StringTypeMapping
     /// </summary>
     protected DuckDBCharTypeMapping(RelationalTypeMappingParameters parameters) : base(parameters)
     {
+    }
+
+    /// <inheritdoc />
+    public override MethodInfo GetDataReaderMethod()
+    {
+        return GetDataReaderMethod(typeof(string));
     }
 
     /// <inheritdoc />
