@@ -217,15 +217,11 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
     {
         await base.Column_collection_of_bools_Contains();
 
-        // TODO array_contains()
         AssertSql(
             """
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
-            WHERE true IN (
-                SELECT b."value"
-                FROM unnest(p."Bools") AS b("value")
-            )
+            WHERE array_contains(p."Bools", true)
             """);
     }
 
@@ -233,15 +229,11 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
     {
         await base.Column_collection_of_ints_Contains();
 
-        // TODO array_contains
         AssertSql(
             """
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
-            WHERE 10 IN (
-                SELECT i."value"
-                FROM unnest(p."Ints") AS i("value")
-            )
+            WHERE array_contains(p."Ints", 10)
             """);
     }
 
@@ -411,10 +403,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
-            WHERE 11 IN (
-                SELECT i."value"
-                FROM unnest(p."Ints"[2:3]) AS i("value")
-            )
+            WHERE array_contains(p."Ints"[2:3], 11)
             """);
     }
 
@@ -426,10 +415,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
-            WHERE 11 IN (
-                SELECT i."value"
-                FROM unnest(p."Ints"[:2]) AS i("value")
-            )
+            WHERE array_contains(p."Ints"[:2], 11)
             """);
     }
 

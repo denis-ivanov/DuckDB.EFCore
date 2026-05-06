@@ -13,18 +13,6 @@ public class CustomConvertersDuckDBTest : CustomConvertersTestBase<CustomConvert
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Can_insert_and_read_back_all_non_nullable_data_types()
-    {
-        await base.Can_insert_and_read_back_all_non_nullable_data_types();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Can_insert_and_read_back_all_nullable_data_types_with_values_set_to_non_null()
-    {
-        await base.Can_insert_and_read_back_all_nullable_data_types_with_values_set_to_non_null();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_insert_and_read_back_non_nullable_backed_data_types()
     {
         await base.Can_insert_and_read_back_non_nullable_backed_data_types();
@@ -43,24 +31,6 @@ public class CustomConvertersDuckDBTest : CustomConvertersTestBase<CustomConvert
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Can_query_using_any_data_type()
-    {
-        await base.Can_query_using_any_data_type();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Can_query_using_any_data_type_nullable_shadow()
-    {
-        await base.Can_query_using_any_data_type_nullable_shadow();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Can_query_using_any_data_type_shadow()
-    {
-        await base.Can_query_using_any_data_type_shadow();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_query_using_any_nullable_data_type()
     {
         await base.Can_query_using_any_nullable_data_type();
@@ -70,12 +40,6 @@ public class CustomConvertersDuckDBTest : CustomConvertersTestBase<CustomConvert
     public override async Task Can_query_using_any_nullable_data_type_as_literal()
     {
         await base.Can_query_using_any_nullable_data_type_as_literal();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Can_read_back_bool_mapped_as_int_through_navigation()
-    {
-        await base.Can_read_back_bool_mapped_as_int_through_navigation();
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
