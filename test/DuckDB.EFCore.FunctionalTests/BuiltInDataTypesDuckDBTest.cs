@@ -39,12 +39,6 @@ public class BuiltInDataTypesDuckDBTest : BuiltInDataTypesTestBase<BuiltInDataTy
         return base.Can_insert_and_read_back_object_backed_data_types();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Can_read_back_bool_mapped_as_int_through_navigation()
-    {
-        return base.Can_read_back_bool_mapped_as_int_through_navigation();
-    }
-
     public class BuiltInDataTypesDuckDBFixture : BuiltInDataTypesFixtureBase, ITestSqlLoggerFactory
     {
         protected override ITestStoreFactory TestStoreFactory => DuckDBTestStoreFactory.Instance;

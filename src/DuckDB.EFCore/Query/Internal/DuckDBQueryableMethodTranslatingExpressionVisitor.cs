@@ -333,11 +333,39 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         return base.TranslateAny(source, predicate);
     }
 
+    protected override ShapedQueryExpression? TranslateContains(ShapedQueryExpression source, Expression item)
+    {
+        if (source.TryExtractArray(out var array, ignoreOrderings: true)
+            && TranslateExpression(item, applyDefaultTypeMapping: false) is { } translatedItem)
+        {
+            var elementClrType = array.Type.GetSequenceType();
+            var isElementNullable = elementClrType.IsNullableType();
+            var isItemNullable = item.Type.IsNullableType();
+
+            // DuckDB's array_contains() does not support searching for NULL elements.
+            // It is safe to use when the array element type is non-nullable (can never contain NULL)
+            // or when the searched item is non-nullable (can never be NULL itself).
+            if (!isElementNullable || !isItemNullable)
+            {
+                var elementTypeMapping = (array.TypeMapping as DuckDBArrayTypeMapping)?.ElementTypeMapping;
+                translatedItem = _sqlExpressionFactory.ApplyTypeMapping(translatedItem, elementTypeMapping);
+
+                return BuildSimplifiedShapedQuery(
+                    source,
+                    _sqlExpressionFactory.Function(
+                        "array_contains",
+                        [array, translatedItem],
+                        nullable: true,
+                        argumentsPropagateNullability: [true, true],
+                        typeof(bool)));
+            }
+        }
+
+        return base.TranslateContains(source, item);
+    }
+
     /// <inheritdoc />
-    protected override ShapedQueryExpression? TranslateElementAtOrDefault(
-        ShapedQueryExpression source,
-        Expression index,
-        bool returnDefault)
+    protected override ShapedQueryExpression? TranslateElementAtOrDefault(ShapedQueryExpression source, Expression index, bool returnDefault)
     {
         if (!returnDefault && TranslateExpression(index) is { } translatedIndex)
         {
