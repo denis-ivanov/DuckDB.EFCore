@@ -112,7 +112,7 @@ public class ParquetTests
         }
     }
 
-    [Parquet("data/*.parquet")]
+    [FromParquet("data/*.parquet")]
     private sealed class MyData
     {
         public int Id { get; set; }
@@ -129,7 +129,7 @@ public class ParquetTests
         public int Id { get; set; }
     }
 
-    [Parquet("related/*.parquet")]
+    [FromParquet("related/*.parquet")]
     private sealed class RelatedParquetData
     {
         public int Id { get; set; }

@@ -1,9 +1,9 @@
 ﻿namespace DuckDB.EFCore.Metadata;
 
 [AttributeUsage(AttributeTargets.Class)]
-public sealed class ParquetAttribute : Attribute
+public sealed class FromParquetAttribute : Attribute
 {
-    public ParquetAttribute(string path)
+    public FromParquetAttribute(string path)
     {
         if (string.IsNullOrWhiteSpace(path))
         {

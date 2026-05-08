@@ -11,7 +11,7 @@ public sealed class DuckDBParquetConvention : IEntityTypeAddedConvention
         IConventionEntityTypeBuilder entityTypeBuilder,
         IConventionContext<IConventionEntityTypeBuilder> context)
     {
-        var parquetAttribute = entityTypeBuilder.Metadata.ClrType?.GetCustomAttribute<ParquetAttribute>(inherit: true);
+        var parquetAttribute = entityTypeBuilder.Metadata.ClrType?.GetCustomAttribute<FromParquetAttribute>(inherit: true);
 
         if (parquetAttribute is null)
         {
