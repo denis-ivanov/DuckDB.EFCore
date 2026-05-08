@@ -28,9 +28,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public DuckDBQuerySqlGenerator(
-        QuerySqlGeneratorDependencies dependencies,
-        bool reverseNullOrderingEnabled)
+    public DuckDBQuerySqlGenerator(QuerySqlGeneratorDependencies dependencies, bool reverseNullOrderingEnabled)
         : base(dependencies)
     {
         _reverseNullOrderingEnabled = reverseNullOrderingEnabled;
