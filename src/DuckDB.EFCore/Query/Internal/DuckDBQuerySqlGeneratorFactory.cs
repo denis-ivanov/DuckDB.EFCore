@@ -1,6 +1,5 @@
 ﻿using DuckDB.EFCore.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DuckDB.EFCore.Query.Internal;
 
