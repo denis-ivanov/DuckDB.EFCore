@@ -131,4 +131,16 @@ public class ParquetTests
     {
         public static string CurrentPath { get; set; } = string.Empty;
     }
+
+    private sealed class DynamicParquetContext(DbContextOptions<DynamicParquetContext> options) : DbContext(options)
+    {
+        public DbSet<DynamicMyData> DynamicMyData => Set<DynamicMyData>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DynamicMyData>()
+                .FromParquet(TestParquetPathService.CurrentPath);
+        }
+    }
 }
+
