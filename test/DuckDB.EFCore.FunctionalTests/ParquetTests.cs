@@ -54,9 +54,11 @@ public class ParquetTests
     public void Write_throws_for_parquet_entity()
     {
         using var context = CreateContext();
+        context.Database.EnsureCreated();
         context.MyData.Add(new MyData { Id = 1 });
 
-        Assert.ThrowsAny<Exception>(() => context.SaveChanges());
+        var exception = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+        Assert.Contains("read_parquet", exception.ToString(), StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
