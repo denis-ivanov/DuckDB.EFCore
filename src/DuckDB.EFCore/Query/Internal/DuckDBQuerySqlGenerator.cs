@@ -153,7 +153,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
             return parquetPath;
         }
 
-        return resolvedPath;
+        return null;
     }
 
     /// <summary>
