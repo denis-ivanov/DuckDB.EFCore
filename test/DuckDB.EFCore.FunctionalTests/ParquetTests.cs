@@ -1,6 +1,8 @@
 using DuckDB.EFCore.Metadata;
 using DuckDB.EFCore.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using Xunit;
 
 namespace DuckDB.EFCore.FunctionalTests;
@@ -57,6 +59,15 @@ public class ParquetTests
         Assert.ThrowsAny<Exception>(() => context.SaveChanges());
     }
 
+    [Fact]
+    public void Dynamic_parquet_path_from_service_provider_uses_read_parquet()
+    {
+        using var context = CreateDynamicContext("dynamic/*.parquet");
+        var sql = context.DynamicMyData.ToQueryString();
+
+        Assert.Contains("read_parquet('dynamic/*.parquet')", sql);
+    }
+
     private static ParquetContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<ParquetContext>()
@@ -66,11 +77,39 @@ public class ParquetTests
         return new ParquetContext(options);
     }
 
+    private static DynamicParquetContext CreateDynamicContext(string parquetPath)
+    {
+        TestParquetPathService.CurrentPath = parquetPath;
+
+        var services = new ServiceCollection();
+        services.AddEntityFrameworkDuckDB();
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        var options = new DbContextOptionsBuilder<DynamicParquetContext>()
+            .UseInternalServiceProvider(serviceProvider)
+            .UseDuckDB("DataSource=:memory:")
+            .Options;
+
+        return new DynamicParquetContext(options);
+    }
+
     private sealed class ParquetContext(DbContextOptions<ParquetContext> options) : DbContext(options)
     {
         public DbSet<MyData> MyData => Set<MyData>();
         public DbSet<OtherData> Others => Set<OtherData>();
         public DbSet<RelatedParquetData> RelatedParquetData => Set<RelatedParquetData>();
+    }
+
+    private sealed class DynamicParquetContext(DbContextOptions<DynamicParquetContext> options) : DbContext(options)
+    {
+        public DbSet<DynamicMyData> DynamicMyData => Set<DynamicMyData>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DynamicMyData>()
+                .FromParquet(TestParquetPathService.GetPath);
+        }
     }
 
     [Parquet("data/*.parquet")]
@@ -85,6 +124,11 @@ public class ParquetTests
         public int Id { get; set; }
     }
 
+    private sealed class DynamicMyData
+    {
+        public int Id { get; set; }
+    }
+
     [Parquet("related/*.parquet")]
     private sealed class RelatedParquetData
     {
@@ -92,5 +136,13 @@ public class ParquetTests
         public int MyDataId { get; set; }
         public int Value { get; set; }
         public MyData? MyData { get; set; }
+    }
+
+    private static class TestParquetPathService
+    {
+        public static string CurrentPath { get; set; } = string.Empty;
+
+        public static string GetPath(ServiceProvider _)
+            => CurrentPath;
     }
 }

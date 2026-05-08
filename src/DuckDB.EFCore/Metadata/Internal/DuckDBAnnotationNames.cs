@@ -24,4 +24,6 @@ public static class DuckDBAnnotationNames
     /// </summary>
     public const string ValueGenerationStrategy = Prefix + "ValueGenerationStrategy";
     public const string ParquetPath = Prefix + "ParquetPath";
+    public const string ParquetPathFactory = Prefix + "ParquetPathFactory";
+    public const string ParquetPathFactoryValue = Prefix + "ParquetPathFactoryValue";
 }

@@ -1,5 +1,6 @@
 ﻿using DuckDB.EFCore.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DuckDB.EFCore.Query.Internal;
 
@@ -13,6 +14,7 @@ public class DuckDBQuerySqlGeneratorFactory : IQuerySqlGeneratorFactory
 {
     private readonly QuerySqlGeneratorDependencies _dependencies;
     private readonly IDuckDBSingletonOptions _duckDbSingletonOptions;
+    private readonly IServiceProvider _serviceProvider;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -22,15 +24,20 @@ public class DuckDBQuerySqlGeneratorFactory : IQuerySqlGeneratorFactory
     /// </summary>
     public DuckDBQuerySqlGeneratorFactory(
         QuerySqlGeneratorDependencies dependencies,
-        IDuckDBSingletonOptions duckDbSingletonOptions)
+        IDuckDBSingletonOptions duckDbSingletonOptions,
+        IServiceProvider serviceProvider)
     {
         _dependencies = dependencies;
         _duckDbSingletonOptions = duckDbSingletonOptions;
+        _serviceProvider = serviceProvider;
     }
 
     /// <inheritdoc />
     public QuerySqlGenerator Create()
     {
-        return new DuckDBQuerySqlGenerator(_dependencies, _duckDbSingletonOptions.ReverseNullOrderingEnabled);
+        return new DuckDBQuerySqlGenerator(
+            _dependencies,
+            _duckDbSingletonOptions.ReverseNullOrderingEnabled,
+            _serviceProvider as ServiceProvider);
     }
 }

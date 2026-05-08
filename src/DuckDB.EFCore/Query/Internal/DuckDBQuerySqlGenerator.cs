@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Linq.Expressions;
 
@@ -20,6 +21,7 @@ namespace DuckDB.EFCore.Query.Internal;
 public class DuckDBQuerySqlGenerator : QuerySqlGenerator
 {
     private readonly bool _reverseNullOrderingEnabled;
+    private readonly ServiceProvider? _serviceProvider;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -27,10 +29,14 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public DuckDBQuerySqlGenerator(QuerySqlGeneratorDependencies dependencies, bool reverseNullOrderingEnabled)
+    public DuckDBQuerySqlGenerator(
+        QuerySqlGeneratorDependencies dependencies,
+        bool reverseNullOrderingEnabled,
+        ServiceProvider? serviceProvider)
         : base(dependencies)
     {
         _reverseNullOrderingEnabled = reverseNullOrderingEnabled;
+        _serviceProvider = serviceProvider;
     }
 
     /// <inheritdoc />
@@ -125,7 +131,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         var parquetPath = tableExpression.Table.EntityTypeMappings
             .Select(m => m.TypeBase)
             .OfType<IEntityType>()
-            .Select(e => e.GetParquetPath())
+            .Select(GetParquetPath)
             .FirstOrDefault(p => !string.IsNullOrEmpty(p));
 
         if (string.IsNullOrEmpty(parquetPath))
@@ -142,6 +148,40 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
             .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(tableExpression.Alias));
 
         return tableExpression;
+    }
+
+    private string? GetParquetPath(IEntityType entityType)
+    {
+        var parquetPath = entityType.GetParquetPath();
+        if (!string.IsNullOrEmpty(parquetPath))
+        {
+            return parquetPath;
+        }
+
+        var parquetPathFactoryValue = entityType.GetParquetPathFactoryValue();
+        if (!string.IsNullOrEmpty(parquetPathFactoryValue))
+        {
+            return parquetPathFactoryValue;
+        }
+
+        var parquetPathFactory = entityType.GetParquetPathFactory();
+        if (parquetPathFactory is null)
+        {
+            return null;
+        }
+
+        if (_serviceProvider is null)
+        {
+            throw new InvalidOperationException($"A service provider is required to resolve the parquet path for entity '{entityType.DisplayName()}'.");
+        }
+
+        var resolvedPath = parquetPathFactory(_serviceProvider);
+        if (string.IsNullOrWhiteSpace(resolvedPath))
+        {
+            throw new InvalidOperationException($"The parquet path factory for entity '{entityType.DisplayName()}' returned an empty path.");
+        }
+
+        return resolvedPath;
     }
 
     /// <summary>
