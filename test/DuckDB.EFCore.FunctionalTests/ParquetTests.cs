@@ -101,17 +101,6 @@ public class ParquetTests
         public DbSet<RelatedParquetData> RelatedParquetData => Set<RelatedParquetData>();
     }
 
-    private sealed class DynamicParquetContext(DbContextOptions<DynamicParquetContext> options) : DbContext(options)
-    {
-        public DbSet<DynamicMyData> DynamicMyData => Set<DynamicMyData>();
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<DynamicMyData>()
-                .FromParquet(TestParquetPathService.GetPath);
-        }
-    }
-
     [FromParquet("data/*.parquet")]
     private sealed class MyData
     {
@@ -141,8 +130,5 @@ public class ParquetTests
     private static class TestParquetPathService
     {
         public static string CurrentPath { get; set; } = string.Empty;
-
-        public static string GetPath(ServiceProvider _)
-            => CurrentPath;
     }
 }
