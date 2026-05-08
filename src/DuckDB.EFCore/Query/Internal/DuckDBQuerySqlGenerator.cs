@@ -21,7 +21,6 @@ namespace DuckDB.EFCore.Query.Internal;
 public class DuckDBQuerySqlGenerator : QuerySqlGenerator
 {
     private readonly bool _reverseNullOrderingEnabled;
-    private readonly ServiceProvider? _serviceProvider;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -31,12 +30,10 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
     /// </summary>
     public DuckDBQuerySqlGenerator(
         QuerySqlGeneratorDependencies dependencies,
-        bool reverseNullOrderingEnabled,
-        ServiceProvider? serviceProvider)
+        bool reverseNullOrderingEnabled)
         : base(dependencies)
     {
         _reverseNullOrderingEnabled = reverseNullOrderingEnabled;
-        _serviceProvider = serviceProvider;
     }
 
     /// <inheritdoc />
