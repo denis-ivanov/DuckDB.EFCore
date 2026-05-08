@@ -559,6 +559,63 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
     }
 
     /// <inheritdoc />
+    protected override Expression VisitScalarSubquery(ScalarSubqueryExpression scalarSubqueryExpression)
+    {
+        if (TryVisitInlineCollectionIndexAccess(scalarSubqueryExpression.Subquery))
+        {
+            return scalarSubqueryExpression;
+        }
+
+        return base.VisitScalarSubquery(scalarSubqueryExpression);
+    }
+
+    /// <summary>
+    ///     Tries to translate an inline-collection-indexed-by-column pattern into a native DuckDB array access.
+    ///     DuckDB does not support correlated columns in LIMIT/OFFSET.
+    ///     <para>
+    ///         Matches: <c>SELECT v."Value" FROM (VALUES (0, v1), (1, v2), ...) ORDER BY _ord LIMIT 1 OFFSET &lt;expr&gt;</c>
+    ///     </para>
+    ///     <para>
+    ///         Emits: <c>list_value(v1, v2, ...)[&lt;expr&gt; + 1]</c>
+    ///     </para>
+    /// </summary>
+    private bool TryVisitInlineCollectionIndexAccess(SelectExpression selectExpression)
+    {
+        if (selectExpression.Projection.Count != 1
+            || selectExpression.Tables.Count != 1
+            || selectExpression.Tables[0] is not ValuesExpression { RowValues: { Count: > 0 } rowValues, ColumnNames.Count: 2 }
+            || selectExpression.Limit is not SqlConstantExpression { Value: 1 }
+            || selectExpression.Offset is null or SqlConstantExpression
+            || selectExpression.Predicate != null
+            || selectExpression.GroupBy.Count != 0
+            || selectExpression.Having != null
+            || selectExpression.IsDistinct)
+        {
+            return false;
+        }
+
+        // Generate: list_value(v1, v2, ...)[offset + 1]
+        // DuckDB uses 1-based array indexing; EF Core uses 0-based.
+        Sql.Append("list_value(");
+        for (var i = 0; i < rowValues.Count; i++)
+        {
+            if (i > 0)
+            {
+                Sql.Append(", ");
+            }
+
+            // Each row value is (_ord, actual_value); we want the second element.
+            Visit(rowValues[i].Values[1]);
+        }
+
+        Sql.Append(")[");
+        Visit(selectExpression.Offset);
+        Sql.Append(" + 1]");
+
+        return true;
+    }
+
+    /// <inheritdoc />
     protected override void GenerateValues(ValuesExpression valuesExpression)
     {
         if (valuesExpression.RowValues is null)

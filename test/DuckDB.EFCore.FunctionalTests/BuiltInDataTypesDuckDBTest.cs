@@ -1,9 +1,7 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.TestUtilities;
+﻿using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class BuiltInDataTypesDuckDBTest : BuiltInDataTypesTestBase<BuiltInDataTypesDuckDBTest.BuiltInDataTypesDuckDBFixture>
 {
@@ -41,12 +39,6 @@ public class BuiltInDataTypesDuckDBTest : BuiltInDataTypesTestBase<BuiltInDataTy
         return base.Can_insert_and_read_back_object_backed_data_types();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Can_read_back_bool_mapped_as_int_through_navigation()
-    {
-        return base.Can_read_back_bool_mapped_as_int_through_navigation();
-    }
-
     public class BuiltInDataTypesDuckDBFixture : BuiltInDataTypesFixtureBase, ITestSqlLoggerFactory
     {
         protected override ITestStoreFactory TestStoreFactory => DuckDBTestStoreFactory.Instance;
@@ -63,7 +55,7 @@ public class BuiltInDataTypesDuckDBTest : BuiltInDataTypesTestBase<BuiltInDataTy
 
         public override bool SupportsDecimalComparisons { get; }
 
-        public override DateTime DefaultDateTime => DateTime.Parse("1754-08-30T22:43:41.1286549");
+        public override DateTime DefaultDateTime => new();
 
         public override bool PreservesDateTimeKind { get; }
 

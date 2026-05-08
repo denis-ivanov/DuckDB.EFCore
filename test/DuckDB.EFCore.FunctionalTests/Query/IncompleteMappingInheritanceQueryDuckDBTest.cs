@@ -1,5 +1,3 @@
-using DuckDB.EFCore.FunctionalTests;
-using DuckDB.EFCore.FunctionalTests.Query;
 using Xunit;
 using Xunit.Abstractions;
 

@@ -1,10 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore.TestUtilities;
+﻿using Microsoft.EntityFrameworkCore.TestUtilities;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
-public class NorthwindAsNoTrackingQueryDuckDBTest
-    : NorthwindAsNoTrackingQueryTestBase<NorthwindQueryDuckDBFixture<NoopModelCustomizer>>
+public class NorthwindAsNoTrackingQueryDuckDBTest : NorthwindAsNoTrackingQueryTestBase<NorthwindQueryDuckDBFixture<NoopModelCustomizer>>
 {
     public NorthwindAsNoTrackingQueryDuckDBTest(NorthwindQueryDuckDBFixture<NoopModelCustomizer> fixture) : base(fixture)
     {

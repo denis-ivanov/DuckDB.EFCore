@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DuckDB.EFCore.Query.Internal;
 
@@ -30,6 +31,7 @@ public class DuckDBQueryCompilationContext : RelationalQueryCompilationContext
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
+    [Experimental("EF9100")]
     public DuckDBQueryCompilationContext(
         QueryCompilationContextDependencies dependencies,
         RelationalQueryCompilationContextDependencies relationalDependencies,
@@ -38,4 +40,8 @@ public class DuckDBQueryCompilationContext : RelationalQueryCompilationContext
         : base(dependencies, relationalDependencies, async, precompiling)
     {
     }
+
+    /// <inheritdoc />
+    public override bool SupportsPrecompiledQuery
+        => true;
 }

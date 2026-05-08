@@ -1,12 +1,10 @@
 ﻿using DuckDB.EFCore.Extensions;
-using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public abstract class ConnectionInterceptionDuckDBTestBase : ConnectionInterceptionTestBase
 {
@@ -41,18 +39,6 @@ public abstract class ConnectionInterceptionDuckDBTestBase : ConnectionIntercept
         public override async Task Intercept_connection_creation_passively(bool async)
         {
             await base.Intercept_connection_creation_passively(async);
-        }
-
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-        public override async Task Intercept_connection_creation_with_multiple_interceptors(bool async)
-        {
-            await base.Intercept_connection_creation_with_multiple_interceptors(async);
-        }
-
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-        public override async Task Intercept_connection_that_throws_on_open(bool async)
-        {
-            await base.Intercept_connection_that_throws_on_open(async);
         }
 
         [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -92,21 +78,9 @@ public abstract class ConnectionInterceptionDuckDBTestBase : ConnectionIntercept
         }
 
         [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-        public override async Task Intercept_connection_creation_with_multiple_interceptors(bool async)
-        {
-            await base.Intercept_connection_creation_with_multiple_interceptors(async);
-        }
-
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
         public override async Task Intercept_connection_to_override_connection_after_creation(bool async)
         {
             await base.Intercept_connection_to_override_connection_after_creation(async);
-        }
-
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-        public override async Task Intercept_connection_that_throws_on_open(bool async)
-        {
-            await base.Intercept_connection_that_throws_on_open(async);
         }
 
         [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]

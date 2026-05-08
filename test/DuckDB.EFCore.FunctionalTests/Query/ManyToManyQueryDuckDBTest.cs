@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
-using Xunit;
+﻿using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
-public class ManyToManyQueryDuckDBTest: ManyToManyQueryRelationalTestBase<ManyToManyQueryDuckDBFixture>
+public class ManyToManyQueryDuckDBTest : ManyToManyQueryRelationalTestBase<ManyToManyQueryDuckDBFixture>
 {
     public ManyToManyQueryDuckDBTest(ManyToManyQueryDuckDBFixture fixture) : base(fixture)
     {

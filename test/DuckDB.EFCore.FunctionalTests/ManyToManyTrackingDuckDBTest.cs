@@ -1,12 +1,10 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.TestModels.ManyToManyModel;
+﻿using Microsoft.EntityFrameworkCore.TestModels.ManyToManyModel;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
-// TODO
+// TODO Many_to_many_delete_behaviors_are_set - is not virtual
 public abstract class ManyToManyTrackingDuckDBTest : ManyToManyTrackingRelationalTestBase<ManyToManyTrackingDuckDBTest.ManyToManyTrackingDuckDBFixture>
 {
     protected ManyToManyTrackingDuckDBTest(ManyToManyTrackingDuckDBFixture fixture) : base(fixture)

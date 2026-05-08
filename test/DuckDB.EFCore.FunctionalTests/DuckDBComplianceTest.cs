@@ -1,16 +1,28 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Update;
 using System.Reflection;
-using Xunit;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class DuckDBComplianceTest : RelationalComplianceTestBase
 {
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override void All_test_bases_must_be_implemented()
+    protected override ICollection<Type> IgnoredTestBases { get; } = new HashSet<Type>
     {
-        base.All_test_bases_must_be_implemented();
-    }
+        typeof(FromSqlSprocQueryTestBase<>),
+        typeof(SqlExecutorTestBase<>),
+        typeof(UdfDbFunctionTestBase<>),
+        typeof(StoredProcedureUpdateTestBase), // DuckDB does not support stored procedures
+        typeof(UpdatesRelationalTestBase<>), // TODO Some tests are non-virtual, could not override
+        typeof(AdHocMiscellaneousQueryRelationalTestBase), // TODO  Some tests are non-virtual, could not override
+        typeof(ManyToManyTrackingRelationalTestBase<>), // TODO  Some tests are non-virtual, could not override
+        typeof(MonsterFixupTestBase<>), // TODO  Some tests are non-virtual, could not override
+        typeof(PropertyValuesTestBase<>), // TODO Some tests are non-virtual, could not override
+        typeof(AdHocMiscellaneousQueryTestBase), // TODO  Some tests are non-virtual, could not override
+        typeof(StoreGeneratedTestBase<>), // TODO  Some tests are non-virtual, could not override
+        typeof(UpdatesTestBase<>), // TODO  Some tests are non-virtual, could not override
+        typeof(PropertyValuesRelationalTestBase<>), // TODO  Some tests are non-virtual, could not override
+        typeof(ManyToManyTrackingTestBase<>), // TODO  Some tests are non-virtual, could not override
+    };
 
     protected override Assembly TargetAssembly { get; } = typeof(DuckDBComplianceTest).Assembly;
 }

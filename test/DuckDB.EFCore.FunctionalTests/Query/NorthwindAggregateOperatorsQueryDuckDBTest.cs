@@ -1,10 +1,9 @@
 ﻿using AwesomeAssertions;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class NorthwindAggregateOperatorsQueryDuckDBTest : NorthwindAggregateOperatorsQueryRelationalTestBase<
     NorthwindQueryDuckDBFixture<NoopModelCustomizer>>

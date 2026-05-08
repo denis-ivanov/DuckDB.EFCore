@@ -55,7 +55,7 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         { typeof(uint), UInt32TypeMapping },
         { typeof(ulong), UInt64TypeMapping },
         { typeof(ushort), UInt16TypeMapping },
-        { typeof(DateTime), DuckDBTimestampTypeMapping.TimestampNs },
+        { typeof(DateTime), DuckDBTimestampTypeMapping.Timestamp },
         { typeof(DateTimeOffset), DuckDBTimestampTypeMapping.TimestampTz },
         { typeof(DateOnly), DateTypeMapping },
         { typeof(TimeSpan), DuckDBTimeTypeMapping.TimeSpan },
@@ -69,7 +69,7 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         { typeof(JsonTypePlaceholder), JsonOwned }
     };
 
-    private static readonly Dictionary<string, RelationalTypeMapping> StoreTypeMappings = new()
+    private static readonly Dictionary<string, RelationalTypeMapping> StoreTypeMappings = new(StringComparer.OrdinalIgnoreCase)
     {
         { "INT8", UInt64TypeMapping },
         { "LONG", UInt64TypeMapping },
@@ -127,7 +127,7 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
     protected override RelationalTypeMapping? FindMapping(in RelationalTypeMappingInfo mappingInfo)
     {
         var mapping = base.FindMapping(mappingInfo)
-                      ?? FindRawMapping(mappingInfo)
+                      ?? FindRawMapping(mappingInfo)?.Clone(mappingInfo)
                       ?? FindRowValueMapping(mappingInfo)?.Clone(mappingInfo);
 
         return mapping != null && mappingInfo.StoreTypeName != null
@@ -313,12 +313,34 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
             return null;
         }
 
+        var storeTypeName = mappingInfo.StoreTypeName;
+
         if (clrType != null && ClrTypeMappings.TryGetValue(clrType, out var mapping))
         {
+            if (storeTypeName != null)
+            {
+                if (mapping.StoreType.Equals(storeTypeName, StringComparison.OrdinalIgnoreCase)
+                    || mapping.StoreTypeNameBase.Equals(storeTypeName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return mapping;
+                }
+
+                if (StoreTypeMappings.TryGetValue(storeTypeName, out var storeMapping)
+                    && storeMapping.ClrType.UnwrapNullableType() != clrType)
+                {
+                    return null;
+                }
+
+                var affinityMapping = _typeRules.Select(r => r(storeTypeName)).FirstOrDefault(r => r != null);
+                if (affinityMapping != null && affinityMapping.ClrType.UnwrapNullableType() != clrType)
+                {
+                    return null;
+                }
+            }
+
             return mapping;
         }
 
-        var storeTypeName = mappingInfo.StoreTypeName;
         if (storeTypeName != null
             && StoreTypeMappings.TryGetValue(storeTypeName, out mapping)
             && (clrType == null || mapping.ClrType.UnwrapNullableType() == clrType))

@@ -1,10 +1,8 @@
-﻿using DuckDB.EFCore.FunctionalTests.TestUtilities;
-using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore.TestUtilities;
+﻿using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests.Query;
+namespace Microsoft.EntityFrameworkCore.Query;
 
 public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRelationalTestBase<PrimitiveCollectionsQueryDuckDBTest.PrimitiveCollectionsQueryDuckDBFixture>
 {
@@ -150,7 +148,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
-            WHERE p."DateTimes"[2] = TIMESTAMP_NS '2020-01-10 12:30:00.0000000'
+            WHERE p."DateTimes"[2] = TIMESTAMP '2020-01-10 12:30:00.000000'
             """);
     }
 
@@ -219,15 +217,11 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
     {
         await base.Column_collection_of_bools_Contains();
 
-        // TODO array_contains()
         AssertSql(
             """
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
-            WHERE true IN (
-                SELECT b."value"
-                FROM unnest(p."Bools") AS b("value")
-            )
+            WHERE array_contains(p."Bools", true)
             """);
     }
 
@@ -235,15 +229,11 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
     {
         await base.Column_collection_of_ints_Contains();
 
-        // TODO array_contains
         AssertSql(
             """
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
-            WHERE 10 IN (
-                SELECT i."value"
-                FROM unnest(p."Ints") AS i("value")
-            )
+            WHERE array_contains(p."Ints", 10)
             """);
     }
 
@@ -413,10 +403,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
-            WHERE 11 IN (
-                SELECT i."value"
-                FROM unnest(p."Ints"[2:3]) AS i("value")
-            )
+            WHERE array_contains(p."Ints"[2:3], 11)
             """);
     }
 
@@ -428,10 +415,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """
             SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
             FROM "PrimitiveCollectionsEntity" AS p
-            WHERE 11 IN (
-                SELECT i."value"
-                FROM unnest(p."Ints"[:2]) AS i("value")
-            )
+            WHERE array_contains(p."Ints"[:2], 11)
             """);
     }
 
@@ -600,10 +584,16 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
         await base.Inline_collection_Except_column_collection();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Inline_collection_index_Column()
     {
         await base.Inline_collection_index_Column();
+
+        AssertSql(
+            """
+            SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
+            FROM "PrimitiveCollectionsEntity" AS p
+            WHERE list_value(CAST(1 AS INTEGER), 2, 3)[p."Int" + 1] = 1
+            """);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
