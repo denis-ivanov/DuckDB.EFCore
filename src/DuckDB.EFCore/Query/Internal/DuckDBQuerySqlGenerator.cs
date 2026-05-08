@@ -153,29 +153,6 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
             return parquetPath;
         }
 
-        var parquetPathFactoryValue = entityType.GetParquetPathFactoryValue();
-        if (!string.IsNullOrEmpty(parquetPathFactoryValue))
-        {
-            return parquetPathFactoryValue;
-        }
-
-        var parquetPathFactory = entityType.GetParquetPathFactory();
-        if (parquetPathFactory is null)
-        {
-            return null;
-        }
-
-        if (_serviceProvider is null)
-        {
-            throw new InvalidOperationException($"A service provider is required to resolve the parquet path for entity '{entityType.DisplayName()}'.");
-        }
-
-        var resolvedPath = parquetPathFactory(_serviceProvider);
-        if (string.IsNullOrWhiteSpace(resolvedPath))
-        {
-            throw new InvalidOperationException($"The parquet path factory for entity '{entityType.DisplayName()}' returned an empty path.");
-        }
-
         return resolvedPath;
     }
 
