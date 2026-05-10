@@ -4,9 +4,9 @@ using Xunit;
 namespace Microsoft.EntityFrameworkCore;
 
 public class ConcurrencyDetectorDisabledDuckDBTest : ConcurrencyDetectorDisabledRelationalTestBase<
-    ConcurrencyDetectorDisabledDuckDBTest.ConcurrencyDetectorSqlServerFixture>
+    ConcurrencyDetectorDisabledDuckDBTest.ConcurrencyDetectorDuckDBFixture>
 {
-    public ConcurrencyDetectorDisabledDuckDBTest(ConcurrencyDetectorSqlServerFixture fixture) : base(fixture)
+    public ConcurrencyDetectorDisabledDuckDBTest(ConcurrencyDetectorDuckDBFixture fixture) : base(fixture)
     {
     }
 
@@ -16,7 +16,7 @@ public class ConcurrencyDetectorDisabledDuckDBTest : ConcurrencyDetectorDisabled
         return base.Last(async);
     }
 
-    public class ConcurrencyDetectorSqlServerFixture : ConcurrencyDetectorFixtureBase, ITestSqlLoggerFactory
+    public class ConcurrencyDetectorDuckDBFixture : ConcurrencyDetectorFixtureBase, ITestSqlLoggerFactory
     {
         protected override ITestStoreFactory TestStoreFactory
             => DuckDBTestStoreFactory.Instance;
