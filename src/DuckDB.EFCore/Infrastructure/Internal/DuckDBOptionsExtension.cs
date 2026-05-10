@@ -37,12 +37,18 @@ public class DuckDBOptionsExtension : RelationalOptionsExtension
         : base(copyFrom)
     {
         ReverseNullOrdering = copyFrom.ReverseNullOrdering;
+        _loadSpatialite = copyFrom._loadSpatialite;
     }
 
     /// <summary>
     /// <see langword="true"/> if reverse null ordering is enabled; otherwise, <see langword="false" />.
     /// </summary>
     public virtual bool ReverseNullOrdering { get; private set; }
+
+    /// <summary>
+    /// <see langword="true"/> if the DuckDB spatial extension should be loaded; otherwise, <see langword="false" />.
+    /// </summary>
+    public virtual bool LoadSpatialite => _loadSpatialite;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to

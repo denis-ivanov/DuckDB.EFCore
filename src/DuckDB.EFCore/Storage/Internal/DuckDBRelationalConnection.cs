@@ -1,4 +1,5 @@
 ﻿using DuckDB.EFCore.Extensions;
+using DuckDB.EFCore.Infrastructure.Internal;
 using DuckDB.NET.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -18,6 +19,7 @@ public class DuckDBRelationalConnection : RelationalConnection, IDuckDBRelationa
 {
     private readonly IRawSqlCommandBuilder _rawSqlCommandBuilder;
     private readonly IDiagnosticsLogger<DbLoggerCategory.Infrastructure> _logger;
+    private readonly bool _loadSpatial;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -33,6 +35,9 @@ public class DuckDBRelationalConnection : RelationalConnection, IDuckDBRelationa
     {
         _rawSqlCommandBuilder = rawSqlCommandBuilder;
         _logger = logger;
+
+        var optionsExtension = dependencies.ContextOptions.FindExtension<DuckDBOptionsExtension>();
+        _loadSpatial = optionsExtension?.LoadSpatialite == true;
     }
 
     /// <inheritdoc />
@@ -88,6 +93,7 @@ public class DuckDBRelationalConnection : RelationalConnection, IDuckDBRelationa
         if (connection.State != ConnectionState.Open)
         {
             connection.Open();
+            LoadSpatialExtensionIfNeeded();
         }
     }
 
@@ -98,6 +104,31 @@ public class DuckDBRelationalConnection : RelationalConnection, IDuckDBRelationa
         if (connection.State != ConnectionState.Open)
         {
             await connection.OpenAsync(cancellationToken);
+            await LoadSpatialExtensionIfNeededAsync(cancellationToken);
         }
+    }
+
+    private void LoadSpatialExtensionIfNeeded()
+    {
+        if (!_loadSpatial)
+        {
+            return;
+        }
+
+        var paramObj = new RelationalCommandParameterObject(this, null, null, null, null);
+        _rawSqlCommandBuilder.Build("INSTALL spatial").ExecuteNonQuery(paramObj);
+        _rawSqlCommandBuilder.Build("LOAD spatial").ExecuteNonQuery(paramObj);
+    }
+
+    private async Task LoadSpatialExtensionIfNeededAsync(CancellationToken cancellationToken)
+    {
+        if (!_loadSpatial)
+        {
+            return;
+        }
+
+        var paramObj = new RelationalCommandParameterObject(this, null, null, null, null);
+        await _rawSqlCommandBuilder.Build("INSTALL spatial").ExecuteNonQueryAsync(paramObj, cancellationToken);
+        await _rawSqlCommandBuilder.Build("LOAD spatial").ExecuteNonQueryAsync(paramObj, cancellationToken);
     }
 }

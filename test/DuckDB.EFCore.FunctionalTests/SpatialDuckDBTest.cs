@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore;
 
-[SpatialiteRequired]
 public class SpatialDuckDBTest : SpatialTestBase<SpatialDuckDBFixture>
 {
     public SpatialDuckDBTest(SpatialDuckDBFixture fixture) : base(fixture)

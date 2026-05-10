@@ -6,6 +6,8 @@ namespace DuckDB.EFCore.NTS.Infrastructure.Internal;
 
 public class DuckDBNetTopologySuiteOptionsExtension : IDbContextOptionsExtension
 {
+    private DbContextOptionsExtensionInfo? _info;
+
     public void ApplyServices(IServiceCollection services)
     {
         services.AddEntityFrameworkDuckDBNetTopologySuite();
@@ -15,5 +17,20 @@ public class DuckDBNetTopologySuiteOptionsExtension : IDbContextOptionsExtension
     {
     }
 
-    public DbContextOptionsExtensionInfo Info { get; }
+    public DbContextOptionsExtensionInfo Info => _info ??= new ExtensionInfo(this);
+
+    private sealed class ExtensionInfo(IDbContextOptionsExtension extension) : DbContextOptionsExtensionInfo(extension)
+    {
+        public override bool IsDatabaseProvider => false;
+
+        public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other)
+            => other is ExtensionInfo;
+
+        public override string LogFragment => "using NetTopologySuite ";
+
+        public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
+            => debugInfo["DuckDB.NTS"] = "1";
+
+        public override int GetServiceProviderHashCode() => 0;
+    }
 }
