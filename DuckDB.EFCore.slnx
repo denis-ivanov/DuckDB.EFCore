@@ -3,6 +3,7 @@
     <File Path=".editorconfig" />
     <File Path=".github/workflows/dotnet.yml" />
     <File Path=".github/workflows/publish-nuget.yml" />
+    <File Path="LICENSE" />
     <File Path="README.md" />
   </Folder>
   <Folder Name="/src/">
