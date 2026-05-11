@@ -1,30 +1,51 @@
 using DuckDB.EFCore.Extensions;
 using DuckDB.EFCore.Metadata;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace DuckDB.EFCore.FunctionalTests;
 
-public class ParquetTests
+public class ParquetTests : IClassFixture<ParquetTests.ParquetFixture>
 {
+    public ParquetTests(ParquetFixture fixture, ITestOutputHelper testOutputHelper)
+    {
+        Fixture = fixture;
+
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
+    }
+
+    private ParquetFixture Fixture { get; }
+
     [Fact]
     public void Simple_query_uses_read_parquet()
     {
         using var context = CreateContext();
-        var sql = context.MyData.ToQueryString();
 
-        Assert.Contains("read_parquet('data/*.parquet')", sql);
+        AssertSql(
+            context.MyData.ToQueryString(),
+            """
+            SELECT m."Id"
+            FROM read_parquet('data/*.parquet') AS m
+            """
+        );
     }
 
     [Fact]
     public void Where_query_uses_read_parquet()
     {
         using var context = CreateContext();
-        var sql = context.MyData.Where(x => x.Id > 10).ToQueryString();
 
-        Assert.Contains("read_parquet('data/*.parquet')", sql);
-        Assert.Contains("WHERE", sql);
+        AssertSql(
+            context.MyData.Where(x => x.Id > 10).ToQueryString(),
+            """
+            SELECT m."Id"
+            FROM read_parquet('data/*.parquet') AS m
+            WHERE m."Id" > 10
+            """
+        );
     }
 
     [Fact]
@@ -36,9 +57,14 @@ public class ParquetTests
             join otherRow in context.Others on parquetRow.Id equals otherRow.Id
             select parquetRow;
 
-        var sql = query.ToQueryString();
-
-        Assert.Contains("read_parquet('data/*.parquet')", sql);
+        AssertSql(
+            query.ToQueryString(),
+            """
+            SELECT m."Id"
+            FROM read_parquet('data/*.parquet') AS m
+            INNER JOIN "Others" AS o ON m."Id" = o."Id"
+            """
+        );
     }
 
     [Fact]
@@ -49,40 +75,47 @@ public class ParquetTests
             m => m.Related,
             (m, r) => new { m.Id, r.Value }
         );
-        var sql = relationshipQuery.ToQueryString();
-
-        Assert.Contains("read_parquet('data/*.parquet')", sql);
-        Assert.Contains("read_parquet('related/*.parquet')", sql);
-        Assert.Contains("JOIN", sql);
+        AssertSql(
+            relationshipQuery.ToQueryString(),
+            """
+            SELECT m."Id", r."Value"
+            FROM read_parquet('data/*.parquet') AS m
+            INNER JOIN read_parquet('related/*.parquet') AS r ON m."Id" = r."MyDataId"
+            """
+        );
     }
 
     [Fact]
     public void Dynamic_parquet_path_from_context_configuration_uses_read_parquet()
     {
         using var context = CreateDynamicContext("dynamic/*.parquet");
-        var sql = context.DynamicMyData.ToQueryString();
 
-        Assert.Contains("read_parquet('dynamic/*.parquet')", sql);
+        AssertSql(
+            context.DynamicMyData.ToQueryString(),
+            """
+            SELECT d."Id"
+            FROM read_parquet('dynamic/*.parquet') AS d
+            """
+        );
     }
 
-    private static ParquetContext CreateContext()
+    private void AssertSql(string actual, params string[] expected)
+        => Fixture.AssertSql(actual, expected);
+
+    private ParquetContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<ParquetContext>()
+            .UseInternalServiceProvider(Fixture.ServiceProvider)
             .UseDuckDB("DataSource=:memory:")
             .Options;
 
         return new ParquetContext(options);
     }
 
-    private static DynamicParquetContext CreateDynamicContext(string parquetPath)
+    private DynamicParquetContext CreateDynamicContext(string parquetPath)
     {
-        var services = new ServiceCollection();
-        services.AddEntityFrameworkDuckDB();
-
-        var serviceProvider = services.BuildServiceProvider();
-
         var options = new DbContextOptionsBuilder<DynamicParquetContext>()
-            .UseInternalServiceProvider(serviceProvider)
+            .UseInternalServiceProvider(Fixture.ServiceProvider)
             .UseDuckDB("DataSource=:memory:")
             .Options;
 
@@ -144,6 +177,25 @@ public class ParquetTests
         {
             modelBuilder.Entity<DynamicMyData>().FromParquet(_parquetPath);
         }
+    }
+
+    public sealed class ParquetFixture
+        : ServiceProviderFixtureBase, ITestSqlLoggerFactory
+    {
+        protected override ITestStoreFactory TestStoreFactory
+            => DuckDBTestStoreFactory.Instance;
+
+        public TestSqlLoggerFactory TestSqlLoggerFactory
+            => (TestSqlLoggerFactory)ListLoggerFactory;
+
+        public void AssertSql(string actual, params string[] expected)
+            => Assert.Equal(Normalize(expected), Normalize(actual));
+
+        private static string Normalize(params string[] sql)
+            => string.Join("\n\n", sql.Select(s => Normalize(s)));
+
+        private static string Normalize(string sql)
+            => sql.Replace("\r\n", "\n").Trim();
     }
 }
 
