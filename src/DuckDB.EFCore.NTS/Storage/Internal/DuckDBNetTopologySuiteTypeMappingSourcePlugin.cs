@@ -7,11 +7,11 @@ namespace DuckDB.EFCore.NTS.Storage.Internal;
 
 public class DuckDBNetTopologySuiteTypeMappingSourcePlugin : IRelationalTypeMappingSourcePlugin
 {
-    // All geometry types are stored as BLOB (WKB). We also still recognise the named
-    // geometry store-type strings so that HasColumnType("GEOMETRY") etc. keeps working.
+    // All geometry types map to DuckDB's native GEOMETRY column type.
+    // Reading is done via ST_AsWKT() projection (see DuckDBNtsQuerySqlGenerator);
+    // writing uses a VARCHAR parameter with ST_GeomFromText() wrapping (DuckDB auto-accepts it).
     private static readonly Dictionary<string, Type> StoreTypeMappings = new(StringComparer.OrdinalIgnoreCase)
     {
-        { "BLOB", typeof(Geometry) },
         { "GEOMETRY", typeof(Geometry) },
         { "GEOMETRYZ", typeof(Geometry) },
         { "GEOMETRYM", typeof(Geometry) },
@@ -55,29 +55,26 @@ public class DuckDBNetTopologySuiteTypeMappingSourcePlugin : IRelationalTypeMapp
     {
         var clrType = mappingInfo.ClrType;
         var storeTypeName = mappingInfo.StoreTypeName;
-        string? defaultStoreType = null;
         Type? defaultClrType = null;
 
-        return (clrType != null && TryGetDefaultStoreType(clrType, out defaultStoreType))
-            || (storeTypeName != null && StoreTypeMappings.TryGetValue(storeTypeName, out defaultClrType))
-            ? (RelationalTypeMapping)Activator.CreateInstance(
-                typeof(DuckDBGeometryTypeMapping<>).MakeGenericType(clrType ?? defaultClrType ?? typeof(Geometry)),
-                _geometryServices,
-                storeTypeName ?? defaultStoreType ?? "BLOB")!
-            : null;
+        if ((clrType == null || !TryGetDefaultStoreType(clrType, out _))
+            && (storeTypeName == null || !StoreTypeMappings.TryGetValue(storeTypeName, out defaultClrType)))
+        {
+            return null;
+        }
+
+        // Always use GEOMETRY as the physical column type (native DuckDB type).
+        // SELECT projections are wrapped with ST_AsWKT() by DuckDBNtsQuerySqlGenerator;
+        // INSERT/UPDATE parameters carry WKT text which DuckDB auto-casts to GEOMETRY.
+        return (RelationalTypeMapping)Activator.CreateInstance(
+            typeof(DuckDBGeometryTypeMapping<>).MakeGenericType(clrType ?? defaultClrType ?? typeof(Geometry)),
+            _geometryServices,
+            "GEOMETRY")!;
     }
 
     private static bool TryGetDefaultStoreType(Type type, [NotNullWhen(true)] out string? defaultStoreType)
     {
-        if (typeof(Geometry).IsAssignableFrom(type))
-        {
-            defaultStoreType = "BLOB";
-        }
-        else
-        {
-            defaultStoreType = null;
-        }
-
+        defaultStoreType = typeof(Geometry).IsAssignableFrom(type) ? "GEOMETRY" : null;
         return defaultStoreType != null;
     }
 }

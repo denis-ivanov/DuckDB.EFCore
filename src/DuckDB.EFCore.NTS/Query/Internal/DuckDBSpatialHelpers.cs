@@ -7,39 +7,42 @@ namespace DuckDB.EFCore.NTS.Query.Internal;
 
 /// <summary>
 /// Helper methods for DuckDB spatial SQL expression generation.
-/// DuckDB stores geometry as BLOB (WKB format). When passing a BLOB column or parameter
-/// to a spatial function, it must be wrapped with ST_GeomFromWKB() to convert to GEOMETRY type.
+/// <para>
+/// DuckDB stores geometry as native GEOMETRY columns. SQL parameters, however, carry WKT
+/// text (a VARCHAR string), so they must be wrapped with <c>ST_GeomFromText()</c> before
+/// being passed to a spatial function.
+/// </para>
+/// <para>
+/// Column expressions and spatial-function results are already the DuckDB GEOMETRY type and
+/// do not need any conversion. SQL constants already emit <c>ST_GeomFromText('...')</c>
+/// via <c>GenerateNonNullSqlLiteral</c>.
+/// </para>
 /// </summary>
 internal static class DuckDBSpatialHelpers
 {
     /// <summary>
-    /// Wraps a geometry expression with ST_GeomFromWKB() if it is a raw BLOB value
-    /// (i.e., a column or parameter with a DuckDB geometry type mapping).
-    /// Function result expressions (e.g., ST_Centroid(...)) are already in DuckDB GEOMETRY
-    /// format and do not need wrapping.
+    /// Wraps a <see cref="SqlParameterExpression"/> with <c>ST_GeomFromText()</c> when its
+    /// type mapping is a DuckDB geometry mapping (i.e., the parameter value is a WKT string).
+    /// All other expression kinds are returned unchanged.
     /// </summary>
     public static SqlExpression AsGeometry(SqlExpression expression, ISqlExpressionFactory factory)
     {
-        // Only wrap column references and parameters – they contain raw WKB BLOB data.
-        // Function results and constants are already proper DuckDB GEOMETRY expressions.
-        if (expression.TypeMapping is IDuckDBGeometryTypeMapping
-            && expression is ColumnExpression or SqlParameterExpression or SqlConstantExpression { Value: Geometry })
+        // Only parameters need wrapping – they carry WKT text.
+        // • ColumnExpression        → native GEOMETRY column, already the right type
+        // • SqlFunctionExpression   → spatial-function result, already GEOMETRY
+        // • SqlConstantExpression   → GenerateNonNullSqlLiteral emits ST_GeomFromText('...')
+        if (expression is SqlParameterExpression
+            && expression.TypeMapping is IDuckDBGeometryTypeMapping)
         {
-            // SQL constants already generate ST_GeomFromText(...) via GenerateNonNullSqlLiteral
-            // – no extra wrap needed for those.
-            if (expression is SqlConstantExpression)
-                return expression;
-
             return factory.Function(
-                "ST_GeomFromWKB",
+                "ST_GeomFromText",
                 [expression],
                 nullable: true,
                 argumentsPropagateNullability: [true],
                 returnType: expression.Type,
-                typeMapping: null); // null = raw DuckDB GEOMETRY (not mapped to CLR byte[])
+                typeMapping: null); // null = raw DuckDB GEOMETRY (unmapped CLR side)
         }
 
         return expression;
     }
 }
-
