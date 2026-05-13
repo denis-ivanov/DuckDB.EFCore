@@ -840,6 +840,12 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
         return base.Project_collection_of_ints_with_distinct();
     }
 
+    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Parameter_collection_of_nullable_ints_Contains_nullable_int_with_EF_Parameter()
+    {
+        return base.Parameter_collection_of_nullable_ints_Contains_nullable_int_with_EF_Parameter();
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 

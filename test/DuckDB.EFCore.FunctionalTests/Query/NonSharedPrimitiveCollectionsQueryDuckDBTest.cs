@@ -58,6 +58,12 @@ public class NonSharedPrimitiveCollectionsQueryDuckDBTest : NonSharedPrimitiveCo
         return base.Parameter_collection_Contains_with_default_mode(mode);
     }
 
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task Parameter_collection_of_enum_Cast_from_different_enum_type(ParameterTranslationMode mode)
+    {
+        return base.Parameter_collection_of_enum_Cast_from_different_enum_type(mode);
+    }
+
     protected override ITestStoreFactory TestStoreFactory
         => DuckDBTestStoreFactory.Instance;
 
