@@ -27,10 +27,17 @@ public class DuckDBTestStore : RelationalTestStore
         => new(name, shared: false);
 
     private readonly bool _seed;
+    private bool _loadSpatial;
 
     private DuckDBTestStore(string name, bool seed = true, bool sharedCache = false, bool shared = true)
         : base(name, shared, CreateConnection(name, sharedCache))
         => _seed = seed;
+
+    public DuckDBTestStore WithSpatialExtension()
+    {
+        _loadSpatial = true;
+        return this;
+    }
 
     public virtual DbContextOptionsBuilder AddProviderOptions(
         DbContextOptionsBuilder builder,
@@ -120,6 +127,7 @@ public class DuckDBTestStore : RelationalTestStore
         if (connection.State != ConnectionState.Open)
         {
             connection.Open();
+            LoadSpatialExtensionIfNeeded();
         }
     }
 
@@ -130,7 +138,19 @@ public class DuckDBTestStore : RelationalTestStore
         if (connection.State != ConnectionState.Open)
         {
             await connection.OpenAsync();
+            LoadSpatialExtensionIfNeeded();
         }
+    }
+
+    private void LoadSpatialExtensionIfNeeded()
+    {
+        if (!_loadSpatial)
+        {
+            return;
+        }
+
+        ExecuteNonQuery("INSTALL spatial");
+        ExecuteNonQuery("LOAD spatial");
     }
 
     protected override string OpenDelimiter => "\"";

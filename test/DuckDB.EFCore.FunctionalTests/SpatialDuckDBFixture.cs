@@ -9,7 +9,7 @@ namespace Microsoft.EntityFrameworkCore;
 public class SpatialDuckDBFixture  : SpatialFixtureBase
 {
     protected override ITestStoreFactory TestStoreFactory
-        => DuckDBTestStoreFactory.Instance;
+        => SpatialDuckDBTestStoreFactory.Instance;
 
     protected override IServiceCollection AddServices(IServiceCollection serviceCollection)
         => base.AddServices(serviceCollection)

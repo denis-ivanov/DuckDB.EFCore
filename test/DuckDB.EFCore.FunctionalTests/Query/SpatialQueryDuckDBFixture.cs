@@ -8,7 +8,7 @@ namespace Microsoft.EntityFrameworkCore.Query;
 public class SpatialQueryDuckDBFixture : SpatialQueryRelationalFixture
 {
     protected override ITestStoreFactory TestStoreFactory
-        => DuckDBTestStoreFactory.Instance;
+        => SpatialDuckDBTestStoreFactory.Instance;
 
     protected override IServiceCollection AddServices(IServiceCollection serviceCollection)
         => base.AddServices(serviceCollection)
