@@ -22,6 +22,11 @@ public static class DuckDBNetTopologySuiteServiceCollectionExtensions
             .TryAdd<IAggregateMethodCallTranslatorPlugin, DuckDBNetTopologySuiteAggregateMethodCallTranslatorPlugin>()
             .TryAdd<IMemberTranslatorPlugin, DuckDBNetTopologySuiteMemberTranslatorPlugin>();
 
+        // Replace the SQL generator factory so that geometry projections are wrapped
+        // with ST_AsWKT() – DuckDB.NET cannot read native GEOMETRY columns (type ID 40).
+        serviceCollection.Replace(
+            ServiceDescriptor.Singleton<IQuerySqlGeneratorFactory, DuckDBNtsQuerySqlGeneratorFactory>());
+
         return serviceCollection;
     }
 }

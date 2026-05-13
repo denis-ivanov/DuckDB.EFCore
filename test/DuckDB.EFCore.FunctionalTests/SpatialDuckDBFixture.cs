@@ -9,7 +9,7 @@ namespace Microsoft.EntityFrameworkCore;
 public class SpatialDuckDBFixture  : SpatialFixtureBase
 {
     protected override ITestStoreFactory TestStoreFactory
-        => DuckDBTestStoreFactory.Instance;
+        => SpatialDuckDBTestStoreFactory.Instance;
 
     protected override IServiceCollection AddServices(IServiceCollection serviceCollection)
         => base.AddServices(serviceCollection)
@@ -27,8 +27,9 @@ public class SpatialDuckDBFixture  : SpatialFixtureBase
     {
         base.OnModelCreating(modelBuilder, context);
 
-        modelBuilder.Entity<PointEntity>().Property(e => e.PointZ).HasColumnType("POINTZ");
-        modelBuilder.Entity<PointEntity>().Property(e => e.PointM).HasColumnType("POINTM");
-        modelBuilder.Entity<PointEntity>().Property(e => e.PointZM).HasColumnType("POINTZM");
+        // DuckDB only has a single GEOMETRY type — sub-types like POINTZ are not supported
+        modelBuilder.Entity<PointEntity>().Property(e => e.PointZ).HasColumnType("GEOMETRY");
+        modelBuilder.Entity<PointEntity>().Property(e => e.PointM).HasColumnType("GEOMETRY");
+        modelBuilder.Entity<PointEntity>().Property(e => e.PointZM).HasColumnType("GEOMETRY");
     }
 }

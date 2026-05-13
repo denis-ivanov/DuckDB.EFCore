@@ -4,5 +4,16 @@ namespace DuckDB.EFCore.NTS.Query.Internal;
 
 public class DuckDBNetTopologySuiteMethodCallTranslatorPlugin : IMethodCallTranslatorPlugin
 {
-    public IEnumerable<IMethodCallTranslator> Translators { get; } = [];
+    public DuckDBNetTopologySuiteMethodCallTranslatorPlugin(ISqlExpressionFactory sqlExpressionFactory)
+    {
+        Translators =
+        [
+            new DuckDBGeometryMethodTranslator(sqlExpressionFactory),
+            new DuckDBGeometryCollectionMethodTranslator(sqlExpressionFactory),
+            new DuckDBLineStringMethodTranslator(sqlExpressionFactory),
+            new DuckDBPolygonMethodTranslator(sqlExpressionFactory)
+        ];
+    }
+
+    public IEnumerable<IMethodCallTranslator> Translators { get; }
 }
