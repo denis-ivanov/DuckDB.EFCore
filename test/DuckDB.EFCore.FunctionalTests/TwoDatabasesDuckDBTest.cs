@@ -16,12 +16,6 @@ public class TwoDatabasesDuckDBTest : TwoDatabasesTestBase, IClassFixture<TwoDat
         base.Can_query_from_one_connection_string_and_save_changes_to_another();
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override void Can_set_connection_string_in_interceptor(bool withConnectionString, bool withNullConnectionString)
-    {
-        base.Can_set_connection_string_in_interceptor(withConnectionString, withNullConnectionString);
-    }
-
     protected new TwoDatabasesFixture Fixture
         => (TwoDatabasesFixture)base.Fixture;
 
