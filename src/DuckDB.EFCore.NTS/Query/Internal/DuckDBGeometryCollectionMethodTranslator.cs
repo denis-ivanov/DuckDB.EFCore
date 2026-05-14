@@ -32,7 +32,7 @@ public class DuckDBGeometryCollectionMethodTranslator : IMethodCallTranslator
             && arguments is [var collection, var index])
         {
             return _sqlExpressionFactory.Function(
-                "ST_GeometryN",
+                "ST_CollectionExtract",
                 [DuckDBSpatialHelpers.AsGeometry(collection, _sqlExpressionFactory), _sqlExpressionFactory.Add(index, _sqlExpressionFactory.Constant(1))],
                 nullable: true,
                 argumentsPropagateNullability: [true, true],
