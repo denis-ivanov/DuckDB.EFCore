@@ -40,78 +40,97 @@ public class DuckDBNetTopologySuiteAggregateMethodTranslator : IAggregateMethodC
             return null;
         }
 
+        // DuckDB aggregates:
+        //   GeometryCombiner.Combine  → ST_Collect(list(geom))
+        //   ConvexHull.Create         → ST_ConvexHull(ST_Collect(list(geom)))
+        //   UnaryUnionOp.Union        → ST_Union_Agg(geom)   (native DuckDB aggregate)
+        //   EnvelopeCombiner          → ST_Envelope_Agg(geom) (native DuckDB aggregate)
+
+        if (method == GeometryCombineMethod)
+        {
+            return _sqlExpressionFactory.Function(
+                "ST_Collect",
+                [MakeListAggregate(sqlExpression, source)],
+                nullable: true,
+                argumentsPropagateNullability: [true],
+                typeof(Geometry));
+        }
+
         if (method == ConvexHullMethod)
         {
-            CombineAggregateTerms();
-
-            // DuckDB has no built-in aggregate convex hull — collect first, then compute convex hull
             return _sqlExpressionFactory.Function(
                 "ST_ConvexHull",
                 [
                     _sqlExpressionFactory.Function(
                         "ST_Collect",
-                        [DuckDBSpatialHelpers.AsGeometry(sqlExpression, _sqlExpressionFactory)],
+                        [MakeListAggregate(sqlExpression, source)],
                         nullable: true,
-                        argumentsPropagateNullability: [false],
+                        argumentsPropagateNullability: [true],
                         typeof(Geometry))
                 ],
                 nullable: true,
                 argumentsPropagateNullability: [true],
+                typeof(Geometry));
+        }
+
+        if (method == UnionMethod)
+        {
+            return _sqlExpressionFactory.Function(
+                "ST_Union_Agg",
+                [ApplyPredicateAndDistinct(ref sqlExpression, source)],
+                nullable: true,
+                argumentsPropagateNullability: [false],
                 typeof(Geometry));
         }
 
         if (method == EnvelopeCombineMethod)
         {
-            CombineAggregateTerms();
-
             return _sqlExpressionFactory.Function(
-                "ST_Envelope",
-                [
-                    _sqlExpressionFactory.Function(
-                        "ST_Collect",
-                        [DuckDBSpatialHelpers.AsGeometry(sqlExpression, _sqlExpressionFactory)],
-                        nullable: true,
-                        argumentsPropagateNullability: [false],
-                        typeof(Geometry))
-                ],
+                "ST_Envelope_Agg",
+                [ApplyPredicateAndDistinct(ref sqlExpression, source)],
                 nullable: true,
-                argumentsPropagateNullability: [true],
+                argumentsPropagateNullability: [false],
                 typeof(Geometry));
         }
 
-        var functionName = method == UnionMethod
-            ? "ST_Union_Agg"
-            : method == GeometryCombineMethod
-                ? "ST_Collect"
-                : null;
+        return null;
+    }
 
-        if (functionName is null)
-        {
-            return null;
-        }
-
-        CombineAggregateTerms();
-
+    /// <summary>
+    /// Applies predicate / distinct to <paramref name="expr"/> and wraps it with
+    /// DuckDB's <c>list()</c> aggregate so that the result is a <c>GEOMETRY[]</c>
+    /// array suitable for passing to <c>ST_Collect</c>.
+    /// </summary>
+    private SqlExpression MakeListAggregate(SqlExpression expr, EnumerableExpression source)
+    {
+        ApplyPredicateAndDistinct(ref expr, source);
+        var wrappedGeom = DuckDBSpatialHelpers.AsGeometry(expr, _sqlExpressionFactory);
+        // Use the geometry type mapping so the postprocessor sees a non-null mapping.
+        // list() is never materialized directly — it is always consumed by ST_Collect.
         return _sqlExpressionFactory.Function(
-            functionName,
-            [DuckDBSpatialHelpers.AsGeometry(sqlExpression, _sqlExpressionFactory)],
+            "list",
+            [wrappedGeom],
             nullable: true,
             argumentsPropagateNullability: [false],
-            typeof(Geometry));
+            wrappedGeom.Type,
+            wrappedGeom.TypeMapping); // GEOMETRY[] — borrow the geometry mapping as placeholder
+    }
 
-        void CombineAggregateTerms()
+    /// <summary>Modifies <paramref name="expr"/> in-place for predicate/distinct, returns it.</summary>
+    private SqlExpression ApplyPredicateAndDistinct(ref SqlExpression expr, EnumerableExpression source)
+    {
+        if (source.Predicate != null)
         {
-            if (source.Predicate != null)
-            {
-                sqlExpression = _sqlExpressionFactory.Case(
-                    new List<CaseWhenClause> { new(source.Predicate, sqlExpression) },
-                    elseResult: null);
-            }
-
-            if (source.IsDistinct)
-            {
-                sqlExpression = new DistinctExpression(sqlExpression);
-            }
+            expr = _sqlExpressionFactory.Case(
+                new List<CaseWhenClause> { new(source.Predicate, expr) },
+                elseResult: null);
         }
+
+        if (source.IsDistinct)
+        {
+            expr = new DistinctExpression(expr);
+        }
+
+        return DuckDBSpatialHelpers.AsGeometry(expr, _sqlExpressionFactory);
     }
 }

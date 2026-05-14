@@ -26,9 +26,10 @@ public class DuckDBGeometryMethodTranslator : IMethodCallTranslator
         { typeof(Geometry).GetRuntimeMethod(nameof(Geometry.EqualsTopologically), [typeof(Geometry)])!, "ST_Equals" },
         { typeof(Geometry).GetRuntimeMethod(nameof(Geometry.Intersection), [typeof(Geometry)])!, "ST_Intersection" },
         { typeof(Geometry).GetRuntimeMethod(nameof(Geometry.Intersects), [typeof(Geometry)])!, "ST_Intersects" },
+        { typeof(Geometry).GetRuntimeMethod(nameof(Geometry.Normalized), Type.EmptyTypes)!, "ST_Normalize" },
         { typeof(Geometry).GetRuntimeMethod(nameof(Geometry.Overlaps), [typeof(Geometry)])!, "ST_Overlaps" },
         { typeof(Geometry).GetRuntimeMethod(nameof(Geometry.Reverse), Type.EmptyTypes)!, "ST_Reverse" },
-        { typeof(Geometry).GetRuntimeMethod(nameof(Geometry.SymmetricDifference), [typeof(Geometry)])!, "ST_SymDifference" },
+        // SymmetricDifference is handled separately below (no native ST_SymDifference in DuckDB)
         { typeof(Geometry).GetRuntimeMethod(nameof(Geometry.ToBinary), Type.EmptyTypes)!, "ST_AsBinary" },
         { typeof(Geometry).GetRuntimeMethod(nameof(Geometry.ToText), Type.EmptyTypes)!, "ST_AsText" },
         { typeof(Geometry).GetRuntimeMethod(nameof(Geometry.Touches), [typeof(Geometry)])!, "ST_Touches" },
@@ -36,6 +37,9 @@ public class DuckDBGeometryMethodTranslator : IMethodCallTranslator
         { typeof(Geometry).GetRuntimeMethod(nameof(Geometry.Union), [typeof(Geometry)])!, "ST_Union" },
         { typeof(Geometry).GetRuntimeMethod(nameof(Geometry.Within), [typeof(Geometry)])!, "ST_Within" }
     };
+
+    private static readonly MethodInfo SymmetricDifferenceMethod
+        = typeof(Geometry).GetRuntimeMethod(nameof(Geometry.SymmetricDifference), [typeof(Geometry)])!;
 
     private static readonly MethodInfo GetGeometryN
         = typeof(Geometry).GetRuntimeMethod(nameof(Geometry.GetGeometryN), [typeof(int)])!;
@@ -114,6 +118,28 @@ public class DuckDBGeometryMethodTranslator : IMethodCallTranslator
                 nullable: true,
                 argumentsPropagateNullability: [true, true, true],
                 typeof(bool));
+        }
+
+        // DuckDB has no ST_SymDifference; emulate as ST_Union(ST_Difference(A,B), ST_Difference(B,A))
+        if (Equals(method, SymmetricDifferenceMethod))
+        {
+            var a = DuckDBSpatialHelpers.AsGeometry(instance, _sqlExpressionFactory);
+            var b = DuckDBSpatialHelpers.AsGeometry(arguments[0], _sqlExpressionFactory);
+
+            var diffAB = _sqlExpressionFactory.Function(
+                "ST_Difference", [a, b],
+                nullable: true, argumentsPropagateNullability: [true, true],
+                method.ReturnType);
+
+            var diffBA = _sqlExpressionFactory.Function(
+                "ST_Difference", [b, a],
+                nullable: true, argumentsPropagateNullability: [true, true],
+                method.ReturnType);
+
+            return _sqlExpressionFactory.Function(
+                "ST_Union", [diffAB, diffBA],
+                nullable: true, argumentsPropagateNullability: [true, true],
+                method.ReturnType);
         }
 
         return null;
