@@ -12,28 +12,22 @@ public class CustomConvertersDuckDBTest : CustomConvertersTestBase<CustomConvert
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [ConditionalFact(Skip = "DateTimeOffset with non-zero offset, https://github.com/dotnet/efcore/issues/26068")]
     public override async Task Can_insert_and_read_back_non_nullable_backed_data_types()
     {
         await base.Can_insert_and_read_back_non_nullable_backed_data_types();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [ConditionalFact(Skip = "DateTimeOffset with non-zero offset, https://github.com/dotnet/efcore/issues/26068")]
     public override async Task Can_insert_and_read_back_nullable_backed_data_types()
     {
         await base.Can_insert_and_read_back_nullable_backed_data_types();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [ConditionalFact(Skip = "DateTimeOffset with non-zero offset, https://github.com/dotnet/efcore/issues/26068")]
     public override async Task Can_insert_and_read_back_object_backed_data_types()
     {
         await base.Can_insert_and_read_back_object_backed_data_types();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Can_query_using_any_nullable_data_type()
-    {
-        await base.Can_query_using_any_nullable_data_type();
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]

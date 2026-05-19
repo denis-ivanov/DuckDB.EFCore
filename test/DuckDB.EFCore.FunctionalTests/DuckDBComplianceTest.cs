@@ -12,7 +12,6 @@ public class DuckDBComplianceTest : RelationalComplianceTestBase
         typeof(SqlExecutorTestBase<>),
         typeof(UdfDbFunctionTestBase<>),
         typeof(StoredProcedureUpdateTestBase), // DuckDB does not support stored procedures
-        typeof(UpdatesRelationalTestBase<>), // TODO Some tests are non-virtual, could not override
         typeof(AdHocMiscellaneousQueryRelationalTestBase), // TODO  Some tests are non-virtual, could not override
         typeof(ManyToManyTrackingRelationalTestBase<>), // TODO  Some tests are non-virtual, could not override
         typeof(MonsterFixupTestBase<>), // TODO  Some tests are non-virtual, could not override

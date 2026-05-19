@@ -384,7 +384,7 @@ SELECT child.column_name  AS child_column,
                 };
 
                 var expressions = reader.GetFieldValue<string>("expressions");
-                var columns = Array.ConvertAll(expressions.TrimStart('[').TrimEnd(']').Split(','), e => e.Trim());
+                var columns = Array.ConvertAll(expressions.TrimStart('[').TrimEnd(']').Split(','), e => e.Trim().Trim(['\'', '\"']));
 
                 foreach (var column in columns)
                 {
