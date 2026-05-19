@@ -11,8 +11,8 @@ public class DuckDBTestStore : RelationalTestStore
 {
     public const int CommandTimeout = 30;
 
-    public static DuckDBTestStore GetOrCreate(string name, bool sharedCache = false)
-        => new(name, sharedCache: sharedCache);
+    public static DuckDBTestStore GetOrCreate(string name)
+        => new(name);
 
     public static async Task<DuckDBTestStore> GetOrCreateInitializedAsync(string name)
         => await new DuckDBTestStore(name).InitializeDuckDBAsync(
@@ -29,8 +29,8 @@ public class DuckDBTestStore : RelationalTestStore
     private readonly bool _seed;
     private bool _loadSpatial;
 
-    private DuckDBTestStore(string name, bool seed = true, bool sharedCache = false, bool shared = true)
-        : base(name, shared, CreateConnection(name, sharedCache))
+    private DuckDBTestStore(string name, bool seed = true, bool shared = true)
+        : base(name, shared, CreateConnection(name))
         => _seed = seed;
 
     public DuckDBTestStore WithSpatialExtension()
@@ -108,13 +108,11 @@ public class DuckDBTestStore : RelationalTestStore
         return command;
     }
 
-    private static DuckDBConnection CreateConnection(string name, bool sharedCache)
+    private static DuckDBConnection CreateConnection(string name)
     {
         var connectionString = new DuckDBConnectionStringBuilder
         {
-            DataSource = sharedCache
-                ? DuckDBConnectionStringBuilder.InMemorySharedDataSource
-                : name + ".db"
+            DataSource = name + ".db",
         }.ToString();
 
         return new DuckDBConnection(connectionString);
