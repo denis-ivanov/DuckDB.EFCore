@@ -33,7 +33,7 @@ public abstract class TransactionInterceptionDuckDBTestBase(TransactionIntercept
             => "TransactionInterception";
 
         protected override ITestStoreFactory TestStoreFactory
-            => SharedCacheDuckDBTestStoreFactory.Instance;
+            => DuckDBTestStoreFactory.Instance;
 
         protected override IServiceCollection InjectInterceptors(
             IServiceCollection serviceCollection,

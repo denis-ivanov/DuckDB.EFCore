@@ -8,12 +8,6 @@ public class OptimisticConcurrencyULongDuckDBTest(F1ULongDuckDBFixture fixture)
     : OptimisticConcurrencyDuckDBTestBase<F1ULongDuckDBFixture, ulong?>(fixture)
 {
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Adding_the_same_entity_twice_results_in_DbUpdateException()
-    {
-        await base.Adding_the_same_entity_twice_results_in_DbUpdateException();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override void Property_entry_original_value_is_set()
     {
         base.Property_entry_original_value_is_set();
@@ -27,18 +21,6 @@ public class OptimisticConcurrencyDuckDBTest(F1DuckDBFixture fixture)
     public override void Property_entry_original_value_is_set()
     {
         base.Property_entry_original_value_is_set();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Adding_the_same_entity_twice_results_in_DbUpdateException()
-    {
-        await base.Adding_the_same_entity_twice_results_in_DbUpdateException();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Attempting_to_add_same_relationship_twice_for_many_to_many_results_in_independent_association_exception()
-    {
-        await base.Attempting_to_add_same_relationship_twice_for_many_to_many_results_in_independent_association_exception();
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -195,18 +177,6 @@ RETURNING 1;
     [ConditionalFact(Skip = "Optimistic Offline Lock #2195")]
     public override Task Two_concurrency_issues_in_one_to_one_related_entities_can_be_handled_by_dealing_with_dependent_first()
         => Task.FromResult(true);
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Adding_the_same_entity_twice_results_in_DbUpdateException()
-    {
-        await base.Adding_the_same_entity_twice_results_in_DbUpdateException();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Attempting_to_add_same_relationship_twice_for_many_to_many_results_in_independent_association_exception()
-    {
-        await base.Attempting_to_add_same_relationship_twice_for_many_to_many_results_in_independent_association_exception();
-    }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Attempting_to_delete_same_relationship_twice_for_many_to_many_results_in_independent_association_exception()
