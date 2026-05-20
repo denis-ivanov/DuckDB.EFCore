@@ -846,6 +846,14 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
         return base.Parameter_collection_of_nullable_ints_Contains_nullable_int_with_EF_Parameter();
     }
 
+    [ConditionalFact]
+    public virtual async Task Column_collection_Append()
+    {
+        await AssertQuery(
+            ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => c.Ints.Append(3).Count() == 3),
+            ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => c.Ints.Length == 2));
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 

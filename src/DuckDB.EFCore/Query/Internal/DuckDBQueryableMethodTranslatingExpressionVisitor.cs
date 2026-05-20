@@ -601,6 +601,82 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
     protected override bool IsNaturallyOrdered(SelectExpression selectExpression)
         => IsNaturallyOrderedUnnest(selectExpression) || IsNaturallyOrderedJsonEach(selectExpression);
 
+    protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression)
+    {
+        if (methodCallExpression.Method.DeclaringType == typeof(Queryable))
+        {
+            if (methodCallExpression.Method.Name == nameof(Queryable.Append))
+            {
+                if (Visit(methodCallExpression.Arguments[0]) is ShapedQueryExpression appendSource)
+                {
+                    return TranslateAppend(appendSource, methodCallExpression.Arguments[1])
+                        ?? base.VisitMethodCall(methodCallExpression);
+                }
+            }
+
+            if (methodCallExpression.Method.Name == nameof(Queryable.Prepend))
+            {
+                if (Visit(methodCallExpression.Arguments[0]) is ShapedQueryExpression prependSource)
+                {
+                    return TranslatePrepend(prependSource, methodCallExpression.Arguments[1])
+                        ?? base.VisitMethodCall(methodCallExpression);
+                }
+            }
+        }
+
+        return base.VisitMethodCall(methodCallExpression);
+    }
+
+    protected virtual ShapedQueryExpression? TranslateAppend(ShapedQueryExpression source, Expression item)
+        => TranslateArrayPush(source, item, "array_push_back");
+
+    protected virtual ShapedQueryExpression? TranslatePrepend(ShapedQueryExpression source, Expression item)
+        => TranslateArrayPush(source, item, "array_push_front");
+
+    private ShapedQueryExpression? TranslateArrayPush(ShapedQueryExpression source, Expression item, string functionName)
+    {
+        if (!source.TryExtractArray(out var array, out var projectedColumn))
+        {
+            return null;
+        }
+
+        if (TranslateExpression(item) is not SqlExpression translatedItem)
+        {
+            return null;
+        }
+
+        var resultArray = _sqlExpressionFactory.Function(
+            functionName,
+            [array, translatedItem],
+            nullable: true,
+            argumentsPropagateNullability: [true, true],
+            array.Type,
+            array.TypeMapping);
+
+#pragma warning disable EF1001 // SelectExpression constructors are currently internal
+        var tableAlias = ((SelectExpression)source.QueryExpression).Tables[0].Alias!;
+        var selectExpression = new SelectExpression(
+            [new DuckDBUnnestExpression(tableAlias, resultArray, "value")],
+            new ColumnExpression("value", tableAlias, projectedColumn.Type, projectedColumn.TypeMapping, projectedColumn.IsNullable),
+            [GenerateOrdinalityIdentifier(tableAlias)],
+            _queryCompilationContext.SqlAliasManager);
+#pragma warning restore EF1001
+
+        Expression shaperExpression = new ProjectionBindingExpression(
+            selectExpression, new ProjectionMember(), source.ShaperExpression.Type.MakeNullable());
+
+        if (source.ShaperExpression.Type != shaperExpression.Type)
+        {
+            Debug.Assert(
+                source.ShaperExpression.Type.MakeNullable() == shaperExpression.Type,
+                "expression.Type must be nullable of targetType");
+
+            shaperExpression = Expression.Convert(shaperExpression, source.ShaperExpression.Type);
+        }
+
+        return new ShapedQueryExpression(selectExpression, shaperExpression);
+    }
+
     private static bool IsNaturallyOrderedUnnest(SelectExpression selectExpression)
     {
         if (selectExpression.Tables is not [DuckDBUnnestExpression unnest, ..])
