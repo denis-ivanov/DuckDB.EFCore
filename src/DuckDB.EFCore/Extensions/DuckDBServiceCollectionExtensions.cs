@@ -123,6 +123,7 @@ public static class DuckDBServiceCollectionExtensions
             .TryAdd<IQuerySqlGeneratorFactory, DuckDBQuerySqlGeneratorFactory>()
             .TryAdd<IQueryableMethodTranslatingExpressionVisitorFactory, DuckDBQueryableMethodTranslatingExpressionVisitorFactory>()
             .TryAdd<IRelationalSqlTranslatingExpressionVisitorFactory, DuckDBSqlTranslatingExpressionVisitorFactory>()
+            .TryAdd<IQueryTranslationPreprocessorFactory, DuckDBQueryTranslationPreprocessorFactory>()
             .TryAdd<IQueryTranslationPostprocessorFactory, DuckDBQueryTranslationPostprocessorFactory>()
             .TryAdd<IUpdateSqlGenerator, DuckDBUpdateSqlGenerator>()
             .TryAdd<ISqlExpressionFactory, DuckDBSqlExpressionFactory>()
