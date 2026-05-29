@@ -19,10 +19,13 @@ public class DuckDBArrayAppendExpression : Expression
 
     public override Type Type { get; }
 
-    public override bool CanReduce => true;
-
-    public override Expression Reduce()
+    protected override Expression VisitChildren(ExpressionVisitor visitor)
     {
-        return this;
+        var source = visitor.Visit(Source);
+        var value = visitor.Visit(Value);
+
+        return source != Source || value != Value
+            ? new DuckDBArrayAppendExpression(source, value, Type)
+            : this;
     }
 }
