@@ -21,22 +21,24 @@ public class DuckDBArrayPreprocessor : ExpressionVisitor
             {
                 var source = Visit(node.Arguments[0]);
                 var element = Visit(node.Arguments[1]);
+                var queryableSource = EnsureQueryable(source, method.GetGenericArguments()[0]);
 
                 return new DuckDBArrayPrependExpression(
-                    EnsureQueryable(source, method.GetGenericArguments()[0]),
+                    queryableSource,
                     element,
-                    node.Type);
+                    queryableSource.Type);
             }
 
             if (method.Name == nameof(Enumerable.Append))
             {
                 var source = Visit(node.Arguments[0]);
                 var element = Visit(node.Arguments[1]);
+                var queryableSource = EnsureQueryable(source, method.GetGenericArguments()[0]);
 
                 return new DuckDBArrayAppendExpression(
-                    EnsureQueryable(source, method.GetGenericArguments()[0]),
+                    queryableSource,
                     element,
-                    node.Type);
+                    queryableSource.Type);
             }
         }
 

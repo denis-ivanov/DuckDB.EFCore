@@ -17,6 +17,7 @@ public class DuckDBQueryTranslationPreprocessor : RelationalQueryTranslationPrep
     public override Expression Process(Expression query)
     {
         query = new InvocationExpressionRemovingExpressionVisitor().Visit(query);
+        query = new DuckDBArrayPreprocessor().Visit(query);
         query = NormalizeQueryableMethod(query);
         query = new CallForwardingExpressionVisitor().Visit(query);
         query = new NullCheckRemovingExpressionVisitor().Visit(query);

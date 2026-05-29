@@ -852,6 +852,28 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
         await AssertQuery(
             ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => c.Ints.Append(3).Count() == 3),
             ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => c.Ints.Length == 2));
+
+        AssertSql(
+            """
+            SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
+            FROM "PrimitiveCollectionsEntity" AS p
+            WHERE array_length(array_push_back(p."Ints", 3)) = 3
+            """);
+    }
+
+    [ConditionalFact]
+    public virtual async Task Column_collection_Prepend()
+    {
+        await AssertQuery(
+            ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => c.Ints.Prepend(3).Count() == 3),
+            ss => ss.Set<PrimitiveCollectionsEntity>().Where(c => c.Ints.Length == 2));
+
+        AssertSql(
+            """
+            SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
+            FROM "PrimitiveCollectionsEntity" AS p
+            WHERE array_length(array_push_front(p."Ints", 3)) = 3
+            """);
     }
 
     private void AssertSql(params string[] expected)

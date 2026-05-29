@@ -601,6 +601,30 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
     protected override bool IsNaturallyOrdered(SelectExpression selectExpression)
         => IsNaturallyOrderedUnnest(selectExpression) || IsNaturallyOrderedJsonEach(selectExpression);
 
+    protected override Expression VisitExtension(Expression extensionExpression)
+    {
+        switch (extensionExpression)
+        {
+            case DuckDBArrayAppendExpression appendExpression:
+                if (Visit(appendExpression.Source) is ShapedQueryExpression appendSource)
+                {
+                    return TranslateAppend(appendSource, appendExpression.Value) ?? QueryCompilationContext.NotTranslatedExpression;
+                }
+
+                return QueryCompilationContext.NotTranslatedExpression;
+
+            case DuckDBArrayPrependExpression prependExpression:
+                if (Visit(prependExpression.Source) is ShapedQueryExpression prependSource)
+                {
+                    return TranslatePrepend(prependSource, prependExpression.Value) ?? QueryCompilationContext.NotTranslatedExpression;
+                }
+
+                return QueryCompilationContext.NotTranslatedExpression;
+        }
+
+        return base.VisitExtension(extensionExpression);
+    }
+
     protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression)
     {
         if (methodCallExpression.Method.DeclaringType == typeof(Queryable))

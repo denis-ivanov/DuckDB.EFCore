@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using DuckDB.EFCore.Query.Expressions.Internal;
 using System.Linq.Expressions;
 
 namespace DuckDB.EFCore.Query.Internal;
@@ -17,21 +18,29 @@ public class DuckDBNavigationExpandingExpressionVisitor : NavigationExpandingExp
 
     protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression)
     {
-        var method = methodCallExpression.Method;
-
-        if (method.DeclaringType == typeof(Queryable))
+        if (methodCallExpression.Method.DeclaringType == typeof(Queryable)
+            && methodCallExpression.Arguments.Count > 0)
         {
-            if (method.Name == nameof(Queryable.Prepend))
+            var source = Visit(methodCallExpression.Arguments[0]);
+
+            if (source is DuckDBArrayAppendExpression or DuckDBArrayPrependExpression)
             {
-                return methodCallExpression.Update(Visit(methodCallExpression.Object), methodCallExpression.Arguments.Select(e => Visit(e)));
-            }
-            
-            if (method.Name == nameof(Queryable.Append))
-            {
-                return methodCallExpression.Update(Visit(methodCallExpression.Object), methodCallExpression.Arguments.Select(e => Visit(e)));
+                return methodCallExpression.Update(
+                    methodCallExpression.Object,
+                    new Expression[] { source }.Concat(methodCallExpression.Arguments.Skip(1).Select(argument => Visit(argument)!)));
             }
         }
 
         return base.VisitMethodCall(methodCallExpression);
     }
+
+    protected override Expression VisitExtension(Expression extensionExpression)
+        => extensionExpression switch
+        {
+            DuckDBArrayAppendExpression appendExpression
+                => new DuckDBArrayAppendExpression(Visit(appendExpression.Source), Visit(appendExpression.Value), appendExpression.Type),
+            DuckDBArrayPrependExpression prependExpression
+                => new DuckDBArrayPrependExpression(Visit(prependExpression.Source), Visit(prependExpression.Value), prependExpression.Type),
+            _ => base.VisitExtension(extensionExpression)
+        };
 }
