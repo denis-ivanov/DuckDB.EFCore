@@ -32,6 +32,14 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
         _sqlExpressionFactory = (DuckDBSqlExpressionFactory)dependencies.SqlExpressionFactory;
     }
 
+    /// <inheritdoc />
+    protected override Expression VisitExtension(Expression node)
+        => node switch
+        {
+            DuckDBUnnestExpression unnestExpression => VisitUnnest(unnestExpression),
+            _ => base.VisitExtension(node)
+        };
+
     protected override bool IsCollectionTable(TableExpressionBase table, [NotNullWhen(true)] out Expression? collection)
     {
         switch (table)
@@ -43,10 +51,29 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
             case DuckDBUnnestExpression unnest:
                 collection = unnest.Array;
                 return true;
+
+            case TableValuedFunctionExpression { Name: "unnest", Schema: null, IsBuiltIn: true, Arguments: [var arrayArgument] }:
+                collection = arrayArgument;
+                return true;
         }
 
         return base.IsCollectionTable(table, out collection);
     }
+
+    /// <inheritdoc />
+    protected override TableExpressionBase UpdateParameterCollection(
+        TableExpressionBase table,
+        SqlParameterExpression newCollectionParameter)
+        => table switch
+        {
+            TableValuedFunctionExpression { Name: "json_each", Schema: null, IsBuiltIn: true, Arguments: [SqlParameterExpression] } jsonEach
+                => jsonEach.Update([newCollectionParameter]),
+            DuckDBUnnestExpression { Arguments: [SqlParameterExpression] } unnest
+                => unnest.Update(newCollectionParameter),
+            TableValuedFunctionExpression { Name: "unnest", Schema: null, IsBuiltIn: true, Arguments: [SqlParameterExpression] } unnest
+                => unnest.Update([newCollectionParameter]),
+            _ => base.UpdateParameterCollection(table, newCollectionParameter)
+        };
 
     /// <inheritdoc />
     protected override SqlExpression VisitSqlBinary(SqlBinaryExpression sqlBinaryExpression, bool allowOptimizedExpansion, out bool nullable)
@@ -200,6 +227,15 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
             DuckDBRowValueExpression e => VisitRowValueExpression(e, allowOptimizedExpansion, out nullable),
             _ => base.VisitCustomSqlExpression(sqlExpression, allowOptimizedExpansion, out nullable)
         };
+    }
+
+    private DuckDBUnnestExpression VisitUnnest(DuckDBUnnestExpression unnestExpression)
+    {
+        var array = Visit(unnestExpression.Array, out _);
+
+        return array == unnestExpression.Array
+            ? unnestExpression
+            : unnestExpression.Update(array!);
     }
 
     /// <summary>

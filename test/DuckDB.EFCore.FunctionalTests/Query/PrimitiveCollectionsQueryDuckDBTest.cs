@@ -122,12 +122,6 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Column_collection_in_subquery_Union_parameter_collection()
-    {
-        return base.Column_collection_in_subquery_Union_parameter_collection();
-    }
-
     public override async Task Column_collection_index_beyond_end()
     {
         await base.Column_collection_index_beyond_end();
@@ -207,7 +201,6 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Column_collection_Join_parameter_collection()
     {
         return base.Column_collection_Join_parameter_collection();
@@ -606,18 +599,6 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
     public override async Task Inline_collection_Join_ordered_column_collection()
     {
         await base.Inline_collection_Join_ordered_column_collection();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Inline_collection_List_value_index_Column()
-    {
-        await base.Inline_collection_List_value_index_Column();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Inline_collection_value_index_Column()
-    {
-        await base.Inline_collection_value_index_Column();
     }
 
     public override async Task Non_nullable_reference_column_collection_index_equals_nullable_column()
