@@ -17,9 +17,4 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
     {
         return base.GroupBy_aggregate_projecting_conditional_expression(async);
     }
-
-    public override Task GroupJoin_complex_GroupBy_Aggregate(bool async)
-    {
-        return base.GroupJoin_complex_GroupBy_Aggregate(async);
-    }
 }
