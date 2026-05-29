@@ -21,10 +21,10 @@ public class DuckDBNavigationExpandingExpressionVisitor : NavigationExpandingExp
         if (methodCallExpression.Method.DeclaringType == typeof(Queryable)
             && methodCallExpression.Arguments.Count > 0)
         {
-            var source = Visit(methodCallExpression.Arguments[0]);
-
-            if (source is DuckDBArrayAppendExpression or DuckDBArrayPrependExpression)
+            var originalSource = methodCallExpression.Arguments[0];
+            if (originalSource is DuckDBArrayAppendExpression or DuckDBArrayPrependExpression)
             {
+                var source = Visit(originalSource);
                 return methodCallExpression.Update(
                     methodCallExpression.Object,
                     new Expression[] { source }.Concat(methodCallExpression.Arguments.Skip(1).Select(argument => Visit(argument)!)));
