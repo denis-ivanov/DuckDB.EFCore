@@ -1,20 +1,15 @@
-﻿using DuckDB.EFCore.Query.Expressions.Internal;
+using DuckDB.EFCore.Query.Expressions.Internal;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace DuckDB.EFCore.Query.Internal;
 
 public class DuckDBArrayPreprocessor : ExpressionVisitor
 {
-    private static readonly MethodInfo QueryableAsQueryableMethod =
-        typeof(Queryable).GetMethods()
-            .Single(m => m is { Name: nameof(Queryable.AsQueryable), IsGenericMethod: true }
-                         && m.GetParameters().Length == 1);
-
     protected override Expression VisitMethodCall(MethodCallExpression node)
     {
         var method = node.Method;
-
+        
         if (method.DeclaringType == typeof(Enumerable))
         {
             if (method.Name == nameof(Enumerable.Prepend))
@@ -53,7 +48,7 @@ public class DuckDBArrayPreprocessor : ExpressionVisitor
             _ => base.VisitExtension(node)
         };
     }
-    
+
     private Expression EnsureQueryable(Expression source, Type elementType)
     {
         if (typeof(IQueryable<>).MakeGenericType(elementType).IsAssignableFrom(source.Type))
@@ -62,7 +57,7 @@ public class DuckDBArrayPreprocessor : ExpressionVisitor
         }
 
         return Expression.Call(
-            QueryableAsQueryableMethod.MakeGenericMethod(elementType),
+            QueryableMethods.AsQueryable.MakeGenericMethod(elementType),
             source);
     }
 }

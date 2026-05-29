@@ -1,12 +1,11 @@
 using DuckDB.EFCore.Extensions;
 using DuckDB.EFCore.Metadata;
 using DuckDB.NET.Data;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DuckDB.EFCore.FunctionalTests;
+namespace Microsoft.EntityFrameworkCore;
 
 public class ParquetTests : IClassFixture<ParquetTests.ParquetFixture>
 {

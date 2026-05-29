@@ -669,6 +669,8 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
             return null;
         }
 
+        (translatedItem, array) = _sqlExpressionFactory.ApplyTypeMappingsOnItemAndArray(translatedItem, array);
+
         var resultArray = _sqlExpressionFactory.Function(
             functionName,
             [array, translatedItem],

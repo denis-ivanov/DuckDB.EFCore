@@ -2,7 +2,7 @@
 
 namespace DuckDB.EFCore.Query.Expressions.Internal;
 
-public class DuckDBArrayPrependExpression : Expression
+internal sealed class DuckDBArrayPrependExpression : Expression
 {
     public DuckDBArrayPrependExpression(Expression source, Expression value, Type expressionType)
     {
@@ -11,9 +11,9 @@ public class DuckDBArrayPrependExpression : Expression
         Type = expressionType;
     }
     
-    public Expression Source { get; set; }
+    public Expression Source { get; }
     
-    public Expression Value { get; set; }
+    public Expression Value { get; }
 
     public override ExpressionType NodeType => ExpressionType.Extension;
 
