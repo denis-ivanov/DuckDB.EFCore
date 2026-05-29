@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
 
@@ -44,7 +45,7 @@ public class DuckDBUnnestExpression : TableValuedFunctionExpression, IEquatable<
         SqlExpression array,
         string columnName,
         bool withOrdinality = true)
-        : this(alias, array, new ColumnInfo(columnName), withOrdinality)
+        : this(alias, array, new ColumnInfo(columnName), annotations: null, withOrdinality)
     {
     }
 
@@ -52,8 +53,9 @@ public class DuckDBUnnestExpression : TableValuedFunctionExpression, IEquatable<
         string alias,
         SqlExpression array,
         ColumnInfo? columnInfo,
+        IReadOnlyDictionary<string, IAnnotation>? annotations,
         bool withOrdinality = true)
-        : base(alias, "unnest", schema: null, builtIn: true, [array])
+        : base(alias, "unnest", schema: null, builtIn: true, [array], annotations)
     {
         ColumnInfos = columnInfo is null ? null : [columnInfo.Value];
         WithOrdinality = withOrdinality;
@@ -63,7 +65,7 @@ public class DuckDBUnnestExpression : TableValuedFunctionExpression, IEquatable<
     protected override Expression VisitChildren(ExpressionVisitor visitor)
         => visitor.Visit(Array) is var visitedArray && visitedArray == Array
             ? this
-            : new DuckDBUnnestExpression(Alias, (SqlExpression)visitedArray, ColumnName, WithOrdinality);
+            : Update((SqlExpression)visitedArray);
 
     /// <inheritdoc />
     public override TableValuedFunctionExpression Update(IReadOnlyList<SqlExpression> arguments)
@@ -78,19 +80,30 @@ public class DuckDBUnnestExpression : TableValuedFunctionExpression, IEquatable<
     public virtual DuckDBUnnestExpression Update(SqlExpression array)
         => array == Array
             ? this
-            : new DuckDBUnnestExpression(Alias, array, ColumnName, WithOrdinality);
+            : new DuckDBUnnestExpression(
+                Alias,
+                array,
+                GetSingleColumnInfo(),
+                Annotations,
+                WithOrdinality);
 
     /// <inheritdoc />
     public override TableExpressionBase Clone(string? alias, ExpressionVisitor cloningExpressionVisitor)
         => new DuckDBUnnestExpression(
             alias ?? Alias,
             (SqlExpression)cloningExpressionVisitor.Visit(Array),
-            ColumnName,
+            GetSingleColumnInfo(),
+            Annotations,
             WithOrdinality);
 
     /// <inheritdoc />
     public override TableValuedFunctionExpression WithAlias(string newAlias)
-        => new DuckDBUnnestExpression(newAlias, Array, ColumnName, WithOrdinality);
+        => new DuckDBUnnestExpression(
+            newAlias,
+            Array,
+            GetSingleColumnInfo(),
+            Annotations,
+            WithOrdinality);
 
     /// <summary>
     ///     Returns a new expression with the given column infos applied.
@@ -105,7 +118,12 @@ public class DuckDBUnnestExpression : TableValuedFunctionExpression, IEquatable<
                 [var columnInfo] => columnInfo,
                 _ => throw new ArgumentException()
             },
+            Annotations,
             WithOrdinality);
+
+    /// <inheritdoc />
+    protected override TableValuedFunctionExpression WithAnnotations(IReadOnlyDictionary<string, IAnnotation> annotations)
+        => new DuckDBUnnestExpression(Alias, Array, GetSingleColumnInfo(), annotations, WithOrdinality);
 
     /// <inheritdoc />
     protected override void Print(ExpressionPrinter expressionPrinter)
@@ -164,6 +182,14 @@ public class DuckDBUnnestExpression : TableValuedFunctionExpression, IEquatable<
     /// <inheritdoc />
     public override int GetHashCode()
         => base.GetHashCode();
+
+    private ColumnInfo? GetSingleColumnInfo()
+        => ColumnInfos switch
+        {
+            null or [] => null,
+            [var columnInfo] => columnInfo,
+            _ => throw new ArgumentException()
+        };
 
     /// <summary>
     ///     Column descriptor for the output of a table-valued function.

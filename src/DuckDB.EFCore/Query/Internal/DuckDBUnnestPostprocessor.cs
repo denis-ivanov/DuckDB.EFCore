@@ -72,6 +72,11 @@ public class DuckDBUnnestPostprocessor : ExpressionVisitor
                         }
                     }
 
+                    if (newTables is not null && newTables[i] is null)
+                    {
+                        newTables[i] = table;
+                    }
+
                     bool IsOrdinalityColumn(SqlExpression expression)
                         => expression is ColumnExpression { Name: "ordinality" } ordinalityColumn
                             && ordinalityColumn.TableAlias == unwrappedTable.Alias;
