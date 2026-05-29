@@ -21,7 +21,14 @@ namespace DuckDB.EFCore.Query.Internal;
 /// </summary>
 public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQueryableMethodTranslatingExpressionVisitor
 {
+    /// <summary>
+    ///     The column name produced by <c>json_each</c> for element keys.
+    /// </summary>
     public const string JsonEachKeyColumnName = "key";
+
+    /// <summary>
+    ///     The column name produced by <c>json_each</c> for element values.
+    /// </summary>
     public const string JsonEachValueColumnName = "value";
 
     private readonly RelationalQueryCompilationContext _queryCompilationContext;
@@ -601,6 +608,7 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
     protected override bool IsNaturallyOrdered(SelectExpression selectExpression)
         => IsNaturallyOrderedUnnest(selectExpression) || IsNaturallyOrderedJsonEach(selectExpression);
 
+    /// <inheritdoc />
     protected override Expression VisitExtension(Expression extensionExpression)
     {
         switch (extensionExpression)
@@ -625,6 +633,7 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         return base.VisitExtension(extensionExpression);
     }
 
+    /// <inheritdoc />
     protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression)
     {
         if (methodCallExpression.Method.DeclaringType == typeof(Queryable))
