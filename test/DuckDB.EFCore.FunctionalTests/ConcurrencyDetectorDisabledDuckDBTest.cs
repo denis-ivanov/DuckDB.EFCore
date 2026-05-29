@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.TestUtilities;
-using Xunit;
 
 namespace Microsoft.EntityFrameworkCore;
 
@@ -8,12 +7,6 @@ public class ConcurrencyDetectorDisabledDuckDBTest : ConcurrencyDetectorDisabled
 {
     public ConcurrencyDetectorDisabledDuckDBTest(ConcurrencyDetectorDuckDBFixture fixture) : base(fixture)
     {
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Last(bool async)
-    {
-        return base.Last(async);
     }
 
     public class ConcurrencyDetectorDuckDBFixture : ConcurrencyDetectorFixtureBase, ITestSqlLoggerFactory
