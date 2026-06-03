@@ -179,12 +179,6 @@ public class JsonTypesDuckDBTest : JsonTypesRelationalTestBase
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Can_read_write_binary_JSON_values(string value, string json)
-    {
-        await base.Can_read_write_binary_JSON_values(value, json);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_collection_of_binary_JSON_values(string expected)
     {
         await base.Can_read_write_collection_of_binary_JSON_values(expected);
@@ -200,12 +194,6 @@ public class JsonTypesDuckDBTest : JsonTypesRelationalTestBase
     public override async Task Can_read_write_collection_of_nullable_binary_JSON_values(string expected)
     {
         await base.Can_read_write_collection_of_nullable_binary_JSON_values(expected);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Can_read_write_nullable_binary_JSON_values(string? value, string json)
-    {
-        await base.Can_read_write_nullable_binary_JSON_values(value, json);
     }
 
     protected override ITestStoreFactory TestStoreFactory

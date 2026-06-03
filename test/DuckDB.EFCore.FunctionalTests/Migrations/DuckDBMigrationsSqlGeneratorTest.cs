@@ -21,7 +21,7 @@ public class DuckDBMigrationsSqlGeneratorTest : MigrationsSqlGeneratorTestBase
 
     protected override string GetGeometryCollectionStoreType()
     {
-        throw new NotImplementedException();
+        return "GEOMETRYCOLLECTION";
     }
 
     public override void AddColumnOperation_without_column_type()
@@ -84,7 +84,6 @@ public class DuckDBMigrationsSqlGeneratorTest : MigrationsSqlGeneratorTestBase
         base.AlterColumnOperation_without_column_type();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override void InsertDataOperation_all_args_spatial()
     {
         base.InsertDataOperation_all_args_spatial();
