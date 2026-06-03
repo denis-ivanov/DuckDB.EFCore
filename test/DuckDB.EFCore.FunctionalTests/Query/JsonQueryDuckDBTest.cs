@@ -345,18 +345,6 @@ public class JsonQueryDuckDBTest : JsonQueryRelationalTestBase<JsonQueryDuckDBFi
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Json_boolean_projection(bool async)
-    {
-        return base.Json_boolean_projection(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Json_boolean_projection_negated(bool async)
-    {
-        return base.Json_boolean_projection_negated(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Json_branch_collection_distinct_and_other_collection(bool async)
     {
         return base.Json_branch_collection_distinct_and_other_collection(async);
