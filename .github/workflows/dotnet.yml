@@ -36,7 +36,7 @@ jobs:
       run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger:"junit;LogFilePath=junit.xml"
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v6
+      uses: codecov/codecov-action@v7
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         slug: denis-ivanov/DuckDB.EFCore
@@ -48,7 +48,7 @@ jobs:
 
     - name: Upload test results to Codecov
       if: ${{ !cancelled() }}
-      uses: codecov/codecov-action@v6
+      uses: codecov/codecov-action@v7
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         slug: denis-ivanov/DuckDB.EFCore
