@@ -5,9 +5,9 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
-        <PackageVersion>1.0.0</PackageVersion>
-        <FileVersion>1.0.0</FileVersion>
-        <Version>1.0.0</Version>
+        <PackageVersion>1.0.3</PackageVersion>
+        <FileVersion>1.0.3</FileVersion>
+        <Version>1.0.3</Version>
         <Authors>Denis Ivanov</Authors>
         <Description>NetTopologySuite (spatial) support for the DuckDB provider for Entity Framework Core.</Description>
         <PackageTags>DuckDB; Entity Framework Core; EF Core; NetTopologySuite; Spatial; GIS</PackageTags>
@@ -19,8 +19,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.8" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.9" />
       <PackageReference Include="NetTopologySuite" Version="2.6.0" />
     </ItemGroup>
 
