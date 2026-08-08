@@ -189,10 +189,10 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
         {
             var singleArgumentFunctionName = method.Name switch
             {
-                "AnyValueAggregate" => "ANY_VALUE",
-                "BitAndAggregate" => "BIT_AND",
-                "BitOrAggregate" => "BIT_OR",
-                "BitXorAggregate" => "BIT_XOR",
+                nameof(DuckDBGroupingExtensions.AnyValueAggregate) => "ANY_VALUE",
+                nameof(DuckDBGroupingExtensions.BitAndAggregate) => "BIT_AND",
+                nameof(DuckDBGroupingExtensions.BitOrAggregate) => "BIT_OR",
+                nameof(DuckDBGroupingExtensions.BitXorAggregate) => "BIT_XOR",
                 _ => null
             };
 
@@ -211,10 +211,19 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
 
         // Support ARG_MAX / ARG_MAX_NULL / ARG_MIN / ARG_MIN_NULL aggregate functions
         // (e.g., g.ArgMax(e => e.Prop, e => e.Value[, n]), g.ArgMinNull(e => e.Prop, e => e.Value))
-        if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
-            && method.Name is "ArgMaxAggregate" or "ArgMaxNullAggregate" or "ArgMinAggregate" or "ArgMinNullAggregate")
+        if (method.DeclaringType == typeof(DuckDBGroupingExtensions))
         {
-            if (source.Selector is DuckDBRowValueExpression { Values.Count: 2 } rowValue
+            var functionName = method.Name switch
+            {
+                nameof(DuckDBGroupingExtensions.ArgMaxAggregate) => "ARG_MAX",
+                nameof(DuckDBGroupingExtensions.ArgMaxNullAggregate) => "ARG_MAX_NULL",
+                nameof(DuckDBGroupingExtensions.ArgMinAggregate) => "ARG_MIN",
+                nameof(DuckDBGroupingExtensions.ArgMinNullAggregate) => "ARG_MIN_NULL",
+                _ => null
+            };
+
+            if (functionName != null
+                && source.Selector is DuckDBRowValueExpression { Values.Count: 2 } rowValue
                 && !source.IsDistinct)
             {
                 var arg = rowValue.Values[0];
@@ -225,14 +234,6 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                     arg = CombineTerms(source, arg);
                     val = CombineTerms(source, val);
                 }
-
-                var functionName = method.Name switch
-                {
-                    "ArgMaxAggregate" => "ARG_MAX",
-                    "ArgMaxNullAggregate" => "ARG_MAX_NULL",
-                    "ArgMinAggregate" => "ARG_MIN",
-                    _ => "ARG_MIN_NULL"
-                };
 
                 return arguments.Count == 1
                     ? _sqlExpressionFactory.Function(
