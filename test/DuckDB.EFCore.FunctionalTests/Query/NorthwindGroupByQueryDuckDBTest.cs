@@ -279,7 +279,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
             .Select(g => new
             {
                 CustomerID = g.Key,
-                EmployeeIds = g.BitStringAgg(o => o.EmployeeID, (uint?)1, (uint?)9)
+                EmployeeIds = g.BitStringAgg(o => o.EmployeeID, 1, 9)
             })
             .ToList();
 

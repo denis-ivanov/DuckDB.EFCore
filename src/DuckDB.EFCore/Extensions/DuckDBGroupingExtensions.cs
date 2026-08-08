@@ -198,8 +198,8 @@ public static class DuckDBGroupingExtensions
     public static string BitStringAgg<TKey, TSource, TValue>(
         this IGrouping<TKey, TSource> source,
         Func<TSource, TValue> selector,
-        TValue min,
-        TValue max)
+        long min,
+        long max)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
     // Marker methods the provider rewrites the public grouping methods into, so that the selectors
@@ -237,6 +237,6 @@ public static class DuckDBGroupingExtensions
     internal static string BitStringAggAggregate<TValue>(IEnumerable<TValue> source)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
-    internal static string BitStringAggAggregate<TValue>(IEnumerable<TValue> source, TValue min, TValue max)
+    internal static string BitStringAggAggregate<TValue>(IEnumerable<TValue> source, long min, long max)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 }
