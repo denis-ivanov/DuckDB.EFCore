@@ -31,6 +31,7 @@ public class DuckDBQueryTranslationPreprocessor : RelationalQueryTranslationPrep
     {
         query = new InvocationExpressionRemovingExpressionVisitor().Visit(query);
         query = new DuckDBArrayPreprocessor().Visit(query);
+        query = new DuckDBAnyValuePreprocessor().Visit(query);
         query = NormalizeQueryableMethod(query);
         query = new CallForwardingExpressionVisitor().Visit(query);
         query = new NullCheckRemovingExpressionVisitor().Visit(query);

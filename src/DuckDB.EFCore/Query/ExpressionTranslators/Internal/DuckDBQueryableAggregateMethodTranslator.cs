@@ -182,6 +182,23 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
             }
         }
 
+        // Support ANY_VALUE aggregate function (e.g., g.AnyValue(e => e.Prop))
+        if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
+            && method.Name == "AnyValueAggregate")
+        {
+            if (source.Selector is SqlExpression anySqlExpression)
+            {
+                anySqlExpression = CombineTerms(source, anySqlExpression);
+                return _sqlExpressionFactory.Function(
+                    "ANY_VALUE",
+                    new[] { anySqlExpression },
+                    nullable: true,
+                    argumentsPropagateNullability: new[] { false },
+                    anySqlExpression.Type,
+                    anySqlExpression.TypeMapping);
+            }
+        }
+
         return null;
     }
 
