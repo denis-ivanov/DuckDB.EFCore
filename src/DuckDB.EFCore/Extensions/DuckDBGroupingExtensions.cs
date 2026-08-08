@@ -42,6 +42,21 @@ public static class DuckDBGroupingExtensions
             nameof(ArgMinNullAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo BitAndAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(BitAndAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
+    internal static readonly MethodInfo BitOrAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(BitOrAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
+    internal static readonly MethodInfo BitXorAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(BitXorAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     /// <summary>
     /// Translates to the DuckDB <c>ANY_VALUE</c> aggregate function, returning an arbitrary value from the group.
     /// Can only be used in LINQ queries; calling it on the client throws.
@@ -123,6 +138,36 @@ public static class DuckDBGroupingExtensions
         Func<TSource, TVal> val)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
+    /// <summary>
+    /// Translates to the DuckDB <c>BIT_AND</c> aggregate function, returning the bitwise <c>AND</c>
+    /// of all values selected in the group.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult BitAnd<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    /// <summary>
+    /// Translates to the DuckDB <c>BIT_OR</c> aggregate function, returning the bitwise <c>OR</c>
+    /// of all values selected in the group.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult BitOr<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    /// <summary>
+    /// Translates to the DuckDB <c>BIT_XOR</c> aggregate function, returning the bitwise <c>XOR</c>
+    /// of all values selected in the group.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult BitXor<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
     // Marker methods the provider rewrites the public grouping methods into, so that the selectors
     // become regular projections over the grouping which EF can translate into aggregates.
     internal static TSource AnyValueAggregate<TSource>(IEnumerable<TSource> source)
@@ -144,5 +189,14 @@ public static class DuckDBGroupingExtensions
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
     internal static TArg ArgMinNullAggregate<TArg, TVal>(IEnumerable<ValueTuple<TArg, TVal>> source)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    internal static TSource BitAndAggregate<TSource>(IEnumerable<TSource> source)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    internal static TSource BitOrAggregate<TSource>(IEnumerable<TSource> source)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    internal static TSource BitXorAggregate<TSource>(IEnumerable<TSource> source)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 }
