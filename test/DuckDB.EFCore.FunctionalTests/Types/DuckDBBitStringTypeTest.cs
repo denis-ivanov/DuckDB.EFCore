@@ -140,6 +140,19 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         Assert.Equal(new BitArray([false, true]).Cast<bool>(), entity.Bits.Cast<bool>());
     }
 
+    [ConditionalFact]
+    public void Explicit_store_type_is_not_overridden_for_BitArray()
+    {
+        var options = new DbContextOptionsBuilder<IncompatibleStoreTypeContext>()
+            .UseInternalServiceProvider(Fixture.ServiceProvider)
+            .UseDuckDB(Fixture.Connection)
+            .Options;
+
+        using var context = new IncompatibleStoreTypeContext(options);
+
+        Assert.Throws<InvalidOperationException>(() => context.Model);
+    }
+
     private BitStringContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<BitStringContext>()
@@ -167,8 +180,21 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         }
     }
 
-    private sealed class BitStringEntity
+    private sealed class IncompatibleStoreTypeContext(DbContextOptions<IncompatibleStoreTypeContext> options) : DbContext(options)
     {
+        public DbSet<BitStringEntity> Entities => Set<BitStringEntity>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<BitStringEntity>(b =>
+            {
+                b.Property(e => e.Id).ValueGeneratedNever();
+                b.Property(e => e.Bits).HasColumnType("TIMESTAMP");
+            });
+        }
+    }
+
+    private sealed class BitStringEntity    {
         public int Id { get; set; }
         public string BitString { get; set; } = null!;
         public BitArray Bits { get; set; } = null!;
