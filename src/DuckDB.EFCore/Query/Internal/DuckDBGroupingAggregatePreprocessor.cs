@@ -32,28 +32,15 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
             switch (methodCallExpression.Method.Name)
             {
                 case nameof(DuckDBGroupingExtensions.AnyValue)
-                    when methodCallExpression.Arguments is [var anyValueSource, var anyValueSelector]
-                        && UnwrapLambda(anyValueSelector) is { } selector:
+                    or nameof(DuckDBGroupingExtensions.BitAnd)
+                    or nameof(DuckDBGroupingExtensions.BitOr)
+                    or nameof(DuckDBGroupingExtensions.BitXor)
+                    when methodCallExpression.Arguments is [var singleSelectorSource, var singleSelectorArgument]
+                        && UnwrapLambda(singleSelectorArgument) is { } singleSelector:
                     return RewriteSingleSelector(
-                        Visit(anyValueSource), selector, DuckDBGroupingExtensions.AnyValueAggregateMethod);
-
-                case nameof(DuckDBGroupingExtensions.BitAnd)
-                    when methodCallExpression.Arguments is [var bitAndSource, var bitAndSelector]
-                        && UnwrapLambda(bitAndSelector) is { } selector:
-                    return RewriteSingleSelector(
-                        Visit(bitAndSource), selector, DuckDBGroupingExtensions.BitAndAggregateMethod);
-
-                case nameof(DuckDBGroupingExtensions.BitOr)
-                    when methodCallExpression.Arguments is [var bitOrSource, var bitOrSelector]
-                        && UnwrapLambda(bitOrSelector) is { } selector:
-                    return RewriteSingleSelector(
-                        Visit(bitOrSource), selector, DuckDBGroupingExtensions.BitOrAggregateMethod);
-
-                case nameof(DuckDBGroupingExtensions.BitXor)
-                    when methodCallExpression.Arguments is [var bitXorSource, var bitXorSelector]
-                        && UnwrapLambda(bitXorSelector) is { } selector:
-                    return RewriteSingleSelector(
-                        Visit(bitXorSource), selector, DuckDBGroupingExtensions.BitXorAggregateMethod);
+                        Visit(singleSelectorSource),
+                        singleSelector,
+                        GetSingleSelectorAggregateMethod(methodCallExpression.Method.Name));
 
                 case nameof(DuckDBGroupingExtensions.ArgMax)
                     when methodCallExpression.Arguments.Count is 3 or 4
@@ -107,6 +94,16 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
 
         return base.VisitMethodCall(methodCallExpression);
     }
+
+    private static MethodInfo GetSingleSelectorAggregateMethod(string methodName)
+        => methodName switch
+        {
+            nameof(DuckDBGroupingExtensions.AnyValue) => DuckDBGroupingExtensions.AnyValueAggregateMethod,
+            nameof(DuckDBGroupingExtensions.BitAnd) => DuckDBGroupingExtensions.BitAndAggregateMethod,
+            nameof(DuckDBGroupingExtensions.BitOr) => DuckDBGroupingExtensions.BitOrAggregateMethod,
+            nameof(DuckDBGroupingExtensions.BitXor) => DuckDBGroupingExtensions.BitXorAggregateMethod,
+            _ => throw new ArgumentOutOfRangeException(nameof(methodName), methodName, null)
+        };
 
     private static Expression RewriteSingleSelector(Expression source, LambdaExpression selector, MethodInfo aggregateMethod)
     {
