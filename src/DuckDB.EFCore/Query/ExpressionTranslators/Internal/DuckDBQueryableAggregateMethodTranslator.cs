@@ -200,10 +200,10 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
             }
         }
 
-        // Support ARG_MAX / ARG_MAX_NULL aggregate functions
-        // (e.g., g.ArgMax(e => e.Prop, e => e.Value[, n]), g.ArgMaxNull(e => e.Prop, e => e.Value))
+        // Support ARG_MAX / ARG_MAX_NULL / ARG_MIN / ARG_MIN_NULL aggregate functions
+        // (e.g., g.ArgMax(e => e.Prop, e => e.Value[, n]), g.ArgMinNull(e => e.Prop, e => e.Value))
         if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
-            && method.Name is "ArgMaxAggregate" or "ArgMaxNullAggregate")
+            && method.Name is "ArgMaxAggregate" or "ArgMaxNullAggregate" or "ArgMinAggregate" or "ArgMinNullAggregate")
         {
             if (source.Selector is DuckDBRowValueExpression { Values.Count: 2 } rowValue
                 && !source.IsDistinct)
@@ -217,17 +217,23 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                     val = CombineTerms(source, val);
                 }
 
-                var isArgMaxNull = method.Name == "ArgMaxNullAggregate";
+                var functionName = method.Name switch
+                {
+                    "ArgMaxAggregate" => "ARG_MAX",
+                    "ArgMaxNullAggregate" => "ARG_MAX_NULL",
+                    "ArgMinAggregate" => "ARG_MIN",
+                    _ => "ARG_MIN_NULL"
+                };
 
                 return arguments.Count == 1
                     ? _sqlExpressionFactory.Function(
-                        isArgMaxNull ? "ARG_MAX_NULL" : "ARG_MAX",
+                        functionName,
                         [arg, val, arguments[0]],
                         nullable: true,
                         argumentsPropagateNullability: [false, false, false],
                         method.ReturnType)
                     : _sqlExpressionFactory.Function(
-                        isArgMaxNull ? "ARG_MAX_NULL" : "ARG_MAX",
+                        functionName,
                         [arg, val],
                         nullable: true,
                         argumentsPropagateNullability: [false, false],
