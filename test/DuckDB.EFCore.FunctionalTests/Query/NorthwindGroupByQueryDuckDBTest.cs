@@ -42,6 +42,81 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    private void AssertSql(params string[] expected)
-        => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
+    [ConditionalFact]
+    public void GroupBy_ArgMax_translates_to_ARG_MAX()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                LatestOrderId = g.ArgMax(o => o.OrderID, o => o.OrderDate)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", ARG_MAX(o."OrderID", o."OrderDate") AS "LatestOrderId"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_ArgMax_with_count_translates_to_ARG_MAX()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                LatestOrderIds = g.ArgMax(o => o.OrderID, o => o.OrderDate, 3)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.NotEmpty(r.LatestOrderIds));
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", ARG_MAX(o."OrderID", o."OrderDate", 3) AS "LatestOrderIds"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_ArgMaxNull_translates_to_ARG_MAX_NULL()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                LatestEmployeeId = g.ArgMaxNull(o => o.EmployeeID, o => o.OrderDate)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", ARG_MAX_NULL(o."EmployeeID", o."OrderDate") AS "LatestEmployeeId"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    private void AssertSql(params string[] expected)        => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }

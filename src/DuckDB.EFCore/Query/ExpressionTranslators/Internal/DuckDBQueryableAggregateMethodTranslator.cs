@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using DuckDB.EFCore.Query.Expressions.Internal;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -196,6 +197,37 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                     argumentsPropagateNullability: new[] { false },
                     anySqlExpression.Type,
                     anySqlExpression.TypeMapping);
+            }
+        }
+
+        // Support ARG_MAX / ARG_MAX_NULL aggregate functions
+        // (e.g., g.ArgMax(e => e.Prop, e => e.Value[, n]), g.ArgMaxNull(e => e.Prop, e => e.Value))
+        if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
+            && method.Name is "ArgMaxAggregate" or "ArgMaxNullAggregate")
+        {
+            if (source.Selector is DuckDBRowValueExpression { Values.Count: 2 } rowValue
+                && !source.IsDistinct)
+            {
+                var arg = rowValue.Values[0];
+                var val = rowValue.Values[1];
+
+                if (source.Predicate != null)
+                {
+                    arg = CombineTerms(source, arg);
+                    val = CombineTerms(source, val);
+                }
+
+                var functionArguments = arguments.Count == 1
+                    ? new[] { arg, val, arguments[0] }
+                    : [arg, val];
+
+                return _sqlExpressionFactory.Function(
+                    method.Name == "ArgMaxNullAggregate" ? "ARG_MAX_NULL" : "ARG_MAX",
+                    functionArguments,
+                    nullable: true,
+                    argumentsPropagateNullability: functionArguments.Select(_ => false).ToArray(),
+                    method.ReturnType,
+                    arguments.Count == 1 ? null : arg.TypeMapping);
             }
         }
 
