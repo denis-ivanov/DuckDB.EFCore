@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using DuckDB.EFCore.Query.Expressions.Internal;
+using DuckDB.EFCore.Storage.Internal;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -207,6 +208,31 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                     singleArgumentSqlExpression.Type,
                     singleArgumentSqlExpression.TypeMapping);
             }
+        }
+
+        // Support BITSTRING_AGG aggregate function
+        // (e.g., g.BitStringAgg(e => e.Value), g.BitStringAgg(e => e.Value, min, max))
+        if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
+            && method.Name == nameof(DuckDBGroupingExtensions.BitStringAggAggregate)
+            && source.Selector is SqlExpression bitStringSelector)
+        {
+            bitStringSelector = CombineTerms(source, bitStringSelector);
+
+            return arguments.Count == 2
+                ? _sqlExpressionFactory.Function(
+                    "BITSTRING_AGG",
+                    [bitStringSelector, arguments[0], arguments[1]],
+                    nullable: true,
+                    argumentsPropagateNullability: [false, false, false],
+                    typeof(string),
+                    DuckDBBitStringTypeMapping.Default)
+                : _sqlExpressionFactory.Function(
+                    "BITSTRING_AGG",
+                    [bitStringSelector],
+                    nullable: true,
+                    argumentsPropagateNullability: [false],
+                    typeof(string),
+                    DuckDBBitStringTypeMapping.Default);
         }
 
         // Support ARG_MAX / ARG_MAX_NULL / ARG_MIN / ARG_MIN_NULL aggregate functions

@@ -57,6 +57,14 @@ public static class DuckDBGroupingExtensions
             nameof(BitXorAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo BitStringAggAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Single(m => m.Name == nameof(BitStringAggAggregate) && m.GetParameters().Length == 1);
+
+    internal static readonly MethodInfo BitStringAggWithBoundsAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Single(m => m.Name == nameof(BitStringAggAggregate) && m.GetParameters().Length == 3);
+
     /// <summary>
     /// Translates to the DuckDB <c>ANY_VALUE</c> aggregate function, returning an arbitrary value from the group.
     /// Can only be used in LINQ queries; calling it on the client throws.
@@ -168,6 +176,32 @@ public static class DuckDBGroupingExtensions
         Func<TSource, TResult> selector)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
+    /// <summary>
+    /// Translates to the DuckDB <c>BITSTRING_AGG</c> aggregate function, returning a bit string whose length
+    /// corresponds to the range of the non-null values selected in the group, with bits set at the location
+    /// of each distinct value.
+    /// DuckDB requires column statistics for this overload; use the overload taking explicit bounds when they
+    /// are not available.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static string BitStringAgg<TKey, TSource, TValue>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TValue> selector)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    /// <summary>
+    /// Translates to the DuckDB <c>BITSTRING_AGG</c> aggregate function, returning a bit string covering the
+    /// <paramref name="min" />..<paramref name="max" /> range, with bits set at the location of each distinct
+    /// non-null value selected in the group.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static string BitStringAgg<TKey, TSource, TValue>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TValue> selector,
+        TValue min,
+        TValue max)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
     // Marker methods the provider rewrites the public grouping methods into, so that the selectors
     // become regular projections over the grouping which EF can translate into aggregates.
     internal static TSource AnyValueAggregate<TSource>(IEnumerable<TSource> source)
@@ -198,5 +232,11 @@ public static class DuckDBGroupingExtensions
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
     internal static TSource BitXorAggregate<TSource>(IEnumerable<TSource> source)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    internal static string BitStringAggAggregate<TValue>(IEnumerable<TValue> source)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    internal static string BitStringAggAggregate<TValue>(IEnumerable<TValue> source, TValue min, TValue max)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 }

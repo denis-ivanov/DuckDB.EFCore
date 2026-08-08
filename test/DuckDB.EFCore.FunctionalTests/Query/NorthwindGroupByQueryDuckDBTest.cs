@@ -269,6 +269,57 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
+    [ConditionalFact]
+    public void GroupBy_BitStringAgg_with_bounds_translates_to_BITSTRING_AGG()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                EmployeeIds = g.BitStringAgg(o => o.EmployeeID, (uint?)1, (uint?)9)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.Equal(9, r.EmployeeIds.Length));
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", BITSTRING_AGG(o."EmployeeID", 1, 9) AS "EmployeeIds"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_BitStringAgg_translates_to_BITSTRING_AGG()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                OrderIds = g.BitStringAgg(o => o.OrderID)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", BITSTRING_AGG(o."OrderID") AS "OrderIds"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
