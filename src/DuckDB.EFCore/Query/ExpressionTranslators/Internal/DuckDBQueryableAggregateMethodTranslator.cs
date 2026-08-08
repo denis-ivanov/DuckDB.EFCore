@@ -217,17 +217,22 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                     val = CombineTerms(source, val);
                 }
 
-                var functionArguments = arguments.Count == 1
-                    ? new[] { arg, val, arguments[0] }
-                    : [arg, val];
+                var isArgMaxNull = method.Name == "ArgMaxNullAggregate";
 
-                return _sqlExpressionFactory.Function(
-                    method.Name == "ArgMaxNullAggregate" ? "ARG_MAX_NULL" : "ARG_MAX",
-                    functionArguments,
-                    nullable: true,
-                    argumentsPropagateNullability: functionArguments.Select(_ => false).ToArray(),
-                    method.ReturnType,
-                    arguments.Count == 1 ? null : arg.TypeMapping);
+                return arguments.Count == 1
+                    ? _sqlExpressionFactory.Function(
+                        isArgMaxNull ? "ARG_MAX_NULL" : "ARG_MAX",
+                        [arg, val, arguments[0]],
+                        nullable: true,
+                        argumentsPropagateNullability: [false, false, false],
+                        method.ReturnType)
+                    : _sqlExpressionFactory.Function(
+                        isArgMaxNull ? "ARG_MAX_NULL" : "ARG_MAX",
+                        [arg, val],
+                        nullable: true,
+                        argumentsPropagateNullability: [false, false],
+                        method.ReturnType,
+                        arg.TypeMapping);
             }
         }
 
