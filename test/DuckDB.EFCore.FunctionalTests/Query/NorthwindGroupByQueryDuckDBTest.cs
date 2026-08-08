@@ -194,6 +194,81 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
+    [ConditionalFact]
+    public void GroupBy_BitAnd_translates_to_BIT_AND()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                EmployeeIdBits = g.BitAnd(o => o.EmployeeID)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", BIT_AND(o."EmployeeID") AS "EmployeeIdBits"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_BitOr_translates_to_BIT_OR()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                EmployeeIdBits = g.BitOr(o => o.EmployeeID)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", BIT_OR(o."EmployeeID") AS "EmployeeIdBits"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_BitXor_translates_to_BIT_XOR()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                EmployeeIdBits = g.BitXor(o => o.EmployeeID)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", BIT_XOR(o."EmployeeID") AS "EmployeeIdBits"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }

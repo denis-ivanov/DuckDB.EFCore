@@ -183,20 +183,29 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
             }
         }
 
-        // Support ANY_VALUE aggregate function (e.g., g.AnyValue(e => e.Prop))
-        if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
-            && method.Name == "AnyValueAggregate")
+        // Support single-argument DuckDB aggregate functions
+        // (e.g., g.AnyValue(e => e.Prop), g.BitAnd(e => e.Flags))
+        if (method.DeclaringType == typeof(DuckDBGroupingExtensions))
         {
-            if (source.Selector is SqlExpression anySqlExpression)
+            var singleArgumentFunctionName = method.Name switch
             {
-                anySqlExpression = CombineTerms(source, anySqlExpression);
+                "AnyValueAggregate" => "ANY_VALUE",
+                "BitAndAggregate" => "BIT_AND",
+                "BitOrAggregate" => "BIT_OR",
+                "BitXorAggregate" => "BIT_XOR",
+                _ => null
+            };
+
+            if (singleArgumentFunctionName != null && source.Selector is SqlExpression singleArgumentSqlExpression)
+            {
+                singleArgumentSqlExpression = CombineTerms(source, singleArgumentSqlExpression);
                 return _sqlExpressionFactory.Function(
-                    "ANY_VALUE",
-                    new[] { anySqlExpression },
+                    singleArgumentFunctionName,
+                    [singleArgumentSqlExpression],
                     nullable: true,
-                    argumentsPropagateNullability: new[] { false },
-                    anySqlExpression.Type,
-                    anySqlExpression.TypeMapping);
+                    argumentsPropagateNullability: [false],
+                    singleArgumentSqlExpression.Type,
+                    singleArgumentSqlExpression.TypeMapping);
             }
         }
 

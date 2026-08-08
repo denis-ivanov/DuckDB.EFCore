@@ -34,7 +34,26 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                 case nameof(DuckDBGroupingExtensions.AnyValue)
                     when methodCallExpression.Arguments is [var anyValueSource, var anyValueSelector]
                         && UnwrapLambda(anyValueSelector) is { } selector:
-                    return RewriteAnyValue(Visit(anyValueSource), selector);
+                    return RewriteSingleSelector(
+                        Visit(anyValueSource), selector, DuckDBGroupingExtensions.AnyValueAggregateMethod);
+
+                case nameof(DuckDBGroupingExtensions.BitAnd)
+                    when methodCallExpression.Arguments is [var bitAndSource, var bitAndSelector]
+                        && UnwrapLambda(bitAndSelector) is { } selector:
+                    return RewriteSingleSelector(
+                        Visit(bitAndSource), selector, DuckDBGroupingExtensions.BitAndAggregateMethod);
+
+                case nameof(DuckDBGroupingExtensions.BitOr)
+                    when methodCallExpression.Arguments is [var bitOrSource, var bitOrSelector]
+                        && UnwrapLambda(bitOrSelector) is { } selector:
+                    return RewriteSingleSelector(
+                        Visit(bitOrSource), selector, DuckDBGroupingExtensions.BitOrAggregateMethod);
+
+                case nameof(DuckDBGroupingExtensions.BitXor)
+                    when methodCallExpression.Arguments is [var bitXorSource, var bitXorSelector]
+                        && UnwrapLambda(bitXorSelector) is { } selector:
+                    return RewriteSingleSelector(
+                        Visit(bitXorSource), selector, DuckDBGroupingExtensions.BitXorAggregateMethod);
 
                 case nameof(DuckDBGroupingExtensions.ArgMax)
                     when methodCallExpression.Arguments.Count is 3 or 4
@@ -89,13 +108,11 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
         return base.VisitMethodCall(methodCallExpression);
     }
 
-    private static Expression RewriteAnyValue(Expression source, LambdaExpression selector)
+    private static Expression RewriteSingleSelector(Expression source, LambdaExpression selector, MethodInfo aggregateMethod)
     {
         var projection = Project(source, selector);
 
-        return Expression.Call(
-            DuckDBGroupingExtensions.AnyValueAggregateMethod.MakeGenericMethod(selector.ReturnType),
-            projection);
+        return Expression.Call(aggregateMethod.MakeGenericMethod(selector.ReturnType), projection);
     }
 
     private static Expression RewriteArgMinMax(
