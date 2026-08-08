@@ -25,7 +25,7 @@ public class DuckDBBitStringTypeMapping : RelationalTypeMapping
         = new(
             (l, r) => l == null ? r == null : r != null && ToBitString(l) == ToBitString(r),
             v => v == null ? 0 : ToBitString(v).GetHashCode(),
-            v => new BitArray(v));
+            v => v == null ? null! : new BitArray(v));
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -110,7 +110,13 @@ public class DuckDBBitStringTypeMapping : RelationalTypeMapping
 
         for (var i = 0; i < value.Length; i++)
         {
-            result[i] = value[i] == '1';
+            result[i] = value[i] switch
+            {
+                '1' => true,
+                '0' => false,
+                _ => throw new InvalidOperationException(
+                    $"Cannot convert '{value}' to a bit string: the character '{value[i]}' at index {i} is not '0' or '1'.")
+            };
         }
 
         return result;

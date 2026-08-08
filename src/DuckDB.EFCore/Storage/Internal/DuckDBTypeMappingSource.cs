@@ -328,7 +328,7 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
             };
         }
 
-        if (clrType == typeof(BitArray))
+        if (clrType == typeof(BitArray) && storeTypeName == null)
         {
             return DuckDBBitStringTypeMapping.BitArray;
         }
