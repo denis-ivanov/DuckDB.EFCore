@@ -40,23 +40,49 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                     when methodCallExpression.Arguments.Count is 3 or 4
                         && UnwrapLambda(methodCallExpression.Arguments[1]) is { } argSelector
                         && UnwrapLambda(methodCallExpression.Arguments[2]) is { } valSelector:
-                    return RewriteArgMax(
+                    return RewriteArgMinMax(
                         Visit(methodCallExpression.Arguments[0]),
                         argSelector,
                         valSelector,
                         methodCallExpression.Arguments.Count == 4 ? Visit(methodCallExpression.Arguments[3]) : null,
-                        nullable: false);
+                        nullable: false,
+                        min: false);
 
                 case nameof(DuckDBGroupingExtensions.ArgMaxNull)
                     when methodCallExpression.Arguments.Count == 3
                         && UnwrapLambda(methodCallExpression.Arguments[1]) is { } nullableArgSelector
                         && UnwrapLambda(methodCallExpression.Arguments[2]) is { } nullableValSelector:
-                    return RewriteArgMax(
+                    return RewriteArgMinMax(
                         Visit(methodCallExpression.Arguments[0]),
                         nullableArgSelector,
                         nullableValSelector,
                         count: null,
-                        nullable: true);
+                        nullable: true,
+                        min: false);
+
+                case nameof(DuckDBGroupingExtensions.ArgMin)
+                    when methodCallExpression.Arguments.Count is 3 or 4
+                        && UnwrapLambda(methodCallExpression.Arguments[1]) is { } minArgSelector
+                        && UnwrapLambda(methodCallExpression.Arguments[2]) is { } minValSelector:
+                    return RewriteArgMinMax(
+                        Visit(methodCallExpression.Arguments[0]),
+                        minArgSelector,
+                        minValSelector,
+                        methodCallExpression.Arguments.Count == 4 ? Visit(methodCallExpression.Arguments[3]) : null,
+                        nullable: false,
+                        min: true);
+
+                case nameof(DuckDBGroupingExtensions.ArgMinNull)
+                    when methodCallExpression.Arguments.Count == 3
+                        && UnwrapLambda(methodCallExpression.Arguments[1]) is { } nullableMinArgSelector
+                        && UnwrapLambda(methodCallExpression.Arguments[2]) is { } nullableMinValSelector:
+                    return RewriteArgMinMax(
+                        Visit(methodCallExpression.Arguments[0]),
+                        nullableMinArgSelector,
+                        nullableMinValSelector,
+                        count: null,
+                        nullable: true,
+                        min: true);
             }
         }
 
@@ -72,12 +98,13 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
             projection);
     }
 
-    private static Expression RewriteArgMax(
+    private static Expression RewriteArgMinMax(
         Expression source,
         LambdaExpression argSelector,
         LambdaExpression valSelector,
         Expression? count,
-        bool nullable)
+        bool nullable,
+        bool min)
     {
         var parameter = argSelector.Parameters[0];
         var valBody = ReplacingExpressionVisitor.Replace(valSelector.Parameters[0], parameter, valSelector.Body);
@@ -94,16 +121,22 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
         if (nullable)
         {
             return Expression.Call(
-                DuckDBGroupingExtensions.ArgMaxNullAggregateMethod.MakeGenericMethod(argType, valType),
+                (min
+                    ? DuckDBGroupingExtensions.ArgMinNullAggregateMethod
+                    : DuckDBGroupingExtensions.ArgMaxNullAggregateMethod).MakeGenericMethod(argType, valType),
                 projection);
         }
 
         return count is null
             ? Expression.Call(
-                DuckDBGroupingExtensions.ArgMaxAggregateMethod.MakeGenericMethod(argType, valType),
+                (min
+                    ? DuckDBGroupingExtensions.ArgMinAggregateMethod
+                    : DuckDBGroupingExtensions.ArgMaxAggregateMethod).MakeGenericMethod(argType, valType),
                 projection)
             : Expression.Call(
-                DuckDBGroupingExtensions.ArgMaxManyAggregateMethod.MakeGenericMethod(argType, valType),
+                (min
+                    ? DuckDBGroupingExtensions.ArgMinManyAggregateMethod
+                    : DuckDBGroupingExtensions.ArgMaxManyAggregateMethod).MakeGenericMethod(argType, valType),
                 projection,
                 count);
     }

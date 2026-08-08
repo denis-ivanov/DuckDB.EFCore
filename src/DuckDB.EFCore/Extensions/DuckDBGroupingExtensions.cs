@@ -29,6 +29,19 @@ public static class DuckDBGroupingExtensions
             nameof(ArgMaxNullAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo ArgMinAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Single(m => m.Name == nameof(ArgMinAggregate) && m.GetParameters().Length == 1);
+
+    internal static readonly MethodInfo ArgMinManyAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Single(m => m.Name == nameof(ArgMinAggregate) && m.GetParameters().Length == 2);
+
+    internal static readonly MethodInfo ArgMinNullAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(ArgMinNullAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     /// <summary>
     /// Translates to the DuckDB <c>ANY_VALUE</c> aggregate function, returning an arbitrary value from the group.
     /// Can only be used in LINQ queries; calling it on the client throws.
@@ -74,6 +87,42 @@ public static class DuckDBGroupingExtensions
         Func<TSource, TVal> val)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
+    /// <summary>
+    /// Translates to the DuckDB <c>ARG_MIN</c> aggregate function, returning the <paramref name="arg" /> value
+    /// from the row with the minimum <paramref name="val" /> value in the group.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TArg ArgMin<TKey, TSource, TArg, TVal>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TArg> arg,
+        Func<TSource, TVal> val)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    /// <summary>
+    /// Translates to the DuckDB <c>ARG_MIN</c> aggregate function, returning the <paramref name="arg" /> values
+    /// from the <paramref name="n" /> rows with the smallest <paramref name="val" /> values in the group,
+    /// ordered from the smallest to the largest.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TArg[] ArgMin<TKey, TSource, TArg, TVal>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TArg> arg,
+        Func<TSource, TVal> val,
+        int n)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    /// <summary>
+    /// Translates to the DuckDB <c>ARG_MIN_NULL</c> aggregate function, returning the <paramref name="arg" /> value
+    /// from the row with the minimum <paramref name="val" /> value in the group. Unlike <see cref="ArgMin{TKey, TSource, TArg, TVal}(IGrouping{TKey, TSource}, Func{TSource, TArg}, Func{TSource, TVal})" />,
+    /// rows where <paramref name="arg" /> is <see langword="null" /> are not ignored.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TArg? ArgMinNull<TKey, TSource, TArg, TVal>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TArg> arg,
+        Func<TSource, TVal> val)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
     // Marker methods the provider rewrites the public grouping methods into, so that the selectors
     // become regular projections over the grouping which EF can translate into aggregates.
     internal static TSource AnyValueAggregate<TSource>(IEnumerable<TSource> source)
@@ -86,5 +135,14 @@ public static class DuckDBGroupingExtensions
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
     internal static TArg ArgMaxNullAggregate<TArg, TVal>(IEnumerable<ValueTuple<TArg, TVal>> source)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    internal static TArg ArgMinAggregate<TArg, TVal>(IEnumerable<ValueTuple<TArg, TVal>> source)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    internal static TArg[] ArgMinAggregate<TArg, TVal>(IEnumerable<ValueTuple<TArg, TVal>> source, int n)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    internal static TArg ArgMinNullAggregate<TArg, TVal>(IEnumerable<ValueTuple<TArg, TVal>> source)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 }

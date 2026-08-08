@@ -118,6 +118,82 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
+    [ConditionalFact]
+    public void GroupBy_ArgMin_translates_to_ARG_MIN()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                EarliestOrderId = g.ArgMin(o => o.OrderID, o => o.OrderDate)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", ARG_MIN(o."OrderID", o."OrderDate") AS "EarliestOrderId"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_ArgMin_with_count_translates_to_ARG_MIN()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                EarliestOrderIds = g.ArgMin(o => o.OrderID, o => o.OrderDate, 3)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.NotEmpty(r.EarliestOrderIds));
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", ARG_MIN(o."OrderID", o."OrderDate", 3) AS "EarliestOrderIds"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_ArgMinNull_translates_to_ARG_MIN_NULL()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                EarliestEmployeeId = g.ArgMinNull(o => o.EmployeeID, o => o.OrderDate)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", ARG_MIN_NULL(o."EmployeeID", o."OrderDate") AS "EarliestEmployeeId"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
