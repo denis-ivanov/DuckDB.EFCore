@@ -42,6 +42,16 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                         singleSelector,
                         GetSingleSelectorAggregateMethod(methodCallExpression.Method.Name));
 
+                case nameof(DuckDBGroupingExtensions.BitStringAgg)
+                    when methodCallExpression.Arguments.Count is 2 or 4
+                        && UnwrapLambda(methodCallExpression.Arguments[1]) is { } bitStringSelector:
+                    return RewriteBitStringAgg(
+                        Visit(methodCallExpression.Arguments[0]),
+                        bitStringSelector,
+                        methodCallExpression.Arguments.Count == 4
+                            ? (Visit(methodCallExpression.Arguments[2]), Visit(methodCallExpression.Arguments[3]))
+                            : null);
+
                 case nameof(DuckDBGroupingExtensions.ArgMax)
                     when methodCallExpression.Arguments.Count is 3 or 4
                         && UnwrapLambda(methodCallExpression.Arguments[1]) is { } argSelector
@@ -110,6 +120,24 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
         var projection = Project(source, selector);
 
         return Expression.Call(aggregateMethod.MakeGenericMethod(selector.ReturnType), projection);
+    }
+
+    private static Expression RewriteBitStringAgg(
+        Expression source,
+        LambdaExpression selector,
+        (Expression Min, Expression Max)? bounds)
+    {
+        var projection = Project(source, selector);
+
+        return bounds is null
+            ? Expression.Call(
+                DuckDBGroupingExtensions.BitStringAggAggregateMethod.MakeGenericMethod(selector.ReturnType),
+                projection)
+            : Expression.Call(
+                DuckDBGroupingExtensions.BitStringAggWithBoundsAggregateMethod.MakeGenericMethod(selector.ReturnType),
+                projection,
+                bounds.Value.Min,
+                bounds.Value.Max);
     }
 
     private static Expression RewriteArgMinMax(
