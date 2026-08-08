@@ -57,6 +57,16 @@ public static class DuckDBGroupingExtensions
             nameof(BitXorAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo BoolAndAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(BoolAndAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
+    internal static readonly MethodInfo BoolOrAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(BoolOrAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     internal static readonly MethodInfo BitStringAggAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
             .Single(m => m.Name == nameof(BitStringAggAggregate) && m.GetParameters().Length == 1);
@@ -202,6 +212,26 @@ public static class DuckDBGroupingExtensions
         long max)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
+    /// <summary>
+    /// Translates to the DuckDB <c>BOOL_AND</c> aggregate function, returning <see langword="true" /> if every
+    /// non-null value selected in the group is <see langword="true" />.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static bool BoolAnd<TKey, TSource>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, bool> selector)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    /// <summary>
+    /// Translates to the DuckDB <c>BOOL_OR</c> aggregate function, returning <see langword="true" /> if any
+    /// non-null value selected in the group is <see langword="true" />.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static bool BoolOr<TKey, TSource>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, bool> selector)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
     // Marker methods the provider rewrites the public grouping methods into, so that the selectors
     // become regular projections over the grouping which EF can translate into aggregates.
     internal static TSource AnyValueAggregate<TSource>(IEnumerable<TSource> source)
@@ -238,5 +268,11 @@ public static class DuckDBGroupingExtensions
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
     internal static string BitStringAggAggregate<TValue>(IEnumerable<TValue> source, long min, long max)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    internal static bool BoolAndAggregate<TSource>(IEnumerable<TSource> source)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    internal static bool BoolOrAggregate<TSource>(IEnumerable<TSource> source)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 }

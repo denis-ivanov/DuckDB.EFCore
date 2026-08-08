@@ -35,6 +35,8 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                     or nameof(DuckDBGroupingExtensions.BitAnd)
                     or nameof(DuckDBGroupingExtensions.BitOr)
                     or nameof(DuckDBGroupingExtensions.BitXor)
+                    or nameof(DuckDBGroupingExtensions.BoolAnd)
+                    or nameof(DuckDBGroupingExtensions.BoolOr)
                     when methodCallExpression.Arguments is [var singleSelectorSource, var singleSelectorArgument]
                         && UnwrapLambda(singleSelectorArgument) is { } singleSelector:
                     return RewriteSingleSelector(
@@ -112,6 +114,8 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
             nameof(DuckDBGroupingExtensions.BitAnd) => DuckDBGroupingExtensions.BitAndAggregateMethod,
             nameof(DuckDBGroupingExtensions.BitOr) => DuckDBGroupingExtensions.BitOrAggregateMethod,
             nameof(DuckDBGroupingExtensions.BitXor) => DuckDBGroupingExtensions.BitXorAggregateMethod,
+            nameof(DuckDBGroupingExtensions.BoolAnd) => DuckDBGroupingExtensions.BoolAndAggregateMethod,
+            nameof(DuckDBGroupingExtensions.BoolOr) => DuckDBGroupingExtensions.BoolOrAggregateMethod,
             _ => throw new ArgumentOutOfRangeException(nameof(methodName), methodName, null)
         };
 
