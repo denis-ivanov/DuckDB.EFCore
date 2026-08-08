@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Collections;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
@@ -16,6 +17,7 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
 {
     internal const string VarCharTypeName = "VARCHAR";
     internal const string BlobTypeName = "BLOB";
+    internal const string BitTypeName = "BIT";
 
     private static readonly DuckDBBooleanTypeMapping BooleanTypeMapping = new();
     private static readonly DuckDBByteTypeMapping ByteTypeMapping = new();
@@ -315,6 +317,22 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
 
         var storeTypeName = mappingInfo.StoreTypeName;
 
+        if (storeTypeName != null && IsBitStoreType(storeTypeName))
+        {
+            return clrType switch
+            {
+                null => DuckDBBitStringTypeMapping.Default,
+                _ when clrType == typeof(string) => DuckDBBitStringTypeMapping.Default,
+                _ when clrType == typeof(BitArray) => DuckDBBitStringTypeMapping.BitArray,
+                _ => null
+            };
+        }
+
+        if (clrType == typeof(BitArray))
+        {
+            return DuckDBBitStringTypeMapping.BitArray;
+        }
+
         if (clrType != null && ClrTypeMappings.TryGetValue(clrType, out var mapping))
         {
             if (storeTypeName != null)
@@ -390,4 +408,8 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
 
     private static bool Contains(string haystack, string needle)
         => haystack.IndexOf(needle, StringComparison.OrdinalIgnoreCase) >= 0;
+
+    private static bool IsBitStoreType(string storeTypeName)
+        => storeTypeName.Equals(BitTypeName, StringComparison.OrdinalIgnoreCase)
+            || storeTypeName.Equals("BITSTRING", StringComparison.OrdinalIgnoreCase);
 }
