@@ -397,6 +397,59 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
+    [ConditionalFact]
+    public void GroupBy_CountIf_translates_to_COUNTIF()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                LateOrders = g.CountIf(o => o.OrderID > 11000)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.Contains(results, r => r.LateOrders > 0);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", COUNTIF(o."OrderID" > 11000) AS "LateOrders"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_CountIf_with_nullable_selector_returns_null_for_all_null_group()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                LateOrders = g.CountIf(o => o.OrderID > 11000 ? true : (bool?)null)
+            })
+            .ToList();
+
+        Assert.Contains(results, r => r.LateOrders == null);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", COUNTIF(CASE
+                WHEN o."OrderID" > 11000 THEN true
+            END) AS "LateOrders"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
