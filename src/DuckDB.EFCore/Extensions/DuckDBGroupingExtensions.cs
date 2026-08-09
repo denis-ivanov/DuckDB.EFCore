@@ -326,7 +326,7 @@ public static class DuckDBGroupingExtensions
     /// </summary>
     /// <remarks>
     /// The geometric mean is computed via logarithms, so DuckDB raises an error when any of the aggregated values
-    /// is zero or negative. Filter the query or the selector so that only positive values reach the aggregate.
+    /// are zero or negative. Filter the query or the selector so that only positive values reach the aggregate.
     /// </remarks>
     public static double? GeometricMean<TKey, TSource, TValue>(
         this IGrouping<TKey, TSource> source,
