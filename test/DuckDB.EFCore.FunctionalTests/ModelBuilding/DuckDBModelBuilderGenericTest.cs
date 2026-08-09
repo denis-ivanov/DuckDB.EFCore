@@ -28,6 +28,11 @@ public class DuckDBModelBuilderGenericTest : DuckDBModelBuilderTestBase
             base.Mapping_throws_for_non_ignored_three_dimensional_array();
         }
 
+        [ConditionalFact(Skip = "DuckDB supports dictionary types, so this test from EF Core no longer throws.")]
+        protected override void Throws_for_int_keyed_dictionary()
+        {
+        }
+
         protected override TestModelBuilder CreateModelBuilder(
             Action<ModelConfigurationBuilder>? configure)
             => new GenericTestModelBuilder(Fixture, configure);
