@@ -185,13 +185,14 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
         }
 
         // Support single-argument DuckDB aggregate functions whose result type differs from the selector type
-        // (e.g., g.CountIf(e => e.IsActive), g.FAvg(e => e.Amount))
+        // (e.g., g.CountIf(e => e.IsActive), g.FAvg(e => e.Amount), g.FSum(e => e.Amount))
         if (method.DeclaringType == typeof(DuckDBGroupingExtensions))
         {
             var fixedResultFunctionName = method.Name switch
             {
                 nameof(DuckDBGroupingExtensions.CountIfAggregate) => "COUNTIF",
                 nameof(DuckDBGroupingExtensions.FAvgAggregate) => "FAVG",
+                nameof(DuckDBGroupingExtensions.FSumAggregate) => "FSUM",
                 _ => null
             };
 
