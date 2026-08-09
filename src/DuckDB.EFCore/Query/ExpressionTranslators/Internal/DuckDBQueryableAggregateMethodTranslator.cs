@@ -194,6 +194,7 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                 nameof(DuckDBGroupingExtensions.FAvgAggregate) => "FAVG",
                 nameof(DuckDBGroupingExtensions.FSumAggregate) => "FSUM",
                 nameof(DuckDBGroupingExtensions.GeometricMeanAggregate) => "GEOMETRIC_MEAN",
+                nameof(DuckDBGroupingExtensions.HistogramAggregate) when arguments.Count == 0 => "HISTOGRAM",
                 _ => null
             };
 
@@ -207,6 +208,22 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                     argumentsPropagateNullability: [false],
                     method.ReturnType);
             }
+        }
+
+        // Support HISTOGRAM(arg, boundaries) aggregate function
+        if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
+            && method.Name == nameof(DuckDBGroupingExtensions.HistogramAggregate)
+            && arguments.Count == 1
+            && source.Selector is SqlExpression histogramSelector)
+        {
+            histogramSelector = CombineTerms(source, histogramSelector);
+
+            return _sqlExpressionFactory.Function(
+                "HISTOGRAM",
+                [histogramSelector, arguments[0]],
+                nullable: true,
+                argumentsPropagateNullability: [false, false],
+                method.ReturnType);
         }
 
         // Support single-argument DuckDB aggregate functions

@@ -85,6 +85,14 @@ public static class DuckDBGroupingExtensions
             nameof(FSumAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo HistogramAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Single(m => m.Name == nameof(HistogramAggregate) && m.GetParameters().Length == 1);
+
+    internal static readonly MethodInfo HistogramWithBoundariesAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Single(m => m.Name == nameof(HistogramAggregate) && m.GetParameters().Length == 2);
+
     internal static readonly MethodInfo GeometricMeanAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(GeometricMeanAggregate),
@@ -262,6 +270,25 @@ public static class DuckDBGroupingExtensions
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BitStringAgg)));
 
     /// <summary>
+    /// Translates to the DuckDB <c>HISTOGRAM</c> aggregate function, returning a map of distinct values and their counts.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static Dictionary<TValue, ulong> Histogram<TKey, TSource, TValue>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TValue> selector)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Histogram)));
+
+    /// <summary>
+    /// Translates to the DuckDB <c>HISTOGRAM</c> aggregate function with boundaries, returning a map of buckets and their counts.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static Dictionary<TValue, ulong> Histogram<TKey, TSource, TValue>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TValue> selector,
+        TValue[] boundaries)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Histogram)));
+
+    /// <summary>
     /// Translates to the DuckDB <c>BOOL_AND</c> aggregate function, returning <see langword="true" /> if every
     /// non-null value selected in the group is <see langword="true" />.
     /// Returns <see langword="null" /> when the group contains no non-null values.
@@ -391,4 +418,10 @@ public static class DuckDBGroupingExtensions
 
     internal static double? GeometricMeanAggregate<TValue>(IEnumerable<TValue> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(GeometricMeanAggregate)));
+
+    internal static Dictionary<TValue, ulong> HistogramAggregate<TValue>(IEnumerable<TValue> source)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(HistogramAggregate)));
+
+    internal static Dictionary<TValue, ulong> HistogramAggregate<TValue>(IEnumerable<TValue> source, TValue[] boundaries)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(HistogramAggregate)));
 }
