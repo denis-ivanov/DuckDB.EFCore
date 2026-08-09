@@ -215,6 +215,7 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
             var singleArgumentFunctionName = method.Name switch
             {
                 nameof(DuckDBGroupingExtensions.AnyValueAggregate) => "ANY_VALUE",
+                nameof(DuckDBGroupingExtensions.ArgFirstAggregate) => "FIRST",
                 nameof(DuckDBGroupingExtensions.BitAndAggregate) => "BIT_AND",
                 nameof(DuckDBGroupingExtensions.BitOrAggregate) => "BIT_OR",
                 nameof(DuckDBGroupingExtensions.BitXorAggregate) => "BIT_XOR",

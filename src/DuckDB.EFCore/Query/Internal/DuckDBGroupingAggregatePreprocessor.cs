@@ -32,6 +32,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
             switch (methodCallExpression.Method.Name)
             {
                 case nameof(DuckDBGroupingExtensions.AnyValue)
+                    or nameof(DuckDBGroupingExtensions.ArgFirst)
                     or nameof(DuckDBGroupingExtensions.BitAnd)
                     or nameof(DuckDBGroupingExtensions.BitOr)
                     or nameof(DuckDBGroupingExtensions.BitXor)
@@ -114,6 +115,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
         => methodName switch
         {
             nameof(DuckDBGroupingExtensions.AnyValue) => DuckDBGroupingExtensions.AnyValueAggregateMethod,
+            nameof(DuckDBGroupingExtensions.ArgFirst) => DuckDBGroupingExtensions.ArgFirstAggregateMethod,
             nameof(DuckDBGroupingExtensions.BitAnd) => DuckDBGroupingExtensions.BitAndAggregateMethod,
             nameof(DuckDBGroupingExtensions.BitOr) => DuckDBGroupingExtensions.BitOrAggregateMethod,
             nameof(DuckDBGroupingExtensions.BitXor) => DuckDBGroupingExtensions.BitXorAggregateMethod,
