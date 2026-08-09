@@ -215,21 +215,23 @@ public static class DuckDBGroupingExtensions
     /// <summary>
     /// Translates to the DuckDB <c>BOOL_AND</c> aggregate function, returning <see langword="true" /> if every
     /// non-null value selected in the group is <see langword="true" />.
+    /// Returns <see langword="null" /> when the group contains no non-null values.
     /// Can only be used in LINQ queries; calling it on the client throws.
     /// </summary>
-    public static bool BoolAnd<TKey, TSource>(
+    public static bool? BoolAnd<TKey, TSource>(
         this IGrouping<TKey, TSource> source,
-        Func<TSource, bool> selector)
+        Func<TSource, bool?> selector)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
     /// <summary>
     /// Translates to the DuckDB <c>BOOL_OR</c> aggregate function, returning <see langword="true" /> if any
     /// non-null value selected in the group is <see langword="true" />.
+    /// Returns <see langword="null" /> when the group contains no non-null values.
     /// Can only be used in LINQ queries; calling it on the client throws.
     /// </summary>
-    public static bool BoolOr<TKey, TSource>(
+    public static bool? BoolOr<TKey, TSource>(
         this IGrouping<TKey, TSource> source,
-        Func<TSource, bool> selector)
+        Func<TSource, bool?> selector)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
     // Marker methods the provider rewrites the public grouping methods into, so that the selectors
@@ -270,9 +272,9 @@ public static class DuckDBGroupingExtensions
     internal static string BitStringAggAggregate<TValue>(IEnumerable<TValue> source, long min, long max)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
-    internal static bool BoolAndAggregate<TSource>(IEnumerable<TSource> source)
+    internal static bool? BoolAndAggregate<TSource>(IEnumerable<TSource> source)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
-    internal static bool BoolOrAggregate<TSource>(IEnumerable<TSource> source)
+    internal static bool? BoolOrAggregate<TSource>(IEnumerable<TSource> source)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 }

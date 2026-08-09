@@ -370,6 +370,33 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
+    [ConditionalFact]
+    public void GroupBy_BoolAnd_with_nullable_selector_returns_null_for_all_null_group()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                AllLateOrders = g.BoolAnd(o => o.OrderID > 11000 ? true : (bool?)null)
+            })
+            .ToList();
+
+        Assert.Contains(results, r => r.AllLateOrders == null);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", BOOL_AND(CASE
+                WHEN o."OrderID" > 11000 THEN true
+            END) AS "AllLateOrders"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
