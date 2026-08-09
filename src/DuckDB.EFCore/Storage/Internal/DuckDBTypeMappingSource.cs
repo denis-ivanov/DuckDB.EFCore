@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Collections;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 
@@ -18,6 +19,7 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
     internal const string VarCharTypeName = "VARCHAR";
     internal const string BlobTypeName = "BLOB";
     internal const string BitTypeName = "BIT";
+    internal const string MapTypeNamePrefix = "MAP(";
 
     private static readonly DuckDBBooleanTypeMapping BooleanTypeMapping = new();
     private static readonly DuckDBByteTypeMapping ByteTypeMapping = new();
@@ -317,6 +319,11 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
 
         var storeTypeName = mappingInfo.StoreTypeName;
 
+        if (FindMapMapping(clrType, storeTypeName) is { } mapMapping)
+        {
+            return mapMapping;
+        }
+
         if (storeTypeName != null && IsBitStoreType(storeTypeName))
         {
             return clrType switch
@@ -412,4 +419,119 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
     private static bool IsBitStoreType(string storeTypeName)
         => storeTypeName.Equals(BitTypeName, StringComparison.OrdinalIgnoreCase)
             || storeTypeName.Equals("BITSTRING", StringComparison.OrdinalIgnoreCase);
+
+    private RelationalTypeMapping? FindMapMapping(Type? clrType, string? storeTypeName)
+    {
+        var isMapStoreType = storeTypeName != null && TryParseMapStoreType(storeTypeName, out _, out _);
+
+        if (clrType == null)
+        {
+            // Without a CLR type there is nothing to instantiate when reading, so let other rules handle it.
+            return null;
+        }
+
+        if (!TryGetDictionaryTypes(clrType, out var keyType, out var valueType))
+        {
+            return null;
+        }
+
+        if (storeTypeName != null && !isMapStoreType)
+        {
+            // The property explicitly asked for a different store type; don't hijack it.
+            return null;
+        }
+
+        RelationalTypeMapping? keyMapping;
+        RelationalTypeMapping? valueMapping;
+
+        if (storeTypeName != null
+            && TryParseMapStoreType(storeTypeName, out var keyStoreType, out var valueStoreType))
+        {
+            keyMapping = FindMapping(keyType, keyStoreType);
+            valueMapping = FindMapping(valueType.UnwrapNullableType(), valueStoreType);
+        }
+        else
+        {
+            keyMapping = FindMapping(keyType);
+            valueMapping = FindMapping(valueType.UnwrapNullableType());
+        }
+
+        if (keyMapping == null || valueMapping == null)
+        {
+            return null;
+        }
+
+        return new DuckDBMapTypeMapping(clrType, keyMapping, valueMapping, storeTypeName);
+    }
+
+    private static bool TryGetDictionaryTypes(
+        Type clrType,
+        [NotNullWhen(true)] out Type? keyType,
+        [NotNullWhen(true)] out Type? valueType)
+    {
+        keyType = null;
+        valueType = null;
+
+        // The CLR type must be instantiable: both DuckDB.NET and the value comparer create instances of it.
+        if (clrType.IsInterface
+            || clrType.IsAbstract
+            || clrType.GetConstructor(Type.EmptyTypes) == null)
+        {
+            return false;
+        }
+
+        var dictionaryInterface = clrType.GetGenericTypeImplementations(typeof(IDictionary<,>)).FirstOrDefault();
+
+        if (dictionaryInterface == null)
+        {
+            return false;
+        }
+
+        keyType = dictionaryInterface.GenericTypeArguments[0];
+        valueType = dictionaryInterface.GenericTypeArguments[1];
+
+        return true;
+    }
+
+    private static bool TryParseMapStoreType(
+        string storeTypeName,
+        [NotNullWhen(true)] out string? keyStoreType,
+        [NotNullWhen(true)] out string? valueStoreType)
+    {
+        keyStoreType = null;
+        valueStoreType = null;
+
+        if (!storeTypeName.StartsWith(MapTypeNamePrefix, StringComparison.OrdinalIgnoreCase)
+            || !storeTypeName.EndsWith(")", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        var arguments = storeTypeName.Substring(
+            MapTypeNamePrefix.Length,
+            storeTypeName.Length - MapTypeNamePrefix.Length - 1);
+
+        // Split on the top-level comma only, so that nested types such as MAP(VARCHAR, MAP(INTEGER, VARCHAR)) work.
+        var depth = 0;
+
+        for (var i = 0; i < arguments.Length; i++)
+        {
+            switch (arguments[i])
+            {
+                case '(':
+                    depth++;
+                    break;
+                case ')':
+                    depth--;
+                    break;
+                case ',' when depth == 0:
+                    keyStoreType = arguments.Substring(0, i).Trim();
+                    valueStoreType = arguments.Substring(i + 1).Trim();
+
+                    return keyStoreType.Length > 0 && valueStoreType.Length > 0;
+            }
+        }
+
+        return false;
+    }
 }
