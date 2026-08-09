@@ -662,6 +662,58 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
+    [ConditionalFact]
+    public void GroupBy_Histogram_translates_to_HISTOGRAM()
+    {
+        using var context = CreateContext();
+
+        var results = context.Customers
+            .GroupBy(c => c.City)
+            .Select(g => new
+            {
+                City = g.Key,
+                Countries = g.Histogram(c => c.Country)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.NotEmpty(r.Countries));
+
+        AssertSql(
+            """
+            SELECT c."City", HISTOGRAM(c."Country") AS "Countries"
+            FROM "Customers" AS c
+            GROUP BY c."City"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_Histogram_with_boundaries_translates_to_HISTOGRAM()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                OrderCounts = g.Histogram(o => o.OrderID, new[] { 10000, 11000 })
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.NotEmpty(r.OrderCounts));
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", HISTOGRAM(o."OrderID", [10000, 11000]::INTEGER[]) AS "OrderCounts"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }

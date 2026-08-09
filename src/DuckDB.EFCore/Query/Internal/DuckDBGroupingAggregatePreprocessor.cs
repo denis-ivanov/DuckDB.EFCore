@@ -41,6 +41,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                     or nameof(DuckDBGroupingExtensions.CountIf)
                     or nameof(DuckDBGroupingExtensions.FAvg)
                     or nameof(DuckDBGroupingExtensions.FSum)
+                    or nameof(DuckDBGroupingExtensions.Histogram)
                     or nameof(DuckDBGroupingExtensions.GeometricMean)
                     when methodCallExpression.Arguments is [var singleSelectorSource, var singleSelectorArgument]
                         && UnwrapLambda(singleSelectorArgument) is { } singleSelector:
@@ -58,6 +59,14 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                         methodCallExpression.Arguments.Count == 4
                             ? (Visit(methodCallExpression.Arguments[2]), Visit(methodCallExpression.Arguments[3]))
                             : null);
+
+                case nameof(DuckDBGroupingExtensions.Histogram)
+                    when methodCallExpression.Arguments.Count == 3
+                        && UnwrapLambda(methodCallExpression.Arguments[1]) is { } histogramSelector:
+                    return RewriteHistogram(
+                        Visit(methodCallExpression.Arguments[0]),
+                        histogramSelector,
+                        Visit(methodCallExpression.Arguments[2]));
 
                 case nameof(DuckDBGroupingExtensions.ArgMax)
                     when methodCallExpression.Arguments.Count is 3 or 4
@@ -125,6 +134,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
             nameof(DuckDBGroupingExtensions.CountIf) => DuckDBGroupingExtensions.CountIfAggregateMethod,
             nameof(DuckDBGroupingExtensions.FAvg) => DuckDBGroupingExtensions.FAvgAggregateMethod,
             nameof(DuckDBGroupingExtensions.FSum) => DuckDBGroupingExtensions.FSumAggregateMethod,
+            nameof(DuckDBGroupingExtensions.Histogram) => DuckDBGroupingExtensions.HistogramAggregateMethod,
             nameof(DuckDBGroupingExtensions.GeometricMean) => DuckDBGroupingExtensions.GeometricMeanAggregateMethod,
             _ => throw new ArgumentOutOfRangeException(nameof(methodName), methodName, null)
         };
@@ -152,6 +162,19 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                 projection,
                 bounds.Value.Min,
                 bounds.Value.Max);
+    }
+
+    private static Expression RewriteHistogram(
+        Expression source,
+        LambdaExpression selector,
+        Expression boundaries)
+    {
+        var projection = Project(source, selector);
+
+        return Expression.Call(
+            DuckDBGroupingExtensions.HistogramWithBoundariesAggregateMethod.MakeGenericMethod(selector.ReturnType),
+            projection,
+            boundaries);
     }
 
     private static Expression RewriteArgMinMax(
