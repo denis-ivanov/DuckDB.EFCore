@@ -184,19 +184,27 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
             }
         }
 
-        // Support the COUNTIF aggregate function, whose result type differs from the selector type
-        // (e.g., g.CountIf(e => e.IsActive))
-        if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
-            && method.Name == nameof(DuckDBGroupingExtensions.CountIfAggregate)
-            && source.Selector is SqlExpression countIfSqlExpression)
+        // Support single-argument DuckDB aggregate functions whose result type differs from the selector type
+        // (e.g., g.CountIf(e => e.IsActive), g.FAvg(e => e.Amount))
+        if (method.DeclaringType == typeof(DuckDBGroupingExtensions))
         {
-            countIfSqlExpression = CombineTerms(source, countIfSqlExpression);
-            return _sqlExpressionFactory.Function(
-                "COUNTIF",
-                [countIfSqlExpression],
-                nullable: true,
-                argumentsPropagateNullability: [false],
-                method.ReturnType);
+            var fixedResultFunctionName = method.Name switch
+            {
+                nameof(DuckDBGroupingExtensions.CountIfAggregate) => "COUNTIF",
+                nameof(DuckDBGroupingExtensions.FAvgAggregate) => "FAVG",
+                _ => null
+            };
+
+            if (fixedResultFunctionName != null && source.Selector is SqlExpression fixedResultSqlExpression)
+            {
+                fixedResultSqlExpression = CombineTerms(source, fixedResultSqlExpression);
+                return _sqlExpressionFactory.Function(
+                    fixedResultFunctionName,
+                    [fixedResultSqlExpression],
+                    nullable: true,
+                    argumentsPropagateNullability: [false],
+                    method.ReturnType);
+            }
         }
 
         // Support single-argument DuckDB aggregate functions
