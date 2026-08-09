@@ -207,7 +207,7 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                     [singleArgumentSqlExpression],
                     nullable: true,
                     argumentsPropagateNullability: [false],
-                    singleArgumentSqlExpression.Type,
+                    method.ReturnType,
                     singleArgumentSqlExpression.TypeMapping);
             }
         }
