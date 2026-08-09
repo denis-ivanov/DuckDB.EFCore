@@ -503,6 +503,59 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
+    [ConditionalFact]
+    public void GroupBy_FSum_translates_to_FSUM()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                TotalOrderID = g.FSum(o => o.OrderID)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.NotNull(r.TotalOrderID));
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", FSUM(o."OrderID") AS "TotalOrderID"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_FSum_with_nullable_selector_returns_null_for_all_null_group()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                TotalLateOrderID = g.FSum(o => o.OrderID > 11000 ? o.OrderID : (int?)null)
+            })
+            .ToList();
+
+        Assert.Contains(results, r => r.TotalLateOrderID == null);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", FSUM(CASE
+                WHEN o."OrderID" > 11000 THEN o."OrderID"
+            END) AS "TotalLateOrderID"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }

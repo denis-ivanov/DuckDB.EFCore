@@ -77,6 +77,11 @@ public static class DuckDBGroupingExtensions
             nameof(FAvgAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo FSumAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(FSumAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     internal static readonly MethodInfo BitStringAggAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
             .Single(m => m.Name == nameof(BitStringAggAggregate) && m.GetParameters().Length == 1);
@@ -267,6 +272,18 @@ public static class DuckDBGroupingExtensions
         Func<TSource, TValue> selector)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
+    /// <summary>
+    /// Translates to the DuckDB <c>FSUM</c> aggregate function, returning the sum of all non-null values
+    /// selected in the group using Kahan compensated summation, which is more accurate than <c>SUM</c> when
+    /// the values differ widely in magnitude.
+    /// Returns <see langword="null" /> when the group contains no non-null values.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static double? FSum<TKey, TSource, TValue>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TValue> selector)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
     // Marker methods the provider rewrites the public grouping methods into, so that the selectors
     // become regular projections over the grouping which EF can translate into aggregates.
     internal static TSource AnyValueAggregate<TSource>(IEnumerable<TSource> source)
@@ -315,5 +332,8 @@ public static class DuckDBGroupingExtensions
         => throw new InvalidOperationException(ClientEvaluationMessage);
 
     internal static double? FAvgAggregate<TValue>(IEnumerable<TValue> source)
+        => throw new InvalidOperationException(ClientEvaluationMessage);
+
+    internal static double? FSumAggregate<TValue>(IEnumerable<TValue> source)
         => throw new InvalidOperationException(ClientEvaluationMessage);
 }
