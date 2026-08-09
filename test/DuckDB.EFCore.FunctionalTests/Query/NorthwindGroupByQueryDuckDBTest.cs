@@ -330,7 +330,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
             .Select(g => new
             {
                 CustomerID = g.Key,
-                AllShipped = g.BoolAnd(o => o.OrderDate != null)
+                AllHaveOrderDate = g.BoolAnd(o => o.OrderDate != null)
             })
             .ToList();
 
@@ -338,7 +338,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
 
         AssertSql(
             """
-            SELECT o."CustomerID", BOOL_AND(o."OrderDate" IS NOT NULL) AS "AllShipped"
+            SELECT o."CustomerID", BOOL_AND(o."OrderDate" IS NOT NULL) AS "AllHaveOrderDate"
             FROM "Orders" AS o
             GROUP BY o."CustomerID"
             """
@@ -355,7 +355,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
             .Select(g => new
             {
                 CustomerID = g.Key,
-                AnyShipped = g.BoolOr(o => o.OrderDate != null)
+                AnyHasOrderDate = g.BoolOr(o => o.OrderDate != null)
             })
             .ToList();
 
@@ -363,7 +363,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
 
         AssertSql(
             """
-            SELECT o."CustomerID", BOOL_OR(o."OrderDate" IS NOT NULL) AS "AnyShipped"
+            SELECT o."CustomerID", BOOL_OR(o."OrderDate" IS NOT NULL) AS "AnyHasOrderDate"
             FROM "Orders" AS o
             GROUP BY o."CustomerID"
             """
