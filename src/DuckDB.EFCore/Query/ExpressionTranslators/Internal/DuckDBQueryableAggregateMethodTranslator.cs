@@ -184,6 +184,21 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
             }
         }
 
+        // Support the COUNTIF aggregate function, whose result type differs from the selector type
+        // (e.g., g.CountIf(e => e.IsActive))
+        if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
+            && method.Name == nameof(DuckDBGroupingExtensions.CountIfAggregate)
+            && source.Selector is SqlExpression countIfSqlExpression)
+        {
+            countIfSqlExpression = CombineTerms(source, countIfSqlExpression);
+            return _sqlExpressionFactory.Function(
+                "COUNTIF",
+                [countIfSqlExpression],
+                nullable: true,
+                argumentsPropagateNullability: [false],
+                method.ReturnType);
+        }
+
         // Support single-argument DuckDB aggregate functions
         // (e.g., g.AnyValue(e => e.Prop), g.BitAnd(e => e.Flags))
         if (method.DeclaringType == typeof(DuckDBGroupingExtensions))
