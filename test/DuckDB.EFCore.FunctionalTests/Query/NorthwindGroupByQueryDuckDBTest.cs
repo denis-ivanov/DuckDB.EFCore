@@ -556,6 +556,59 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
+    [ConditionalFact]
+    public void GroupBy_ArgFirst_translates_to_FIRST()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                FirstOrderID = g.ArgFirst(o => o.OrderID)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.NotEqual(0, r.FirstOrderID));
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", FIRST(o."OrderID") AS "FirstOrderID"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_ArgFirst_with_nullable_selector_translates_to_FIRST()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                FirstLateOrderID = g.ArgFirst(o => o.OrderID > 11000 ? o.OrderID : (int?)null)
+            })
+            .ToList();
+
+        Assert.Contains(results, r => r.FirstLateOrderID == null);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", FIRST(CASE
+                WHEN o."OrderID" > 11000 THEN o."OrderID"
+            END) AS "FirstLateOrderID"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }

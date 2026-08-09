@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Reflection;
 
 namespace Microsoft.EntityFrameworkCore;
@@ -8,12 +9,14 @@ namespace Microsoft.EntityFrameworkCore;
 /// </summary>
 public static class DuckDBGroupingExtensions
 {
-    private const string ClientEvaluationMessage
-        = "This method is for use in LINQ queries only and cannot be evaluated on the client.";
-
     internal static readonly MethodInfo AnyValueAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(AnyValueAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
+    internal static readonly MethodInfo ArgFirstAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(ArgFirstAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
     internal static readonly MethodInfo ArgMaxAggregateMethod
@@ -97,7 +100,19 @@ public static class DuckDBGroupingExtensions
     public static TResult AnyValue<TKey, TSource, TResult>(
         this IGrouping<TKey, TSource> source,
         Func<TSource, TResult> selector)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(AnyValue)));
+
+    /// <summary>
+    /// Translates to the DuckDB <c>FIRST</c> aggregate function, returning the first value selected in the group.
+    /// Unlike most aggregates, <c>FIRST</c> does not skip nulls: it returns <see langword="null" /> when the first
+    /// row of the group has a null value, so select a nullable type when the column is nullable.
+    /// Named <c>ArgFirst</c> to avoid ambiguity with <see cref="Enumerable.First{TSource}(IEnumerable{TSource})" />.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult ArgFirst<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgFirst)));
 
     /// <summary>
     /// Translates to the DuckDB <c>ARG_MAX</c> aggregate function, returning the <paramref name="arg" /> value
@@ -108,7 +123,7 @@ public static class DuckDBGroupingExtensions
         this IGrouping<TKey, TSource> source,
         Func<TSource, TArg> arg,
         Func<TSource, TVal> val)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgMax)));
 
     /// <summary>
     /// Translates to the DuckDB <c>ARG_MAX</c> aggregate function, returning the <paramref name="arg" /> values
@@ -121,7 +136,7 @@ public static class DuckDBGroupingExtensions
         Func<TSource, TArg> arg,
         Func<TSource, TVal> val,
         int n)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgMax)));
 
     /// <summary>
     /// Translates to the DuckDB <c>ARG_MAX_NULL</c> aggregate function, returning the <paramref name="arg" /> value
@@ -133,7 +148,7 @@ public static class DuckDBGroupingExtensions
         this IGrouping<TKey, TSource> source,
         Func<TSource, TArg> arg,
         Func<TSource, TVal> val)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgMaxNull)));
 
     /// <summary>
     /// Translates to the DuckDB <c>ARG_MIN</c> aggregate function, returning the <paramref name="arg" /> value
@@ -144,7 +159,7 @@ public static class DuckDBGroupingExtensions
         this IGrouping<TKey, TSource> source,
         Func<TSource, TArg> arg,
         Func<TSource, TVal> val)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgMin)));
 
     /// <summary>
     /// Translates to the DuckDB <c>ARG_MIN</c> aggregate function, returning the <paramref name="arg" /> values
@@ -157,7 +172,7 @@ public static class DuckDBGroupingExtensions
         Func<TSource, TArg> arg,
         Func<TSource, TVal> val,
         int n)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgMin)));
 
     /// <summary>
     /// Translates to the DuckDB <c>ARG_MIN_NULL</c> aggregate function, returning the <paramref name="arg" /> value
@@ -169,7 +184,7 @@ public static class DuckDBGroupingExtensions
         this IGrouping<TKey, TSource> source,
         Func<TSource, TArg> arg,
         Func<TSource, TVal> val)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgMinNull)));
 
     /// <summary>
     /// Translates to the DuckDB <c>BIT_AND</c> aggregate function, returning the bitwise <c>AND</c>
@@ -179,7 +194,7 @@ public static class DuckDBGroupingExtensions
     public static TResult BitAnd<TKey, TSource, TResult>(
         this IGrouping<TKey, TSource> source,
         Func<TSource, TResult> selector)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BitAnd)));
 
     /// <summary>
     /// Translates to the DuckDB <c>BIT_OR</c> aggregate function, returning the bitwise <c>OR</c>
@@ -189,7 +204,7 @@ public static class DuckDBGroupingExtensions
     public static TResult BitOr<TKey, TSource, TResult>(
         this IGrouping<TKey, TSource> source,
         Func<TSource, TResult> selector)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BitOr)));
 
     /// <summary>
     /// Translates to the DuckDB <c>BIT_XOR</c> aggregate function, returning the bitwise <c>XOR</c>
@@ -199,7 +214,7 @@ public static class DuckDBGroupingExtensions
     public static TResult BitXor<TKey, TSource, TResult>(
         this IGrouping<TKey, TSource> source,
         Func<TSource, TResult> selector)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BitXor)));
 
     /// <summary>
     /// Translates to the DuckDB <c>BITSTRING_AGG</c> aggregate function, returning a bit string whose length
@@ -212,7 +227,7 @@ public static class DuckDBGroupingExtensions
     public static string BitStringAgg<TKey, TSource, TValue>(
         this IGrouping<TKey, TSource> source,
         Func<TSource, TValue> selector)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BitStringAgg)));
 
     /// <summary>
     /// Translates to the DuckDB <c>BITSTRING_AGG</c> aggregate function, returning a bit string covering the
@@ -225,7 +240,7 @@ public static class DuckDBGroupingExtensions
         Func<TSource, TValue> selector,
         long min,
         long max)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BitStringAgg)));
 
     /// <summary>
     /// Translates to the DuckDB <c>BOOL_AND</c> aggregate function, returning <see langword="true" /> if every
@@ -236,7 +251,7 @@ public static class DuckDBGroupingExtensions
     public static bool? BoolAnd<TKey, TSource>(
         this IGrouping<TKey, TSource> source,
         Func<TSource, bool?> selector)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BoolAnd)));
 
     /// <summary>
     /// Translates to the DuckDB <c>BOOL_OR</c> aggregate function, returning <see langword="true" /> if any
@@ -247,7 +262,7 @@ public static class DuckDBGroupingExtensions
     public static bool? BoolOr<TKey, TSource>(
         this IGrouping<TKey, TSource> source,
         Func<TSource, bool?> selector)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BoolOr)));
 
     /// <summary>
     /// Translates to the DuckDB <c>COUNTIF</c> aggregate function, returning the number of values selected
@@ -258,7 +273,7 @@ public static class DuckDBGroupingExtensions
     public static long? CountIf<TKey, TSource>(
         this IGrouping<TKey, TSource> source,
         Func<TSource, bool?> selector)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(CountIf)));
 
     /// <summary>
     /// Translates to the DuckDB <c>FAVG</c> aggregate function, returning the average of all non-null values
@@ -270,7 +285,7 @@ public static class DuckDBGroupingExtensions
     public static double? FAvg<TKey, TSource, TValue>(
         this IGrouping<TKey, TSource> source,
         Func<TSource, TValue> selector)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(FAvg)));
 
     /// <summary>
     /// Translates to the DuckDB <c>FSUM</c> aggregate function, returning the sum of all non-null values
@@ -282,58 +297,61 @@ public static class DuckDBGroupingExtensions
     public static double? FSum<TKey, TSource, TValue>(
         this IGrouping<TKey, TSource> source,
         Func<TSource, TValue> selector)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(FSum)));
 
     // Marker methods the provider rewrites the public grouping methods into, so that the selectors
     // become regular projections over the grouping which EF can translate into aggregates.
     internal static TSource AnyValueAggregate<TSource>(IEnumerable<TSource> source)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(AnyValueAggregate)));
+
+    internal static TSource ArgFirstAggregate<TSource>(IEnumerable<TSource> source)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgFirstAggregate)));
 
     internal static TArg ArgMaxAggregate<TArg, TVal>(IEnumerable<ValueTuple<TArg, TVal>> source)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgMaxAggregate)));
 
     internal static TArg[] ArgMaxAggregate<TArg, TVal>(IEnumerable<ValueTuple<TArg, TVal>> source, int n)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgMaxAggregate)));
 
     internal static TArg ArgMaxNullAggregate<TArg, TVal>(IEnumerable<ValueTuple<TArg, TVal>> source)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgMaxNullAggregate)));
 
     internal static TArg ArgMinAggregate<TArg, TVal>(IEnumerable<ValueTuple<TArg, TVal>> source)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgMinAggregate)));
 
     internal static TArg[] ArgMinAggregate<TArg, TVal>(IEnumerable<ValueTuple<TArg, TVal>> source, int n)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgMinAggregate)));
 
     internal static TArg ArgMinNullAggregate<TArg, TVal>(IEnumerable<ValueTuple<TArg, TVal>> source)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgMinNullAggregate)));
 
     internal static TSource BitAndAggregate<TSource>(IEnumerable<TSource> source)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BitAndAggregate)));
 
     internal static TSource BitOrAggregate<TSource>(IEnumerable<TSource> source)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BitOrAggregate)));
 
     internal static TSource BitXorAggregate<TSource>(IEnumerable<TSource> source)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BitXorAggregate)));
 
     internal static string BitStringAggAggregate<TValue>(IEnumerable<TValue> source)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BitStringAggAggregate)));
 
     internal static string BitStringAggAggregate<TValue>(IEnumerable<TValue> source, long min, long max)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BitStringAggAggregate)));
 
     internal static bool? BoolAndAggregate<TSource>(IEnumerable<TSource> source)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BoolAndAggregate)));
 
     internal static bool? BoolOrAggregate<TSource>(IEnumerable<TSource> source)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BoolOrAggregate)));
 
     internal static long? CountIfAggregate<TSource>(IEnumerable<TSource> source)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(CountIfAggregate)));
 
     internal static double? FAvgAggregate<TValue>(IEnumerable<TValue> source)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(FAvgAggregate)));
 
     internal static double? FSumAggregate<TValue>(IEnumerable<TValue> source)
-        => throw new InvalidOperationException(ClientEvaluationMessage);
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(FSumAggregate)));
 }
