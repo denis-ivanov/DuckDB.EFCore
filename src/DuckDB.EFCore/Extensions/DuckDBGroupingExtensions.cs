@@ -104,11 +104,25 @@ public static class DuckDBGroupingExtensions
 
     /// <summary>
     /// Translates to the DuckDB <c>FIRST</c> aggregate function, returning the first value selected in the group.
-    /// Unlike most aggregates, <c>FIRST</c> does not skip nulls: it returns <see langword="null" /> when the first
-    /// row of the group has a null value, so select a nullable type when the column is nullable.
     /// Named <c>ArgFirst</c> to avoid ambiguity with <see cref="Enumerable.First{TSource}(IEnumerable{TSource})" />.
     /// Can only be used in LINQ queries; calling it on the client throws.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Which row is considered "first" depends on the order in which the database happens to produce the rows of
+    /// the group. That order is not guaranteed, so the result is non-deterministic and may change between
+    /// executions, across DuckDB versions, or when the query plan changes. This overload provides no way to
+    /// specify an ordering, so use it only when any value from the group is acceptable.
+    /// </para>
+    /// <para>
+    /// When a deterministic result is required, use <c>ArgMin</c> or <c>ArgMax</c> instead, which pick the value
+    /// associated with the minimum or maximum of an explicit ordering key.
+    /// </para>
+    /// <para>
+    /// Unlike most aggregates, <c>FIRST</c> does not skip nulls: it returns <see langword="null" /> when the first
+    /// row of the group has a null value, so select a nullable type when the column is nullable.
+    /// </para>
+    /// </remarks>
     public static TResult ArgFirst<TKey, TSource, TResult>(
         this IGrouping<TKey, TSource> source,
         Func<TSource, TResult> selector)
