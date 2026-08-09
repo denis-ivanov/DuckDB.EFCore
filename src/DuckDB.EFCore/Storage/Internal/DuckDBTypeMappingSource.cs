@@ -473,9 +473,11 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         valueType = null;
 
         // The CLR type must be instantiable: both DuckDB.NET and the value comparer create instances of it.
+        // It must also implement IDictionary (non-generic) for literal generation and parameter conversion.
         if (clrType.IsInterface
             || clrType.IsAbstract
-            || clrType.GetConstructor(Type.EmptyTypes) == null)
+            || clrType.GetConstructor(Type.EmptyTypes) == null
+            || !clrType.IsAssignableTo(typeof(IDictionary)))
         {
             return false;
         }
