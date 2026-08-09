@@ -89,7 +89,7 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
 
         if (operation.NewName != null && operation.Name != operation.NewName)
         {
-            builder.Append("ALTER TABLE ").AppendLine(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
+            builder.Append("ALTER TABLE ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema))
                 .Append(" RENAME TO ").Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.NewName, operation.NewSchema));
             EndStatement(builder, true);
         }

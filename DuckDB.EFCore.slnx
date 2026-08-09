@@ -4,6 +4,7 @@
     <File Path=".github/FUNDING.yml" />
     <File Path=".github/workflows/dotnet.yml" />
     <File Path=".github/workflows/publish-nuget.yml" />
+    <File Path=".github/workflows/qodana_code_quality.yml" />
     <File Path="LICENSE" />
     <File Path="qodana.yaml" />
     <File Path="README.md" />
