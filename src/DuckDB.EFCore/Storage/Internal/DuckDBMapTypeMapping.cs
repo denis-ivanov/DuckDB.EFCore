@@ -87,15 +87,31 @@ public class DuckDBMapTypeMapping : RelationalTypeMapping
         object? value,
         bool? nullable = null,
         ParameterDirection direction = ParameterDirection.Input)
+    {
         // DuckDB.NET cannot bind a dictionary directly: IDictionary is an ICollection, so it ends up in the
         // LIST branch of its CLR-to-DuckDB converter and fails. Send the DuckDB textual map representation
         // instead and let DuckDB implicitly cast VARCHAR to MAP.
-        => base.CreateParameter(command, name, value is IDictionary dictionary ? ToMapString(dictionary) : value, nullable, direction);
+        var parameter = base.CreateParameter(command, name, value is IDictionary dictionary ? ToMapString(dictionary) : value, nullable, direction);
+
+        if (parameter is not DuckDBParameter)
+        {
+            throw new InvalidOperationException(
+                $"DuckDB-specific type mapping {GetType().Name} being used with non-DuckDB parameter type {parameter.GetType().Name}");
+        }
+
+        return parameter;
+    }
 
     /// <inheritdoc />
     protected override void ConfigureParameter(DbParameter parameter)
     {
-        ((DuckDBParameter)parameter).RemoveDollarSign();
+        if (parameter is not DuckDBParameter duckDBParameter)
+        {
+            throw new InvalidOperationException(
+                $"DuckDB-specific type mapping {GetType().Name} being used with non-DuckDB parameter type {parameter.GetType().Name}");
+        }
+
+        duckDBParameter.RemoveDollarSign();
         parameter.DbType = System.Data.DbType.String;
         base.ConfigureParameter(parameter);
     }
