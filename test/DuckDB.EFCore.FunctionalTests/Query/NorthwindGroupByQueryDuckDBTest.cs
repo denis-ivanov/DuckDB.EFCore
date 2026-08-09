@@ -609,6 +609,59 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
+    [ConditionalFact]
+    public void GroupBy_GeometricMean_translates_to_GEOMETRIC_MEAN()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                GeometricMeanOrderID = g.GeometricMean(o => o.OrderID)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.NotNull(r.GeometricMeanOrderID));
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", GEOMETRIC_MEAN(o."OrderID") AS "GeometricMeanOrderID"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_GeometricMean_with_nullable_selector_returns_null_for_all_null_group()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                GeometricMeanLateOrderID = g.GeometricMean(o => o.OrderID > 11000 ? o.OrderID : (int?)null)
+            })
+            .ToList();
+
+        Assert.Contains(results, r => r.GeometricMeanLateOrderID == null);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", GEOMETRIC_MEAN(CASE
+                WHEN o."OrderID" > 11000 THEN o."OrderID"
+            END) AS "GeometricMeanLateOrderID"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }

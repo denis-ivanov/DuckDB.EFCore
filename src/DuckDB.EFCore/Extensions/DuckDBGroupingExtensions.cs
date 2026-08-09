@@ -85,6 +85,11 @@ public static class DuckDBGroupingExtensions
             nameof(FSumAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo GeometricMeanAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(GeometricMeanAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     internal static readonly MethodInfo BitStringAggAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
             .Single(m => m.Name == nameof(BitStringAggAggregate) && m.GetParameters().Length == 1);
@@ -313,6 +318,21 @@ public static class DuckDBGroupingExtensions
         Func<TSource, TValue> selector)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(FSum)));
 
+    /// <summary>
+    /// Translates to the DuckDB <c>GEOMETRIC_MEAN</c> aggregate function, returning the geometric mean of all
+    /// non-null values selected in the group.
+    /// Returns <see langword="null" /> when the group contains no non-null values.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    /// <remarks>
+    /// The geometric mean is computed via logarithms, so DuckDB raises an error when any of the aggregated values
+    /// is zero or negative. Filter the query or the selector so that only positive values reach the aggregate.
+    /// </remarks>
+    public static double? GeometricMean<TKey, TSource, TValue>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TValue> selector)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(GeometricMean)));
+
     // Marker methods the provider rewrites the public grouping methods into, so that the selectors
     // become regular projections over the grouping which EF can translate into aggregates.
     internal static TSource AnyValueAggregate<TSource>(IEnumerable<TSource> source)
@@ -368,4 +388,7 @@ public static class DuckDBGroupingExtensions
 
     internal static double? FSumAggregate<TValue>(IEnumerable<TValue> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(FSumAggregate)));
+
+    internal static double? GeometricMeanAggregate<TValue>(IEnumerable<TValue> source)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(GeometricMeanAggregate)));
 }
