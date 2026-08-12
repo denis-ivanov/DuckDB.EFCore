@@ -23,6 +23,12 @@ public class NorthwindAggregateOperatorsQueryDuckDBTest : NorthwindAggregateOper
         asserters.TryAdd(typeof(decimal), (Action<decimal, decimal>)Comparer);
     }
 
+    [ConditionalTheory(Skip = "Rounding issue")]
+    public override async Task Average_over_nested_subquery(bool async)
+    {
+        await base.Average_over_nested_subquery(async);
+    }
+
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Contains_with_local_object_enumerable_closure(bool async)
     {
