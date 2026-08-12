@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <PackageVersion>1.0.3</PackageVersion>
-    <FileVersion>1.0.3</FileVersion>
-    <Version>1.0.3</Version>
+    <PackageVersion>1.0.4</PackageVersion>
+    <FileVersion>1.0.4</FileVersion>
+    <Version>1.0.4</Version>
     <Nullable>enable</Nullable>
     <Authors>Denis Ivanov</Authors>
     <Description>DuckDB provider for Entity Framework Core.</Description>
@@ -18,7 +18,7 @@
     <NoWarn>$(NoWarn);EF1001;EF9100</NoWarn>
     <IsPackable>true</IsPackable>
     <PackageReleaseNotes>
-        Full Changelog: https://github.com/denis-ivanov/DuckDB.EFCore/compare/v1.0.2...v1.0.3
+        Full Changelog: https://github.com/denis-ivanov/DuckDB.EFCore/compare/v1.0.3...v1.0.4
     </PackageReleaseNotes>
   </PropertyGroup>
 
