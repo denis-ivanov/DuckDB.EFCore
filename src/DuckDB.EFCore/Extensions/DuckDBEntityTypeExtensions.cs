@@ -1,7 +1,6 @@
 ﻿using DuckDB.EFCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
 
 namespace DuckDB.EFCore.Extensions;
 

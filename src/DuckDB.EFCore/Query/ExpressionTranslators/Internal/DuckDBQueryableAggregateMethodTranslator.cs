@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using DuckDB.EFCore.Query.Expressions.Internal;
+﻿using DuckDB.EFCore.Query.Expressions.Internal;
 using DuckDB.EFCore.Storage.Internal;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -221,6 +221,22 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
             return _sqlExpressionFactory.Function(
                 "HISTOGRAM",
                 [histogramSelector, arguments[0]],
+                nullable: true,
+                argumentsPropagateNullability: [false, false],
+                method.ReturnType);
+        }
+
+        // Support HISTOGRAM_EXACT(arg, elements) aggregate function
+        if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
+            && method.Name == nameof(DuckDBGroupingExtensions.HistogramExactAggregate)
+            && arguments.Count == 1
+            && source.Selector is SqlExpression histogramExactSelector)
+        {
+            histogramExactSelector = CombineTerms(source, histogramExactSelector);
+
+            return _sqlExpressionFactory.Function(
+                "HISTOGRAM_EXACT",
+                [histogramExactSelector, arguments[0]],
                 nullable: true,
                 argumentsPropagateNullability: [false, false],
                 method.ReturnType);

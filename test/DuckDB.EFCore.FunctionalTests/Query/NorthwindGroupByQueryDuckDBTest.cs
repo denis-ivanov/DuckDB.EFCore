@@ -714,6 +714,32 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
+    [ConditionalFact]
+    public void GroupBy_HistogramExact_translates_to_HISTOGRAM_EXACT()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                OrderCounts = g.HistogramExact(o => o.OrderID, new[] { 10248, 10249 })
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.NotEmpty(r.OrderCounts));
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", HISTOGRAM_EXACT(o."OrderID", [10248, 10249]::INTEGER[]) AS "OrderCounts"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
