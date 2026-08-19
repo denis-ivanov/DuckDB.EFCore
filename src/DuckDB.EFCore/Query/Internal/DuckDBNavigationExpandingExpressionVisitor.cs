@@ -1,6 +1,6 @@
+using DuckDB.EFCore.Query.Expressions.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.Internal;
-using DuckDB.EFCore.Query.Expressions.Internal;
 using System.Linq.Expressions;
 
 namespace DuckDB.EFCore.Query.Internal;

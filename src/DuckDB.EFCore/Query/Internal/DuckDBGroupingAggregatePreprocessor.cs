@@ -1,7 +1,7 @@
-using System.Linq.Expressions;
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace DuckDB.EFCore.Query.Internal;
 
@@ -66,6 +66,14 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                     return RewriteHistogram(
                         Visit(methodCallExpression.Arguments[0]),
                         histogramSelector,
+                        Visit(methodCallExpression.Arguments[2]));
+
+                case nameof(DuckDBGroupingExtensions.HistogramExact)
+                    when methodCallExpression.Arguments.Count == 3
+                        && UnwrapLambda(methodCallExpression.Arguments[1]) is { } histogramExactSelector:
+                    return RewriteHistogramExact(
+                        Visit(methodCallExpression.Arguments[0]),
+                        histogramExactSelector,
                         Visit(methodCallExpression.Arguments[2]));
 
                 case nameof(DuckDBGroupingExtensions.ArgMax)
@@ -175,6 +183,19 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
             DuckDBGroupingExtensions.HistogramWithBoundariesAggregateMethod.MakeGenericMethod(selector.ReturnType),
             projection,
             boundaries);
+    }
+
+    private static Expression RewriteHistogramExact(
+        Expression source,
+        LambdaExpression selector,
+        Expression elements)
+    {
+        var projection = Project(source, selector);
+
+        return Expression.Call(
+            DuckDBGroupingExtensions.HistogramExactAggregateMethod.MakeGenericMethod(selector.ReturnType),
+            projection,
+            elements);
     }
 
     private static Expression RewriteArgMinMax(
