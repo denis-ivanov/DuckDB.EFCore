@@ -97,6 +97,11 @@ public static class DuckDBGroupingExtensions
         = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
             .Single(m => m.Name == nameof(HistogramExactAggregate) && m.GetParameters().Length == 2);
 
+    internal static readonly MethodInfo MaxAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(MaxAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     internal static readonly MethodInfo GeometricMeanAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(GeometricMeanAggregate),
@@ -274,6 +279,17 @@ public static class DuckDBGroupingExtensions
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(BitStringAgg)));
 
     /// <summary>
+    /// Translates to the DuckDB <c>MAX</c> aggregate function, returning the <paramref name="n" /> largest
+    /// values selected in the group in descending order.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult[] Max<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector,
+        int n)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Max)));
+
+    /// <summary>
     /// Translates to the DuckDB <c>HISTOGRAM</c> aggregate function, returning a map of distinct values and their counts.
     /// Can only be used in LINQ queries; calling it on the client throws.
     /// </summary>
@@ -441,4 +457,7 @@ public static class DuckDBGroupingExtensions
 
     internal static Dictionary<TValue, ulong> HistogramExactAggregate<TValue>(IEnumerable<TValue> source, TValue[] elements)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(HistogramExactAggregate)));
+
+    internal static TResult[] MaxAggregate<TResult>(IEnumerable<TResult> source, int n)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(MaxAggregate)));
 }
