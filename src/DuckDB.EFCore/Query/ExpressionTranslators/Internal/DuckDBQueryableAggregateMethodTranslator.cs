@@ -242,6 +242,23 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                 method.ReturnType);
         }
 
+        // Support MAX(arg, n) aggregate function
+        // (e.g., g.Max(e => e.Prop, n))
+        if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
+            && method.Name == nameof(DuckDBGroupingExtensions.MaxAggregate)
+            && arguments.Count == 1
+            && source.Selector is SqlExpression maxSelector)
+        {
+            maxSelector = CombineTerms(source, maxSelector);
+
+            return _sqlExpressionFactory.Function(
+                "MAX",
+                [maxSelector, arguments[0]],
+                nullable: true,
+                argumentsPropagateNullability: [false, false],
+                method.ReturnType);
+        }
+
         // Support single-argument DuckDB aggregate functions
         // (e.g., g.AnyValue(e => e.Prop), g.BitAnd(e => e.Flags))
         if (method.DeclaringType == typeof(DuckDBGroupingExtensions))
