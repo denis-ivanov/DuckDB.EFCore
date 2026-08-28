@@ -242,18 +242,20 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                 method.ReturnType);
         }
 
-        // Support MAX(arg, n) aggregate function
-        // (e.g., g.Max(e => e.Prop, n))
+        // Support MIN(arg, n) and MAX(arg, n) aggregate functions
+        // (e.g., g.Min(e => e.Prop, n), g.Max(e => e.Prop, n))
         if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
-            && method.Name == nameof(DuckDBGroupingExtensions.MaxAggregate)
+            && (method.Name == nameof(DuckDBGroupingExtensions.MinAggregate)
+                || method.Name == nameof(DuckDBGroupingExtensions.MaxAggregate))
             && arguments.Count == 1
-            && source.Selector is SqlExpression maxSelector)
+            && source.Selector is SqlExpression minMaxSelector)
         {
-            maxSelector = CombineTerms(source, maxSelector);
+            var functionName = method.Name == nameof(DuckDBGroupingExtensions.MinAggregate) ? "MIN" : "MAX";
+            minMaxSelector = CombineTerms(source, minMaxSelector);
 
             return _sqlExpressionFactory.Function(
-                "MAX",
-                [maxSelector, arguments[0]],
+                functionName,
+                [minMaxSelector, arguments[0]],
                 nullable: true,
                 argumentsPropagateNullability: [false, false],
                 method.ReturnType);

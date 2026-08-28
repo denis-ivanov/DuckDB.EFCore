@@ -102,6 +102,11 @@ public static class DuckDBGroupingExtensions
             nameof(MaxAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo MinAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(MinAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     internal static readonly MethodInfo GeometricMeanAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(GeometricMeanAggregate),
@@ -290,6 +295,17 @@ public static class DuckDBGroupingExtensions
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Max)));
 
     /// <summary>
+    /// Translates to the DuckDB <c>MIN</c> aggregate function, returning the <paramref name="n" /> smallest
+    /// values selected in the group in ascending order.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult[] Min<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector,
+        int n)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Min)));
+
+    /// <summary>
     /// Translates to the DuckDB <c>HISTOGRAM</c> aggregate function, returning a map of distinct values and their counts.
     /// Can only be used in LINQ queries; calling it on the client throws.
     /// </summary>
@@ -460,4 +476,7 @@ public static class DuckDBGroupingExtensions
 
     internal static TResult[] MaxAggregate<TResult>(IEnumerable<TResult> source, int n)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(MaxAggregate)));
+
+    internal static TResult[] MinAggregate<TResult>(IEnumerable<TResult> source, int n)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(MinAggregate)));
 }
