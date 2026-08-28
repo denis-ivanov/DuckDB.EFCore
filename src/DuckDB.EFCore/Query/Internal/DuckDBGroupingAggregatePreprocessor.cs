@@ -43,6 +43,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                     or nameof(DuckDBGroupingExtensions.FSum)
                     or nameof(DuckDBGroupingExtensions.Histogram)
                     or nameof(DuckDBGroupingExtensions.GeometricMean)
+                    or nameof(DuckDBGroupingExtensions.Product)
                     when methodCallExpression.Arguments is [var singleSelectorSource, var singleSelectorArgument]
                         && UnwrapLambda(singleSelectorArgument) is { } singleSelector:
                     return RewriteSingleSelector(
@@ -160,6 +161,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
             nameof(DuckDBGroupingExtensions.FSum) => DuckDBGroupingExtensions.FSumAggregateMethod,
             nameof(DuckDBGroupingExtensions.Histogram) => DuckDBGroupingExtensions.HistogramAggregateMethod,
             nameof(DuckDBGroupingExtensions.GeometricMean) => DuckDBGroupingExtensions.GeometricMeanAggregateMethod,
+            nameof(DuckDBGroupingExtensions.Product) => DuckDBGroupingExtensions.ProductAggregateMethod,
             _ => throw new ArgumentOutOfRangeException(nameof(methodName), methodName, null)
         };
 
