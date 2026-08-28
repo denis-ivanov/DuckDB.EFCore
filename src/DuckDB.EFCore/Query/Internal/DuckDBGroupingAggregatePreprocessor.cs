@@ -84,6 +84,14 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                         maxSelector,
                         Visit(methodCallExpression.Arguments[2]));
 
+                case nameof(DuckDBGroupingExtensions.Min)
+                    when methodCallExpression.Arguments.Count == 3
+                        && UnwrapLambda(methodCallExpression.Arguments[1]) is { } minSelector:
+                    return RewriteMin(
+                        Visit(methodCallExpression.Arguments[0]),
+                        minSelector,
+                        Visit(methodCallExpression.Arguments[2]));
+
                 case nameof(DuckDBGroupingExtensions.ArgMax)
                     when methodCallExpression.Arguments.Count is 3 or 4
                         && UnwrapLambda(methodCallExpression.Arguments[1]) is { } argSelector
@@ -215,6 +223,19 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
 
         return Expression.Call(
             DuckDBGroupingExtensions.MaxAggregateMethod.MakeGenericMethod(selector.ReturnType),
+            projection,
+            count);
+    }
+
+    private static Expression RewriteMin(
+        Expression source,
+        LambdaExpression selector,
+        Expression count)
+    {
+        var projection = Project(source, selector);
+
+        return Expression.Call(
+            DuckDBGroupingExtensions.MinAggregateMethod.MakeGenericMethod(selector.ReturnType),
             projection,
             count);
     }
