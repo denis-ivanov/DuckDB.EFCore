@@ -112,6 +112,11 @@ public static class DuckDBGroupingExtensions
             nameof(GeometricMeanAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo ProductAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(ProductAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     internal static readonly MethodInfo BitStringAggAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
             .Single(m => m.Name == nameof(BitStringAggAggregate) && m.GetParameters().Length == 1);
@@ -311,7 +316,7 @@ public static class DuckDBGroupingExtensions
     /// </summary>
     public static Dictionary<TValue, ulong> Histogram<TKey, TSource, TValue>(
         this IGrouping<TKey, TSource> source,
-        Func<TSource, TValue> selector)
+        Func<TSource, TValue> selector) where TValue : notnull
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Histogram)));
 
     /// <summary>
@@ -321,7 +326,7 @@ public static class DuckDBGroupingExtensions
     public static Dictionary<TValue, ulong> Histogram<TKey, TSource, TValue>(
         this IGrouping<TKey, TSource> source,
         Func<TSource, TValue> selector,
-        TValue[] boundaries)
+        TValue[] boundaries) where TValue : notnull
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Histogram)));
 
     /// <summary>
@@ -331,7 +336,7 @@ public static class DuckDBGroupingExtensions
     public static Dictionary<TValue, ulong> HistogramExact<TKey, TSource, TValue>(
         this IGrouping<TKey, TSource> source,
         Func<TSource, TValue> selector,
-        TValue[] elements)
+        TValue[] elements) where TValue : notnull
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(HistogramExact)));
 
     /// <summary>
@@ -406,6 +411,17 @@ public static class DuckDBGroupingExtensions
         Func<TSource, TValue> selector)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(GeometricMean)));
 
+    /// <summary>
+    /// Translates to the DuckDB <c>PRODUCT</c> aggregate function, returning the product of all
+    /// non-null values selected in the group.
+    /// Returns <see langword="null" /> when the group contains no non-null values.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static double? Product<TKey, TSource, TValue>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TValue> selector)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Product)));
+
     // Marker methods the provider rewrites the public grouping methods into, so that the selectors
     // become regular projections over the grouping which EF can translate into aggregates.
     internal static TSource AnyValueAggregate<TSource>(IEnumerable<TSource> source)
@@ -465,13 +481,19 @@ public static class DuckDBGroupingExtensions
     internal static double? GeometricMeanAggregate<TValue>(IEnumerable<TValue> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(GeometricMeanAggregate)));
 
+    internal static double? ProductAggregate<TValue>(IEnumerable<TValue> source)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ProductAggregate)));
+
     internal static Dictionary<TValue, ulong> HistogramAggregate<TValue>(IEnumerable<TValue> source)
+        where TValue : notnull
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(HistogramAggregate)));
 
     internal static Dictionary<TValue, ulong> HistogramAggregate<TValue>(IEnumerable<TValue> source, TValue[] boundaries)
+        where TValue : notnull
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(HistogramAggregate)));
 
     internal static Dictionary<TValue, ulong> HistogramExactAggregate<TValue>(IEnumerable<TValue> source, TValue[] elements)
+        where TValue : notnull
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(HistogramExactAggregate)));
 
     internal static TResult[] MaxAggregate<TResult>(IEnumerable<TResult> source, int n)

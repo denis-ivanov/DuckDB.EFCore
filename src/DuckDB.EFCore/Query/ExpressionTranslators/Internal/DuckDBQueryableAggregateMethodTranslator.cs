@@ -194,6 +194,7 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                 nameof(DuckDBGroupingExtensions.FAvgAggregate) => "FAVG",
                 nameof(DuckDBGroupingExtensions.FSumAggregate) => "FSUM",
                 nameof(DuckDBGroupingExtensions.GeometricMeanAggregate) => "GEOMETRIC_MEAN",
+                nameof(DuckDBGroupingExtensions.ProductAggregate) => "PRODUCT",
                 nameof(DuckDBGroupingExtensions.HistogramAggregate) when arguments.Count == 0 => "HISTOGRAM",
                 _ => null
             };
