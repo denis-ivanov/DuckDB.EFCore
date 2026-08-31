@@ -43,6 +43,31 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
     }
 
     [ConditionalFact]
+    public void GroupBy_ApproxCountDistinct_translates_to_APPROX_COUNT_DISTINCT()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                ApproxDistinctOrders = g.ApproxCountDistinct(o => o.OrderID)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", APPROX_COUNT_DISTINCT(o."OrderID") AS "ApproxDistinctOrders"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
     public void GroupBy_ArgMax_translates_to_ARG_MAX()
     {
         using var context = CreateContext();
