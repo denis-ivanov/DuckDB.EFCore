@@ -14,6 +14,11 @@ public static class DuckDBGroupingExtensions
             nameof(AnyValueAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo ApproxCountDistinctAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(ApproxCountDistinctAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     internal static readonly MethodInfo ArgFirstAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(ArgFirstAggregate),
@@ -133,6 +138,15 @@ public static class DuckDBGroupingExtensions
         this IGrouping<TKey, TSource> source,
         Func<TSource, TResult> selector)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(AnyValue)));
+
+    /// <summary>
+    /// Translates to the DuckDB <c>APPROX_COUNT_DISTINCT</c> aggregate function, returning the approximate number of unique elements.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static long ApproxCountDistinct<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxCountDistinct)));
 
     /// <summary>
     /// Translates to the DuckDB <c>FIRST</c> aggregate function, returning the first value selected in the group.
@@ -426,6 +440,9 @@ public static class DuckDBGroupingExtensions
     // become regular projections over the grouping which EF can translate into aggregates.
     internal static TSource AnyValueAggregate<TSource>(IEnumerable<TSource> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(AnyValueAggregate)));
+
+    internal static long ApproxCountDistinctAggregate<TSource>(IEnumerable<TSource> source)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxCountDistinctAggregate)));
 
     internal static TSource ArgFirstAggregate<TSource>(IEnumerable<TSource> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgFirstAggregate)));

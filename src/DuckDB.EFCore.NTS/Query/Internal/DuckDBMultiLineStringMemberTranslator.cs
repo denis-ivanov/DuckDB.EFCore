@@ -37,4 +37,3 @@ public class DuckDBMultiLineStringMemberTranslator : IMemberTranslator
                 null)
             : null;
 }
-

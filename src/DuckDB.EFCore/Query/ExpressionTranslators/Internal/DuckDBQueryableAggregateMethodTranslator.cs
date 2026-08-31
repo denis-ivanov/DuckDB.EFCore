@@ -190,6 +190,7 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
         {
             var fixedResultFunctionName = method.Name switch
             {
+                nameof(DuckDBGroupingExtensions.ApproxCountDistinctAggregate) => "APPROX_COUNT_DISTINCT",
                 nameof(DuckDBGroupingExtensions.CountIfAggregate) => "COUNTIF",
                 nameof(DuckDBGroupingExtensions.FAvgAggregate) => "FAVG",
                 nameof(DuckDBGroupingExtensions.FSumAggregate) => "FSUM",
