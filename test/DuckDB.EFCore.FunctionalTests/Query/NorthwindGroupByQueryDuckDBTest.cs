@@ -119,6 +119,32 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
     }
 
     [ConditionalFact]
+    public void GroupBy_ApproxTopK_translates_to_APPROX_TOP_K()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                TopEmployees = g.ApproxTopK(o => o.EmployeeID, 2)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.NotEmpty(r.TopEmployees));
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", APPROX_TOP_K(o."EmployeeID", 2) AS "TopEmployees"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
     public void GroupBy_ArgMax_translates_to_ARG_MAX()
     {
         using var context = CreateContext();
