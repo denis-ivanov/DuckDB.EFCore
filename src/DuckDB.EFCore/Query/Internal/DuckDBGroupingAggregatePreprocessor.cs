@@ -52,6 +52,14 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                         singleSelector,
                         GetSingleSelectorAggregateMethod(methodCallExpression.Method.Name));
 
+                case nameof(DuckDBGroupingExtensions.ApproxQuantile)
+                    when methodCallExpression.Arguments.Count == 3
+                        && UnwrapLambda(methodCallExpression.Arguments[1]) is { } approxQuantileSelector:
+                    return RewriteApproxQuantile(
+                        Visit(methodCallExpression.Arguments[0]),
+                        approxQuantileSelector,
+                        Visit(methodCallExpression.Arguments[2]));
+
                 case nameof(DuckDBGroupingExtensions.BitStringAgg)
                     when methodCallExpression.Arguments.Count is 2 or 4
                         && UnwrapLambda(methodCallExpression.Arguments[1]) is { } bitStringSelector:
@@ -172,6 +180,23 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
         var projection = Project(source, selector);
 
         return Expression.Call(aggregateMethod.MakeGenericMethod(selector.ReturnType), projection);
+    }
+
+    private static Expression RewriteApproxQuantile(
+        Expression source,
+        LambdaExpression selector,
+        Expression pos)
+    {
+        var projection = Project(source, selector);
+
+        var aggregateMethod = pos.Type == typeof(float[])
+            ? DuckDBGroupingExtensions.ApproxQuantileArrayAggregateMethod
+            : DuckDBGroupingExtensions.ApproxQuantileAggregateMethod;
+
+        return Expression.Call(
+            aggregateMethod.MakeGenericMethod(selector.ReturnType),
+            projection,
+            pos);
     }
 
     private static Expression RewriteBitStringAgg(

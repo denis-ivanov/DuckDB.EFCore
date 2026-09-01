@@ -212,6 +212,24 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
             }
         }
 
+        // Support APPROX_QUANTILE(arg, pos) aggregate function
+        // (e.g., g.ApproxQuantile(e => e.Prop, 0.5), g.ApproxQuantile(e => e.Prop, new[] { 0.25f, 0.75f }))
+        if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
+            && method.Name == nameof(DuckDBGroupingExtensions.ApproxQuantileAggregate)
+            && arguments.Count == 1
+            && source.Selector is SqlExpression approxQuantileSelector)
+        {
+            approxQuantileSelector = CombineTerms(source, approxQuantileSelector);
+
+            return _sqlExpressionFactory.Function(
+                "APPROX_QUANTILE",
+                [approxQuantileSelector, arguments[0]],
+                nullable: true,
+                argumentsPropagateNullability: [false, false],
+                method.ReturnType,
+                method.ReturnType == approxQuantileSelector.Type ? approxQuantileSelector.TypeMapping : null);
+        }
+
         // Support HISTOGRAM(arg, boundaries) aggregate function
         if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
             && method.Name == nameof(DuckDBGroupingExtensions.HistogramAggregate)
