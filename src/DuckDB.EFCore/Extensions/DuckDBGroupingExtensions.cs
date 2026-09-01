@@ -27,6 +27,11 @@ public static class DuckDBGroupingExtensions
         = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
             .Single(m => m.Name == nameof(ApproxQuantileAggregate) && m.GetParameters().Length == 2 && m.GetParameters()[1].ParameterType == typeof(float[]));
 
+    internal static readonly MethodInfo ApproxTopKAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(ApproxTopKAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     internal static readonly MethodInfo ArgFirstAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(ArgFirstAggregate),
@@ -177,6 +182,17 @@ public static class DuckDBGroupingExtensions
         Func<TSource, TResult> selector,
         float[] pos)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxQuantile)));
+
+    /// <summary>
+    /// Translates to the DuckDB <c>APPROX_TOP_K</c> aggregate function, returning the <paramref name="k" /> approximately
+    /// most frequent values selected in the group.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult[] ApproxTopK<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector,
+        int k)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxTopK)));
 
     /// <summary>
     /// Translates to the DuckDB <c>FIRST</c> aggregate function, returning the first value selected in the group.
@@ -479,6 +495,9 @@ public static class DuckDBGroupingExtensions
 
     internal static TResult[] ApproxQuantileAggregate<TResult>(IEnumerable<TResult> source, float[] pos)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxQuantileAggregate)));
+
+    internal static TResult[] ApproxTopKAggregate<TResult>(IEnumerable<TResult> source, int k)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxTopKAggregate)));
 
     internal static TSource ArgFirstAggregate<TSource>(IEnumerable<TSource> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgFirstAggregate)));

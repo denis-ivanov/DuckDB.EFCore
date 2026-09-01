@@ -86,6 +86,14 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                         histogramExactSelector,
                         Visit(methodCallExpression.Arguments[2]));
 
+                case nameof(DuckDBGroupingExtensions.ApproxTopK)
+                    when methodCallExpression.Arguments.Count == 3
+                        && UnwrapLambda(methodCallExpression.Arguments[1]) is { } approxTopKSelector:
+                    return RewriteApproxTopK(
+                        Visit(methodCallExpression.Arguments[0]),
+                        approxTopKSelector,
+                        Visit(methodCallExpression.Arguments[2]));
+
                 case nameof(DuckDBGroupingExtensions.Max)
                     when methodCallExpression.Arguments.Count == 3
                         && UnwrapLambda(methodCallExpression.Arguments[1]) is { } maxSelector:
@@ -241,6 +249,19 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
             DuckDBGroupingExtensions.HistogramExactAggregateMethod.MakeGenericMethod(selector.ReturnType),
             projection,
             elements);
+    }
+
+    private static Expression RewriteApproxTopK(
+        Expression source,
+        LambdaExpression selector,
+        Expression k)
+    {
+        var projection = Project(source, selector);
+
+        return Expression.Call(
+            DuckDBGroupingExtensions.ApproxTopKAggregateMethod.MakeGenericMethod(selector.ReturnType),
+            projection,
+            k);
     }
 
     private static Expression RewriteMax(

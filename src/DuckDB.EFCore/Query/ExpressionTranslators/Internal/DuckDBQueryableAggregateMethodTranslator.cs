@@ -262,6 +262,23 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                 method.ReturnType);
         }
 
+        // Support APPROX_TOP_K(arg, k) aggregate function
+        // (e.g., g.ApproxTopK(e => e.Prop, k))
+        if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
+            && method.Name == nameof(DuckDBGroupingExtensions.ApproxTopKAggregate)
+            && arguments.Count == 1
+            && source.Selector is SqlExpression approxTopKSelector)
+        {
+            approxTopKSelector = CombineTerms(source, approxTopKSelector);
+
+            return _sqlExpressionFactory.Function(
+                "APPROX_TOP_K",
+                [approxTopKSelector, arguments[0]],
+                nullable: true,
+                argumentsPropagateNullability: [false, false],
+                method.ReturnType);
+        }
+
         // Support MIN(arg, n) and MAX(arg, n) aggregate functions
         // (e.g., g.Min(e => e.Prop, n), g.Max(e => e.Prop, n))
         if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
