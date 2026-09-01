@@ -68,6 +68,57 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
     }
 
     [ConditionalFact]
+    public void GroupBy_ApproxQuantile_translates_to_APPROX_QUANTILE()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                MedianOrderId = g.ApproxQuantile(o => o.OrderID, 0.5)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", APPROX_QUANTILE(o."OrderID", 0.5) AS "MedianOrderId"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_ApproxQuantile_with_array_translates_to_APPROX_QUANTILE()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                Quantiles = g.ApproxQuantile(o => o.OrderID, new[] { 0.25f, 0.75f })
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.NotEmpty(r.Quantiles));
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", APPROX_QUANTILE(o."OrderID", [0.25, 0.75]::FLOAT[]) AS "Quantiles"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
     public void GroupBy_ArgMax_translates_to_ARG_MAX()
     {
         using var context = CreateContext();

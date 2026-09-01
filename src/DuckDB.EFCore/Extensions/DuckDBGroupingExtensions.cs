@@ -19,6 +19,14 @@ public static class DuckDBGroupingExtensions
             nameof(ApproxCountDistinctAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo ApproxQuantileAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Single(m => m.Name == nameof(ApproxQuantileAggregate) && m.GetParameters().Length == 2 && m.GetParameters()[1].ParameterType == typeof(double));
+
+    internal static readonly MethodInfo ApproxQuantileArrayAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Single(m => m.Name == nameof(ApproxQuantileAggregate) && m.GetParameters().Length == 2 && m.GetParameters()[1].ParameterType == typeof(float[]));
+
     internal static readonly MethodInfo ArgFirstAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(ArgFirstAggregate),
@@ -147,6 +155,28 @@ public static class DuckDBGroupingExtensions
         this IGrouping<TKey, TSource> source,
         Func<TSource, TResult> selector)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxCountDistinct)));
+
+    /// <summary>
+    /// Translates to the DuckDB <c>APPROX_QUANTILE</c> aggregate function, returning the approximate quantile
+    /// of all non-null values selected in the group at the specified position using T-Digest.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult ApproxQuantile<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector,
+        double pos)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxQuantile)));
+
+    /// <summary>
+    /// Translates to the DuckDB <c>APPROX_QUANTILE</c> aggregate function, returning the approximate quantiles
+    /// of all non-null values selected in the group at the specified positions using T-Digest.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult[] ApproxQuantile<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector,
+        float[] pos)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxQuantile)));
 
     /// <summary>
     /// Translates to the DuckDB <c>FIRST</c> aggregate function, returning the first value selected in the group.
@@ -443,6 +473,12 @@ public static class DuckDBGroupingExtensions
 
     internal static long ApproxCountDistinctAggregate<TSource>(IEnumerable<TSource> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxCountDistinctAggregate)));
+
+    internal static TResult ApproxQuantileAggregate<TResult>(IEnumerable<TResult> source, double pos)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxQuantileAggregate)));
+
+    internal static TResult[] ApproxQuantileAggregate<TResult>(IEnumerable<TResult> source, float[] pos)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxQuantileAggregate)));
 
     internal static TSource ArgFirstAggregate<TSource>(IEnumerable<TSource> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgFirstAggregate)));
