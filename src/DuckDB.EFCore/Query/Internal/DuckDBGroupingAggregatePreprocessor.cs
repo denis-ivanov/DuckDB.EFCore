@@ -52,6 +52,15 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                         singleSelector,
                         GetSingleSelectorAggregateMethod(methodCallExpression.Method.Name));
 
+                case nameof(DuckDBGroupingExtensions.Corr)
+                    when methodCallExpression.Arguments.Count == 3
+                        && UnwrapLambda(methodCallExpression.Arguments[1]) is { } ySelector
+                        && UnwrapLambda(methodCallExpression.Arguments[2]) is { } xSelector:
+                    return RewriteCorr(
+                        Visit(methodCallExpression.Arguments[0]),
+                        ySelector,
+                        xSelector);
+
                 case nameof(DuckDBGroupingExtensions.ApproxQuantile)
                     when methodCallExpression.Arguments.Count == 3
                         && UnwrapLambda(methodCallExpression.Arguments[1]) is { } approxQuantileSelector:
@@ -325,6 +334,28 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
             DuckDBGroupingExtensions.MinAggregateMethod.MakeGenericMethod(selector.ReturnType),
             projection,
             count);
+    }
+
+    private static Expression RewriteCorr(
+        Expression source,
+        LambdaExpression ySelector,
+        LambdaExpression xSelector)
+    {
+        var parameter = ySelector.Parameters[0];
+        var xBody = ReplacingExpressionVisitor.Replace(xSelector.Parameters[0], parameter, xSelector.Body);
+
+        var yType = ySelector.ReturnType;
+        var xType = xSelector.ReturnType;
+
+        var tupleSelector = Expression.Lambda(
+            Expression.Call(ValueTupleCreateMethod.MakeGenericMethod(yType, xType), ySelector.Body, xBody),
+            parameter);
+
+        var projection = Project(source, tupleSelector);
+
+        return Expression.Call(
+            DuckDBGroupingExtensions.CorrAggregateMethod.MakeGenericMethod(yType, xType),
+            projection);
     }
 
     private static Expression RewriteArgMinMax(

@@ -374,6 +374,30 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                     DuckDBBitStringTypeMapping.Default);
         }
 
+        // Support CORR(y, x) aggregate function
+        // (e.g., g.Corr(e => e.Y, e => e.X))
+        if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
+            && method.Name == nameof(DuckDBGroupingExtensions.CorrAggregate)
+            && source.Selector is DuckDBRowValueExpression { Values.Count: 2 } corrRowValue
+            && !source.IsDistinct)
+        {
+            var y = corrRowValue.Values[0];
+            var x = corrRowValue.Values[1];
+
+            if (source.Predicate != null)
+            {
+                y = CombineTerms(source, y);
+                x = CombineTerms(source, x);
+            }
+
+            return _sqlExpressionFactory.Function(
+                "CORR",
+                [y, x],
+                nullable: true,
+                argumentsPropagateNullability: [false, false],
+                method.ReturnType);
+        }
+
         // Support ARG_MAX / ARG_MAX_NULL / ARG_MIN / ARG_MIN_NULL aggregate functions
         // (e.g., g.ArgMax(e => e.Prop, e => e.Value[, n]), g.ArgMinNull(e => e.Prop, e => e.Value))
         if (method.DeclaringType == typeof(DuckDBGroupingExtensions))
