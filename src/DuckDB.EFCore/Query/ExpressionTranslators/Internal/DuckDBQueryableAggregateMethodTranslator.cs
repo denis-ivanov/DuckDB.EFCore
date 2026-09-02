@@ -279,6 +279,28 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                 method.ReturnType);
         }
 
+        // Support RESERVOIR_QUANTILE(x, quantile, sample_size = 8192) aggregate function
+        // (e.g., g.ReservoirQuantile(e => e.Prop, 0.5), g.ReservoirQuantile(e => e.Prop, 0.5, 1024), g.ReservoirQuantile(e => e.Prop, new[] { 0.25f, 0.75f }))
+        if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
+            && method.Name == nameof(DuckDBGroupingExtensions.ReservoirQuantileAggregate)
+            && arguments.Count is 1 or 2
+            && source.Selector is SqlExpression reservoirQuantileSelector)
+        {
+            reservoirQuantileSelector = CombineTerms(source, reservoirQuantileSelector);
+
+            var functionArguments = arguments.Count == 1
+                ? new[] { reservoirQuantileSelector, arguments[0] }
+                : new[] { reservoirQuantileSelector, arguments[0], arguments[1] };
+
+            return _sqlExpressionFactory.Function(
+                "RESERVOIR_QUANTILE",
+                functionArguments,
+                nullable: true,
+                argumentsPropagateNullability: arguments.Count == 1 ? [false, false] : [false, false, false],
+                method.ReturnType,
+                method.ReturnType == reservoirQuantileSelector.Type ? reservoirQuantileSelector.TypeMapping : null);
+        }
+
         // Support MIN(arg, n) and MAX(arg, n) aggregate functions
         // (e.g., g.Min(e => e.Prop, n), g.Max(e => e.Prop, n))
         if (method.DeclaringType == typeof(DuckDBGroupingExtensions)

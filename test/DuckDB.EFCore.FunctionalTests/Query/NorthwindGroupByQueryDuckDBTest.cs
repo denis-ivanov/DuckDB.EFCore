@@ -145,6 +145,108 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
     }
 
     [ConditionalFact]
+    public void GroupBy_ReservoirQuantile_translates_to_RESERVOIR_QUANTILE()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                MedianOrderId = g.ReservoirQuantile(o => o.OrderID, 0.5)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", RESERVOIR_QUANTILE(o."OrderID", 0.5) AS "MedianOrderId"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_ReservoirQuantile_with_sample_size_translates_to_RESERVOIR_QUANTILE()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                MedianOrderId = g.ReservoirQuantile(o => o.OrderID, 0.5, 1024)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", RESERVOIR_QUANTILE(o."OrderID", 0.5, 1024) AS "MedianOrderId"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_ReservoirQuantile_with_array_translates_to_RESERVOIR_QUANTILE()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                Quantiles = g.ReservoirQuantile(o => o.OrderID, new[] { 0.25f, 0.75f })
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.NotEmpty(r.Quantiles));
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", RESERVOIR_QUANTILE(o."OrderID", [0.25, 0.75]::FLOAT[]) AS "Quantiles"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_ReservoirQuantile_with_array_and_sample_size_translates_to_RESERVOIR_QUANTILE()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                Quantiles = g.ReservoirQuantile(o => o.OrderID, new[] { 0.25f, 0.75f }, 1024)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.NotEmpty(r.Quantiles));
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", RESERVOIR_QUANTILE(o."OrderID", [0.25, 0.75]::FLOAT[], 1024) AS "Quantiles"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
     public void GroupBy_ArgMax_translates_to_ARG_MAX()
     {
         using var context = CreateContext();
