@@ -94,6 +94,11 @@ public static class DuckDBGroupingExtensions
             nameof(BitXorAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo CorrAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(CorrAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     internal static readonly MethodInfo BoolAndAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(BoolAndAggregate),
@@ -495,6 +500,17 @@ public static class DuckDBGroupingExtensions
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(CountIf)));
 
     /// <summary>
+    /// Translates to the DuckDB <c>CORR</c> aggregate function, returning the correlation coefficient for non-null pairs in a group.
+    /// Returns <see langword="null" /> when the group contains no non-null pairs.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static double? Corr<TKey, TSource, TY, TX>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TY> y,
+        Func<TSource, TX> x)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Corr)));
+
+    /// <summary>
     /// Translates to the DuckDB <c>FAVG</c> aggregate function, returning the average of all non-null values
     /// selected in the group using Kahan compensated summation, which is more accurate than <c>AVG</c> when
     /// the values differ widely in magnitude.
@@ -617,6 +633,9 @@ public static class DuckDBGroupingExtensions
 
     internal static long? CountIfAggregate<TSource>(IEnumerable<TSource> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(CountIfAggregate)));
+
+    internal static double? CorrAggregate<TY, TX>(IEnumerable<ValueTuple<TY, TX>> source)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(CorrAggregate)));
 
     internal static double? FAvgAggregate<TValue>(IEnumerable<TValue> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(FAvgAggregate)));
