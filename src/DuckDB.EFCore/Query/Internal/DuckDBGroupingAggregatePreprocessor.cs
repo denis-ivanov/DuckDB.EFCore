@@ -94,6 +94,15 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                         approxTopKSelector,
                         Visit(methodCallExpression.Arguments[2]));
 
+                case nameof(DuckDBGroupingExtensions.ReservoirQuantile)
+                    when methodCallExpression.Arguments.Count is 3 or 4
+                        && UnwrapLambda(methodCallExpression.Arguments[1]) is { } reservoirQuantileSelector:
+                    return RewriteReservoirQuantile(
+                        Visit(methodCallExpression.Arguments[0]),
+                        reservoirQuantileSelector,
+                        Visit(methodCallExpression.Arguments[2]),
+                        methodCallExpression.Arguments.Count == 4 ? Visit(methodCallExpression.Arguments[3]) : null);
+
                 case nameof(DuckDBGroupingExtensions.Max)
                     when methodCallExpression.Arguments.Count == 3
                         && UnwrapLambda(methodCallExpression.Arguments[1]) is { } maxSelector:
@@ -262,6 +271,34 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
             DuckDBGroupingExtensions.ApproxTopKAggregateMethod.MakeGenericMethod(selector.ReturnType),
             projection,
             k);
+    }
+
+    private static Expression RewriteReservoirQuantile(
+        Expression source,
+        LambdaExpression selector,
+        Expression quantile,
+        Expression? sampleSize)
+    {
+        var projection = Project(source, selector);
+
+        var aggregateMethod = (quantile.Type == typeof(float[]), sampleSize is not null) switch
+        {
+            (false, false) => DuckDBGroupingExtensions.ReservoirQuantileAggregateMethod,
+            (false, true) => DuckDBGroupingExtensions.ReservoirQuantileWithSizeAggregateMethod,
+            (true, false) => DuckDBGroupingExtensions.ReservoirQuantileArrayAggregateMethod,
+            (true, true) => DuckDBGroupingExtensions.ReservoirQuantileArrayWithSizeAggregateMethod,
+        };
+
+        return sampleSize is null
+            ? Expression.Call(
+                aggregateMethod.MakeGenericMethod(selector.ReturnType),
+                projection,
+                quantile)
+            : Expression.Call(
+                aggregateMethod.MakeGenericMethod(selector.ReturnType),
+                projection,
+                quantile,
+                sampleSize);
     }
 
     private static Expression RewriteMax(

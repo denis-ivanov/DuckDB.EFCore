@@ -32,6 +32,22 @@ public static class DuckDBGroupingExtensions
             nameof(ApproxTopKAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo ReservoirQuantileAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Single(m => m.Name == nameof(ReservoirQuantileAggregate) && m.GetParameters().Length == 2 && m.GetParameters()[1].ParameterType == typeof(double));
+
+    internal static readonly MethodInfo ReservoirQuantileWithSizeAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Single(m => m.Name == nameof(ReservoirQuantileAggregate) && m.GetParameters().Length == 3 && m.GetParameters()[1].ParameterType == typeof(double));
+
+    internal static readonly MethodInfo ReservoirQuantileArrayAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Single(m => m.Name == nameof(ReservoirQuantileAggregate) && m.GetParameters().Length == 2 && m.GetParameters()[1].ParameterType == typeof(float[]));
+
+    internal static readonly MethodInfo ReservoirQuantileArrayWithSizeAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Single(m => m.Name == nameof(ReservoirQuantileAggregate) && m.GetParameters().Length == 3 && m.GetParameters()[1].ParameterType == typeof(float[]));
+
     internal static readonly MethodInfo ArgFirstAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(ArgFirstAggregate),
@@ -193,6 +209,52 @@ public static class DuckDBGroupingExtensions
         Func<TSource, TResult> selector,
         int k)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxTopK)));
+
+    /// <summary>
+    /// Translates to the DuckDB <c>RESERVOIR_QUANTILE</c> aggregate function, returning the approximate quantile
+    /// of all non-null values selected in the group using reservoir sampling.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult ReservoirQuantile<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector,
+        double quantile)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ReservoirQuantile)));
+
+    /// <summary>
+    /// Translates to the DuckDB <c>RESERVOIR_QUANTILE</c> aggregate function, returning the approximate quantile
+    /// of all non-null values selected in the group using reservoir sampling with the specified sample size.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult ReservoirQuantile<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector,
+        double quantile,
+        int sampleSize)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ReservoirQuantile)));
+
+    /// <summary>
+    /// Translates to the DuckDB <c>RESERVOIR_QUANTILE</c> aggregate function, returning the approximate quantiles
+    /// of all non-null values selected in the group at the specified positions using reservoir sampling.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult[] ReservoirQuantile<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector,
+        float[] quantile)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ReservoirQuantile)));
+
+    /// <summary>
+    /// Translates to the DuckDB <c>RESERVOIR_QUANTILE</c> aggregate function, returning the approximate quantiles
+    /// of all non-null values selected in the group at the specified positions using reservoir sampling with the specified sample size.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult[] ReservoirQuantile<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector,
+        float[] quantile,
+        int sampleSize)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ReservoirQuantile)));
 
     /// <summary>
     /// Translates to the DuckDB <c>FIRST</c> aggregate function, returning the first value selected in the group.
@@ -498,6 +560,18 @@ public static class DuckDBGroupingExtensions
 
     internal static TResult[] ApproxTopKAggregate<TResult>(IEnumerable<TResult> source, int k)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxTopKAggregate)));
+
+    internal static TResult ReservoirQuantileAggregate<TResult>(IEnumerable<TResult> source, double quantile)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ReservoirQuantileAggregate)));
+
+    internal static TResult ReservoirQuantileAggregate<TResult>(IEnumerable<TResult> source, double quantile, int sampleSize)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ReservoirQuantileAggregate)));
+
+    internal static TResult[] ReservoirQuantileAggregate<TResult>(IEnumerable<TResult> source, float[] quantile)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ReservoirQuantileAggregate)));
+
+    internal static TResult[] ReservoirQuantileAggregate<TResult>(IEnumerable<TResult> source, float[] quantile, int sampleSize)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ReservoirQuantileAggregate)));
 
     internal static TSource ArgFirstAggregate<TSource>(IEnumerable<TSource> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArgFirstAggregate)));
