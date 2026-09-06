@@ -217,17 +217,21 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
             }
         }
 
-        // Support APPROX_QUANTILE(arg, pos) and QUANTILE_CONT(arg, pos) aggregate functions
-        // (e.g., g.ApproxQuantile(e => e.Prop, 0.5), g.QuantileCont(e => e.Prop, 0.5), g.ApproxQuantile(e => e.Prop, new[] { 0.25f, 0.75f }))
+        // Support APPROX_QUANTILE(arg, pos), QUANTILE(arg, pos) and QUANTILE_CONT(arg, pos) aggregate functions
+        // (e.g., g.ApproxQuantile(e => e.Prop, 0.5), g.Quantile(e => e.Prop, 0.5), g.QuantileCont(e => e.Prop, 0.5), g.ApproxQuantile(e => e.Prop, new[] { 0.25f, 0.75f }))
         if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
             && (method.Name == nameof(DuckDBGroupingExtensions.ApproxQuantileAggregate)
+                || method.Name == nameof(DuckDBGroupingExtensions.QuantileAggregate)
                 || method.Name == nameof(DuckDBGroupingExtensions.QuantileContAggregate))
             && arguments.Count == 1
             && source.Selector is SqlExpression approxQuantileSelector)
         {
-            var functionName = method.Name == nameof(DuckDBGroupingExtensions.ApproxQuantileAggregate)
-                ? "APPROX_QUANTILE"
-                : "QUANTILE_CONT";
+            var functionName = method.Name switch
+            {
+                nameof(DuckDBGroupingExtensions.ApproxQuantileAggregate) => "APPROX_QUANTILE",
+                nameof(DuckDBGroupingExtensions.QuantileAggregate) => "QUANTILE",
+                _ => "QUANTILE_CONT"
+            };
 
             approxQuantileSelector = CombineTerms(source, approxQuantileSelector);
 
