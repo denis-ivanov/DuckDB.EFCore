@@ -41,6 +41,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                     or nameof(DuckDBGroupingExtensions.BoolOr)
                     or nameof(DuckDBGroupingExtensions.CountIf)
                     or nameof(DuckDBGroupingExtensions.Entropy)
+                    or nameof(DuckDBGroupingExtensions.Kurtosis)
                     or nameof(DuckDBGroupingExtensions.KurtosisPop)
                     or nameof(DuckDBGroupingExtensions.FAvg)
                     or nameof(DuckDBGroupingExtensions.FSum)
@@ -204,6 +205,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
             nameof(DuckDBGroupingExtensions.BoolOr) => DuckDBGroupingExtensions.BoolOrAggregateMethod,
             nameof(DuckDBGroupingExtensions.CountIf) => DuckDBGroupingExtensions.CountIfAggregateMethod,
             nameof(DuckDBGroupingExtensions.Entropy) => DuckDBGroupingExtensions.EntropyAggregateMethod,
+            nameof(DuckDBGroupingExtensions.Kurtosis) => DuckDBGroupingExtensions.KurtosisAggregateMethod,
             nameof(DuckDBGroupingExtensions.KurtosisPop) => DuckDBGroupingExtensions.KurtosisPopAggregateMethod,
             nameof(DuckDBGroupingExtensions.FAvg) => DuckDBGroupingExtensions.FAvgAggregateMethod,
             nameof(DuckDBGroupingExtensions.FSum) => DuckDBGroupingExtensions.FSumAggregateMethod,
