@@ -374,11 +374,12 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                     DuckDBBitStringTypeMapping.Default);
         }
 
-        // Support CORR(y, x) and COVAR_POP(y, x) aggregate functions
-        // (e.g., g.Corr(e => e.Y, e => e.X), g.CovarPop(e => e.Y, e => e.X))
+        // Support CORR(y, x), COVAR_POP(y, x) and COVAR_SAMP(y, x) aggregate functions
+        // (e.g., g.Corr(e => e.Y, e => e.X), g.CovarPop(e => e.Y, e => e.X), g.CovarSamp(e => e.Y, e => e.X))
         if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
             && (method.Name == nameof(DuckDBGroupingExtensions.CorrAggregate)
-                || method.Name == nameof(DuckDBGroupingExtensions.CovarPopAggregate))
+                || method.Name == nameof(DuckDBGroupingExtensions.CovarPopAggregate)
+                || method.Name == nameof(DuckDBGroupingExtensions.CovarSampAggregate))
             && source.Selector is DuckDBRowValueExpression { Values.Count: 2 } pairRowValue
             && !source.IsDistinct)
         {
@@ -391,9 +392,12 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                 x = CombineTerms(source, x);
             }
 
-            var functionName = method.Name == nameof(DuckDBGroupingExtensions.CorrAggregate)
-                ? "CORR"
-                : "COVAR_POP";
+            var functionName = method.Name switch
+            {
+                nameof(DuckDBGroupingExtensions.CorrAggregate) => "CORR",
+                nameof(DuckDBGroupingExtensions.CovarPopAggregate) => "COVAR_POP",
+                _ => "COVAR_SAMP"
+            };
 
             return _sqlExpressionFactory.Function(
                 functionName,

@@ -54,6 +54,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
 
                 case nameof(DuckDBGroupingExtensions.Corr)
                 or nameof(DuckDBGroupingExtensions.CovarPop)
+                or nameof(DuckDBGroupingExtensions.CovarSamp)
                     when methodCallExpression.Arguments.Count == 3
                         && UnwrapLambda(methodCallExpression.Arguments[1]) is { } ySelector
                         && UnwrapLambda(methodCallExpression.Arguments[2]) is { } xSelector:
@@ -61,9 +62,12 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                         Visit(methodCallExpression.Arguments[0]),
                         ySelector,
                         xSelector,
-                        methodCallExpression.Method.Name == nameof(DuckDBGroupingExtensions.Corr)
-                            ? DuckDBGroupingExtensions.CorrAggregateMethod
-                            : DuckDBGroupingExtensions.CovarPopAggregateMethod);
+                        methodCallExpression.Method.Name switch
+                        {
+                            nameof(DuckDBGroupingExtensions.Corr) => DuckDBGroupingExtensions.CorrAggregateMethod,
+                            nameof(DuckDBGroupingExtensions.CovarPop) => DuckDBGroupingExtensions.CovarPopAggregateMethod,
+                            _ => DuckDBGroupingExtensions.CovarSampAggregateMethod
+                        });
 
                 case nameof(DuckDBGroupingExtensions.ApproxQuantile)
                     when methodCallExpression.Arguments.Count == 3
