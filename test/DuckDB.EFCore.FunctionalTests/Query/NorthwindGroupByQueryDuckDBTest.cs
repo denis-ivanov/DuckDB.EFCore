@@ -1364,6 +1364,58 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
     }
 
     [ConditionalFact]
+    public void GroupBy_Median_translates_to_MEDIAN()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                Median = g.Median(o => o.OrderID)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", MEDIAN(o."OrderID") AS "Median"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_Median_with_nullable_selector_returns_null_for_all_null_group()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                Median = g.Median(o => o.OrderID > 11000 ? o.OrderID : (int?)null)
+            })
+            .ToList();
+
+        Assert.Contains(results, r => r.Median == null);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", MEDIAN(CASE
+                WHEN o."OrderID" > 11000 THEN o."OrderID"
+            END) AS "Median"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
     public void GroupBy_CovarSamp_translates_to_COVAR_SAMP()
     {
         using var context = CreateContext();

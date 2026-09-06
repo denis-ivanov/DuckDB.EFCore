@@ -44,6 +44,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                     or nameof(DuckDBGroupingExtensions.Kurtosis)
                     or nameof(DuckDBGroupingExtensions.KurtosisPop)
                     or nameof(DuckDBGroupingExtensions.Mad)
+                    or nameof(DuckDBGroupingExtensions.Median)
                     or nameof(DuckDBGroupingExtensions.FAvg)
                     or nameof(DuckDBGroupingExtensions.FSum)
                     or nameof(DuckDBGroupingExtensions.Histogram)
@@ -209,6 +210,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
             nameof(DuckDBGroupingExtensions.Kurtosis) => DuckDBGroupingExtensions.KurtosisAggregateMethod,
             nameof(DuckDBGroupingExtensions.KurtosisPop) => DuckDBGroupingExtensions.KurtosisPopAggregateMethod,
             nameof(DuckDBGroupingExtensions.Mad) => DuckDBGroupingExtensions.MadAggregateMethod,
+            nameof(DuckDBGroupingExtensions.Median) => DuckDBGroupingExtensions.MedianAggregateMethod,
             nameof(DuckDBGroupingExtensions.FAvg) => DuckDBGroupingExtensions.FAvgAggregateMethod,
             nameof(DuckDBGroupingExtensions.FSum) => DuckDBGroupingExtensions.FSumAggregateMethod,
             nameof(DuckDBGroupingExtensions.Histogram) => DuckDBGroupingExtensions.HistogramAggregateMethod,
