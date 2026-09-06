@@ -1154,6 +1154,60 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
     }
 
     [ConditionalFact]
+    public void GroupBy_Entropy_translates_to_ENTROPY()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                Entropy = g.Entropy(o => o.EmployeeID)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.NotNull(r.Entropy));
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", ENTROPY(o."EmployeeID") AS "Entropy"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_Entropy_with_nullable_selector_translates_to_ENTROPY()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                Entropy = g.Entropy(o => o.OrderID > 11000 ? o.EmployeeID : (uint?)null)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.NotNull(r.Entropy));
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", ENTROPY(CASE
+                WHEN o."OrderID" > 11000 THEN o."EmployeeID"
+            END) AS "Entropy"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
     public void GroupBy_CovarSamp_translates_to_COVAR_SAMP()
     {
         using var context = CreateContext();
