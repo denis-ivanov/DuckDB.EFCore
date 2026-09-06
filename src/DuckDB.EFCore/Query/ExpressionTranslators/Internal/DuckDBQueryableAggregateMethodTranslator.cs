@@ -192,6 +192,7 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
             {
                 nameof(DuckDBGroupingExtensions.ApproxCountDistinctAggregate) => "APPROX_COUNT_DISTINCT",
                 nameof(DuckDBGroupingExtensions.CountIfAggregate) => "COUNTIF",
+                nameof(DuckDBGroupingExtensions.EntropyAggregate) => "ENTROPY",
                 nameof(DuckDBGroupingExtensions.FAvgAggregate) => "FAVG",
                 nameof(DuckDBGroupingExtensions.FSumAggregate) => "FSUM",
                 nameof(DuckDBGroupingExtensions.GeometricMeanAggregate) => "GEOMETRIC_MEAN",
