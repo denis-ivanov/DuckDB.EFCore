@@ -275,6 +275,84 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
     }
 
     [ConditionalFact]
+    public void GroupBy_QuantileDisc_translates_to_QUANTILE_DISC()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                MedianOrderId = g.QuantileDisc(o => o.OrderID, 0.5)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", QUANTILE_DISC(o."OrderID", 0.5) AS "MedianOrderId"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_QuantileDisc_with_array_translates_to_QUANTILE_DISC()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                Quantiles = g.QuantileDisc(o => o.OrderID, new[] { 0.25f, 0.75f })
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+        Assert.All(results, r => Assert.NotEmpty(r.Quantiles));
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", QUANTILE_DISC(o."OrderID", [0.25, 0.75]::FLOAT[]) AS "Quantiles"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_QuantileDisc_with_nullable_selector_returns_null_for_all_null_group()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                MedianOrderId = g.QuantileDisc(o => o.OrderID > 11000 ? o.OrderID : (int?)null, 0.5)
+            })
+            .ToList();
+
+        Assert.Contains(results, r => r.MedianOrderId == null);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", QUANTILE_DISC(CASE
+                WHEN o."OrderID" > 11000 THEN o."OrderID"
+            END, 0.5) AS "MedianOrderId"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
     public void GroupBy_ApproxTopK_translates_to_APPROX_TOP_K()
     {
         using var context = CreateContext();

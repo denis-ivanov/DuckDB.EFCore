@@ -78,6 +78,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                 case nameof(DuckDBGroupingExtensions.ApproxQuantile)
                 or nameof(DuckDBGroupingExtensions.Quantile)
                 or nameof(DuckDBGroupingExtensions.QuantileCont)
+                or nameof(DuckDBGroupingExtensions.QuantileDisc)
                     when methodCallExpression.Arguments.Count == 3
                         && UnwrapLambda(methodCallExpression.Arguments[1]) is { } quantileSelector:
                     return RewriteQuantile(
@@ -88,7 +89,8 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                         {
                             nameof(DuckDBGroupingExtensions.ApproxQuantile) => (DuckDBGroupingExtensions.ApproxQuantileAggregateMethod, DuckDBGroupingExtensions.ApproxQuantileArrayAggregateMethod),
                             nameof(DuckDBGroupingExtensions.Quantile) => (DuckDBGroupingExtensions.QuantileAggregateMethod, DuckDBGroupingExtensions.QuantileArrayAggregateMethod),
-                            _ => (DuckDBGroupingExtensions.QuantileContAggregateMethod, DuckDBGroupingExtensions.QuantileContArrayAggregateMethod)
+                            nameof(DuckDBGroupingExtensions.QuantileCont) => (DuckDBGroupingExtensions.QuantileContAggregateMethod, DuckDBGroupingExtensions.QuantileContArrayAggregateMethod),
+                            _ => (DuckDBGroupingExtensions.QuantileDiscAggregateMethod, DuckDBGroupingExtensions.QuantileDiscArrayAggregateMethod)
                         });
 
                 case nameof(DuckDBGroupingExtensions.BitStringAgg)
