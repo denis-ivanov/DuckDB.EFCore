@@ -129,6 +129,11 @@ public static class DuckDBGroupingExtensions
             nameof(EntropyAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo KurtosisAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(KurtosisAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     internal static readonly MethodInfo KurtosisPopAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(KurtosisPopAggregate),
@@ -564,6 +569,17 @@ public static class DuckDBGroupingExtensions
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Entropy)));
 
     /// <summary>
+    /// Translates to the DuckDB <c>KURTOSIS</c> aggregate function, returning the sample excess kurtosis
+    /// of all non-null values selected in the group.
+    /// Returns <see langword="null" /> when the group contains no non-null values.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static double? Kurtosis<TKey, TSource, TValue>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TValue> selector)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Kurtosis)));
+
+    /// <summary>
     /// Translates to the DuckDB <c>KURTOSIS_POP</c> aggregate function, returning the population excess kurtosis
     /// of all non-null values selected in the group.
     /// Returns <see langword="null" /> when the group contains no non-null values.
@@ -700,6 +716,9 @@ public static class DuckDBGroupingExtensions
 
     internal static double? EntropyAggregate<TValue>(IEnumerable<TValue> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(EntropyAggregate)));
+
+    internal static double? KurtosisAggregate<TValue>(IEnumerable<TValue> source)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(KurtosisAggregate)));
 
     internal static double? KurtosisPopAggregate<TValue>(IEnumerable<TValue> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(KurtosisPopAggregate)));
