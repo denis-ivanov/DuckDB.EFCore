@@ -217,17 +217,22 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
             }
         }
 
-        // Support APPROX_QUANTILE(arg, pos) aggregate function
-        // (e.g., g.ApproxQuantile(e => e.Prop, 0.5), g.ApproxQuantile(e => e.Prop, new[] { 0.25f, 0.75f }))
+        // Support APPROX_QUANTILE(arg, pos) and QUANTILE_CONT(arg, pos) aggregate functions
+        // (e.g., g.ApproxQuantile(e => e.Prop, 0.5), g.QuantileCont(e => e.Prop, 0.5), g.ApproxQuantile(e => e.Prop, new[] { 0.25f, 0.75f }))
         if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
-            && method.Name == nameof(DuckDBGroupingExtensions.ApproxQuantileAggregate)
+            && (method.Name == nameof(DuckDBGroupingExtensions.ApproxQuantileAggregate)
+                || method.Name == nameof(DuckDBGroupingExtensions.QuantileContAggregate))
             && arguments.Count == 1
             && source.Selector is SqlExpression approxQuantileSelector)
         {
+            var functionName = method.Name == nameof(DuckDBGroupingExtensions.ApproxQuantileAggregate)
+                ? "APPROX_QUANTILE"
+                : "QUANTILE_CONT";
+
             approxQuantileSelector = CombineTerms(source, approxQuantileSelector);
 
             return _sqlExpressionFactory.Function(
-                "APPROX_QUANTILE",
+                functionName,
                 [approxQuantileSelector, arguments[0]],
                 nullable: true,
                 argumentsPropagateNullability: [false, false],

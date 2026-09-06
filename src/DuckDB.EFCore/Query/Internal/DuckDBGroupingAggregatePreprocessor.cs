@@ -76,12 +76,16 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                         });
 
                 case nameof(DuckDBGroupingExtensions.ApproxQuantile)
+                or nameof(DuckDBGroupingExtensions.QuantileCont)
                     when methodCallExpression.Arguments.Count == 3
-                        && UnwrapLambda(methodCallExpression.Arguments[1]) is { } approxQuantileSelector:
-                    return RewriteApproxQuantile(
+                        && UnwrapLambda(methodCallExpression.Arguments[1]) is { } quantileSelector:
+                    return RewriteQuantile(
                         Visit(methodCallExpression.Arguments[0]),
-                        approxQuantileSelector,
-                        Visit(methodCallExpression.Arguments[2]));
+                        quantileSelector,
+                        Visit(methodCallExpression.Arguments[2]),
+                        methodCallExpression.Method.Name == nameof(DuckDBGroupingExtensions.ApproxQuantile)
+                            ? (DuckDBGroupingExtensions.ApproxQuantileAggregateMethod, DuckDBGroupingExtensions.ApproxQuantileArrayAggregateMethod)
+                            : (DuckDBGroupingExtensions.QuantileContAggregateMethod, DuckDBGroupingExtensions.QuantileContArrayAggregateMethod));
 
                 case nameof(DuckDBGroupingExtensions.BitStringAgg)
                     when methodCallExpression.Arguments.Count is 2 or 4
@@ -228,16 +232,17 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
         return Expression.Call(aggregateMethod.MakeGenericMethod(selector.ReturnType), projection);
     }
 
-    private static Expression RewriteApproxQuantile(
+    private static Expression RewriteQuantile(
         Expression source,
         LambdaExpression selector,
-        Expression pos)
+        Expression pos,
+        (MethodInfo Single, MethodInfo Array) methods)
     {
         var projection = Project(source, selector);
 
         var aggregateMethod = pos.Type == typeof(float[])
-            ? DuckDBGroupingExtensions.ApproxQuantileArrayAggregateMethod
-            : DuckDBGroupingExtensions.ApproxQuantileAggregateMethod;
+            ? methods.Array
+            : methods.Single;
 
         return Expression.Call(
             aggregateMethod.MakeGenericMethod(selector.ReturnType),
