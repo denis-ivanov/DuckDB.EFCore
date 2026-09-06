@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Reflection;
 
+// ReSharper disable once CheckNamespace
 namespace Microsoft.EntityFrameworkCore;
 
 /// <summary>
@@ -137,6 +138,11 @@ public static class DuckDBGroupingExtensions
     internal static readonly MethodInfo KurtosisPopAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(KurtosisPopAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
+    internal static readonly MethodInfo MadAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(MadAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
     internal static readonly MethodInfo FAvgAggregateMethod
@@ -591,6 +597,17 @@ public static class DuckDBGroupingExtensions
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(KurtosisPop)));
 
     /// <summary>
+    /// Translates to the DuckDB <c>MAD</c> aggregate function, returning the median absolute deviation of all
+    /// non-null values selected in the group.
+    /// Returns <see langword="null" /> when the group contains no non-null values.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static double? Mad<TKey, TSource, TValue>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TValue> selector)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Mad)));
+
+    /// <summary>
     /// Translates to the DuckDB <c>FAVG</c> aggregate function, returning the average of all non-null values
     /// selected in the group using Kahan compensated summation, which is more accurate than <c>AVG</c> when
     /// the values differ widely in magnitude.
@@ -722,6 +739,9 @@ public static class DuckDBGroupingExtensions
 
     internal static double? KurtosisPopAggregate<TValue>(IEnumerable<TValue> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(KurtosisPopAggregate)));
+
+    internal static double? MadAggregate<TValue>(IEnumerable<TValue> source)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(MadAggregate)));
 
     internal static double? CorrAggregate<TY, TX>(IEnumerable<ValueTuple<TY, TX>> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(CorrAggregate)));
