@@ -338,6 +338,7 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                 nameof(DuckDBGroupingExtensions.BitXorAggregate) => "BIT_XOR",
                 nameof(DuckDBGroupingExtensions.BoolAndAggregate) => "BOOL_AND",
                 nameof(DuckDBGroupingExtensions.BoolOrAggregate) => "BOOL_OR",
+                nameof(DuckDBGroupingExtensions.ModeAggregate) => "MODE",
                 _ => null
             };
 

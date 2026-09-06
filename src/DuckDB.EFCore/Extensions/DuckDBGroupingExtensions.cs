@@ -150,6 +150,11 @@ public static class DuckDBGroupingExtensions
             nameof(MedianAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo ModeAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(ModeAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     internal static readonly MethodInfo FAvgAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(FAvgAggregate),
@@ -624,6 +629,17 @@ public static class DuckDBGroupingExtensions
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Median)));
 
     /// <summary>
+    /// Translates to the DuckDB <c>MODE</c> aggregate function, returning the most frequent value (mode)
+    /// of all non-null values selected in the group. When multiple values have the same frequency,
+    /// returns the first encountered value.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult Mode<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Mode)));
+
+    /// <summary>
     /// Translates to the DuckDB <c>FAVG</c> aggregate function, returning the average of all non-null values
     /// selected in the group using Kahan compensated summation, which is more accurate than <c>AVG</c> when
     /// the values differ widely in magnitude.
@@ -761,6 +777,9 @@ public static class DuckDBGroupingExtensions
 
     internal static double? MedianAggregate<TValue>(IEnumerable<TValue> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(MedianAggregate)));
+
+    internal static TSource ModeAggregate<TSource>(IEnumerable<TSource> source)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ModeAggregate)));
 
     internal static double? CorrAggregate<TY, TX>(IEnumerable<ValueTuple<TY, TX>> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(CorrAggregate)));
