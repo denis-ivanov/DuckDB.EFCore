@@ -53,13 +53,17 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                         GetSingleSelectorAggregateMethod(methodCallExpression.Method.Name));
 
                 case nameof(DuckDBGroupingExtensions.Corr)
+                or nameof(DuckDBGroupingExtensions.CovarPop)
                     when methodCallExpression.Arguments.Count == 3
                         && UnwrapLambda(methodCallExpression.Arguments[1]) is { } ySelector
                         && UnwrapLambda(methodCallExpression.Arguments[2]) is { } xSelector:
-                    return RewriteCorr(
+                    return RewritePairAggregate(
                         Visit(methodCallExpression.Arguments[0]),
                         ySelector,
-                        xSelector);
+                        xSelector,
+                        methodCallExpression.Method.Name == nameof(DuckDBGroupingExtensions.Corr)
+                            ? DuckDBGroupingExtensions.CorrAggregateMethod
+                            : DuckDBGroupingExtensions.CovarPopAggregateMethod);
 
                 case nameof(DuckDBGroupingExtensions.ApproxQuantile)
                     when methodCallExpression.Arguments.Count == 3
@@ -336,10 +340,11 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
             count);
     }
 
-    private static Expression RewriteCorr(
+    private static Expression RewritePairAggregate(
         Expression source,
         LambdaExpression ySelector,
-        LambdaExpression xSelector)
+        LambdaExpression xSelector,
+        MethodInfo aggregateMethod)
     {
         var parameter = ySelector.Parameters[0];
         var xBody = ReplacingExpressionVisitor.Replace(xSelector.Parameters[0], parameter, xSelector.Body);
@@ -354,7 +359,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
         var projection = Project(source, tupleSelector);
 
         return Expression.Call(
-            DuckDBGroupingExtensions.CorrAggregateMethod.MakeGenericMethod(yType, xType),
+            aggregateMethod.MakeGenericMethod(yType, xType),
             projection);
     }
 
