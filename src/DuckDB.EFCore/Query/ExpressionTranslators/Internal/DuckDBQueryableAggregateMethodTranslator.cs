@@ -196,6 +196,7 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                 nameof(DuckDBGroupingExtensions.KurtosisAggregate) => "KURTOSIS",
                 nameof(DuckDBGroupingExtensions.KurtosisPopAggregate) => "KURTOSIS_POP",
                 nameof(DuckDBGroupingExtensions.MadAggregate) => "MAD",
+                nameof(DuckDBGroupingExtensions.MedianAggregate) => "MEDIAN",
                 nameof(DuckDBGroupingExtensions.FAvgAggregate) => "FAVG",
                 nameof(DuckDBGroupingExtensions.FSumAggregate) => "FSUM",
                 nameof(DuckDBGroupingExtensions.GeometricMeanAggregate) => "GEOMETRIC_MEAN",
