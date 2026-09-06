@@ -28,6 +28,14 @@ public static class DuckDBGroupingExtensions
         = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
             .Single(m => m.Name == nameof(ApproxQuantileAggregate) && m.GetParameters().Length == 2 && m.GetParameters()[1].ParameterType == typeof(float[]));
 
+    internal static readonly MethodInfo QuantileContAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Single(m => m.Name == nameof(QuantileContAggregate) && m.GetParameters().Length == 2 && m.GetParameters()[1].ParameterType == typeof(double));
+
+    internal static readonly MethodInfo QuantileContArrayAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
+            .Single(m => m.Name == nameof(QuantileContAggregate) && m.GetParameters().Length == 2 && m.GetParameters()[1].ParameterType == typeof(float[]));
+
     internal static readonly MethodInfo ApproxTopKAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(ApproxTopKAggregate),
@@ -244,6 +252,28 @@ public static class DuckDBGroupingExtensions
         Func<TSource, TResult> selector,
         float[] pos)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxQuantile)));
+
+    /// <summary>
+    /// Translates to the DuckDB <c>QUANTILE_CONT</c> aggregate function, returning the interpolated quantile
+    /// of all non-null values selected in the group at the specified position.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult QuantileCont<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector,
+        double pos)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(QuantileCont)));
+
+    /// <summary>
+    /// Translates to the DuckDB <c>QUANTILE_CONT</c> aggregate function, returning the interpolated quantiles
+    /// of all non-null values selected in the group at the specified positions.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static TResult[] QuantileCont<TKey, TSource, TResult>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TResult> selector,
+        float[] pos)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(QuantileCont)));
 
     /// <summary>
     /// Translates to the DuckDB <c>APPROX_TOP_K</c> aggregate function, returning the <paramref name="k" /> approximately
@@ -702,6 +732,12 @@ public static class DuckDBGroupingExtensions
 
     internal static TResult[] ApproxQuantileAggregate<TResult>(IEnumerable<TResult> source, float[] pos)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxQuantileAggregate)));
+
+    internal static TResult QuantileContAggregate<TResult>(IEnumerable<TResult> source, double pos)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(QuantileContAggregate)));
+
+    internal static TResult[] QuantileContAggregate<TResult>(IEnumerable<TResult> source, float[] pos)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(QuantileContAggregate)));
 
     internal static TResult[] ApproxTopKAggregate<TResult>(IEnumerable<TResult> source, int k)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ApproxTopKAggregate)));
