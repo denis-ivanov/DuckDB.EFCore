@@ -43,6 +43,11 @@ public class DuckDBDateOnlyMemberTranslator : IMemberTranslator
     /// </summary>
     public SqlExpression? Translate(SqlExpression? instance, MemberInfo member, Type returnType, IDiagnosticsLogger<DbLoggerCategory.Query> logger)
     {
+        if (instance is null)
+        {
+            return null;
+        }
+        
         if (member == Year)
         {
             return _sqlExpressionFactory.Year(instance);

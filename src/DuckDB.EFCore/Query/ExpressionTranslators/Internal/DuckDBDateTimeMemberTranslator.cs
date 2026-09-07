@@ -53,42 +53,42 @@ public class DuckDBDateTimeMemberTranslator : IMemberTranslator
     /// </summary>
     public SqlExpression? Translate(SqlExpression? instance, MemberInfo member, Type returnType, IDiagnosticsLogger<DbLoggerCategory.Query> logger)
     {
-        if (member == Year)
+        if (member == Year && instance is not null)
         {
             return _sqlExpressionFactory.Year(instance);
         }
 
-        if (member == Month)
+        if (member == Month && instance is not null)
         {
             return _sqlExpressionFactory.Month(instance);
         }
 
-        if (member == Day)
+        if (member == Day && instance is not null)
         {
             return _sqlExpressionFactory.Day(instance);
         }
 
-        if (member == Hour)
+        if (member == Hour && instance is not null)
         {
             return _sqlExpressionFactory.Hour(instance);
         }
 
-        if (member == Minute)
+        if (member == Minute && instance is not null)
         {
             return _sqlExpressionFactory.Minute(instance);
         }
 
-        if (member == Second)
+        if (member == Second && instance is not null)
         {
             return _sqlExpressionFactory.Second(instance);
         }
 
-        if (member == Millisecond)
+        if (member == Millisecond && instance is not null)
         {
             return _sqlExpressionFactory.Millisecond(instance);
         }
 
-        if (member == Date)
+        if (member == Date && instance is not null)
         {
             return _sqlExpressionFactory.Convert(
                 instance,
@@ -135,7 +135,7 @@ public class DuckDBDateTimeMemberTranslator : IMemberTranslator
                 _typeMappingSource.FindMapping(typeof(DateTime)));
         }
 
-        if (member == DayOfYear)
+        if (member == DayOfYear && instance is not null)
         {
             return _sqlExpressionFactory.Function(
                 name: "dayofyear",

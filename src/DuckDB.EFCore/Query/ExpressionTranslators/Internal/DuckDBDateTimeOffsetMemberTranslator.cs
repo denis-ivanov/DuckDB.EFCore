@@ -47,6 +47,11 @@ public class DuckDBDateTimeOffsetMemberTranslator : IMemberTranslator
         Type returnType,
         IDiagnosticsLogger<DbLoggerCategory.Query> logger)
     {
+        if (instance is null)
+        {
+            return null;
+        }
+
         if (member == Year)
         {
             return _sqlExpressionFactory.Year(instance);
@@ -72,11 +77,6 @@ public class DuckDBDateTimeOffsetMemberTranslator : IMemberTranslator
             return _sqlExpressionFactory.Minute(instance);
         }
 
-        if (member == Second)
-        {
-            return _sqlExpressionFactory.Second(instance);
-        }
-
-        return null;
+        return member == Second ? _sqlExpressionFactory.Second(instance) : null;
     }
 }
