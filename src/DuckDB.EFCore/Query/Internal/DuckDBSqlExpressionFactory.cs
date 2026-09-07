@@ -51,7 +51,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual SqlExpression Year(SqlExpression? expression)
+    public virtual SqlExpression Year(SqlExpression expression)
     {
         return Function(
             name: "year",
@@ -67,7 +67,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual SqlExpression Month(SqlExpression? expression)
+    public virtual SqlExpression Month(SqlExpression expression)
     {
         return Function(
             name: "month",
@@ -83,7 +83,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual SqlExpression Day(SqlExpression? expression)
+    public virtual SqlExpression Day(SqlExpression expression)
     {
         return Function(
             name: "day",
@@ -99,7 +99,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual SqlExpression Hour(SqlExpression? expression)
+    public virtual SqlExpression Hour(SqlExpression expression)
     {
         return Function(
             name: "hour",
@@ -115,7 +115,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual SqlExpression Minute(SqlExpression? expression)
+    public virtual SqlExpression Minute(SqlExpression expression)
     {
         return Function(
             name: "minute",
@@ -131,7 +131,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual SqlExpression Second(SqlExpression? expression)
+    public virtual SqlExpression Second(SqlExpression expression)
     {
         return Function(
             name: "second",
@@ -147,7 +147,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual SqlExpression Millisecond(SqlExpression? expression)
+    public virtual SqlExpression Millisecond(SqlExpression expression)
     {
         return Function(
             name: "millisecond",
@@ -163,7 +163,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual SqlExpression MicrosecondComponent(SqlExpression? expression)
+    public virtual SqlExpression MicrosecondComponent(SqlExpression expression)
     {
         var microsecondTotal = Function(
             name: "microsecond",
