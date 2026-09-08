@@ -139,6 +139,11 @@ public static class DuckDBGroupingExtensions
             nameof(RegrAvgxAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo RegrAvgyAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(RegrAvgyAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     internal static readonly MethodInfo BoolAndAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(BoolAndAggregate),
@@ -681,6 +686,18 @@ public static class DuckDBGroupingExtensions
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegrAvgx)));
 
     /// <summary>
+    /// Translates to the DuckDB <c>REGR_AVGY</c> aggregate function, returning the average of the dependent variable
+    /// <paramref name="y" /> for non-null pairs in a group (<c>sum(y)/count(y)</c>).
+    /// Returns <see langword="null" /> when the group contains no non-null pairs.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static double? RegrAvgy<TKey, TSource, TY, TX>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TY> y,
+        Func<TSource, TX> x)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegrAvgy)));
+
+    /// <summary>
     /// Translates to the DuckDB <c>ENTROPY</c> aggregate function, returning the log-2 entropy of count values (Shannon entropy)
     /// of all non-null values selected in the group.
     /// Returns <see langword="null" /> when the group contains no non-null values.
@@ -917,6 +934,9 @@ public static class DuckDBGroupingExtensions
 
     internal static double? RegrAvgxAggregate<TY, TX>(IEnumerable<ValueTuple<TY, TX>> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegrAvgxAggregate)));
+
+    internal static double? RegrAvgyAggregate<TY, TX>(IEnumerable<ValueTuple<TY, TX>> source)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegrAvgyAggregate)));
 
     internal static double? FAvgAggregate<TValue>(IEnumerable<TValue> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(FAvgAggregate)));
