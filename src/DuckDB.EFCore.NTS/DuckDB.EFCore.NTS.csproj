@@ -5,9 +5,9 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>true</IsPackable>
-        <PackageVersion>1.0.4</PackageVersion>
-        <FileVersion>1.0.4</FileVersion>
-        <Version>1.0.4</Version>
+        <PackageVersion>1.0.5</PackageVersion>
+        <FileVersion>1.0.5</FileVersion>
+        <Version>1.0.5</Version>
         <Authors>Denis Ivanov</Authors>
         <Description>NetTopologySuite (spatial) support for the DuckDB provider for Entity Framework Core.</Description>
         <PackageTags>DuckDB; Entity Framework Core; EF Core; NetTopologySuite; Spatial; GIS</PackageTags>
@@ -16,6 +16,9 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryUrl>https://github.com/denis-ivanov/DuckDB.EFCore</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
+        <PackageReleaseNotes>
+            Reelease notes: https://github.com/denis-ivanov/DuckDB.EFCore/releases/tag/v1.0.5
+        </PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
