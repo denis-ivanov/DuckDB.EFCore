@@ -391,15 +391,16 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                     DuckDBBitStringTypeMapping.Default);
         }
 
-        // Support CORR(y, x), COVAR_POP(y, x), COVAR_SAMP(y, x), REGR_AVGX(y, x), REGR_AVGY(y, x) and REGR_COUNT(y, x) aggregate functions
-        // (e.g., g.Corr(e => e.Y, e => e.X), g.CovarPop(e => e.Y, e => e.X), g.CovarSamp(e => e.Y, e => e.X), g.RegrAvgx(e => e.Y, e => e.X), g.RegrAvgy(e => e.Y, e => e.X), g.RegrCount(e => e.Y, e => e.X))
+        // Support CORR(y, x), COVAR_POP(y, x), COVAR_SAMP(y, x), REGR_AVGX(y, x), REGR_AVGY(y, x), REGR_COUNT(y, x) and REGR_INTERCEPT(y, x) aggregate functions
+        // (e.g., g.Corr(e => e.Y, e => e.X), g.CovarPop(e => e.Y, e => e.X), g.CovarSamp(e => e.Y, e => e.X), g.RegrAvgx(e => e.Y, e => e.X), g.RegrAvgy(e => e.Y, e => e.X), g.RegrCount(e => e.Y, e => e.X), g.RegrIntercept(e => e.Y, e => e.X))
         if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
             && (method.Name == nameof(DuckDBGroupingExtensions.CorrAggregate)
                 || method.Name == nameof(DuckDBGroupingExtensions.CovarPopAggregate)
                 || method.Name == nameof(DuckDBGroupingExtensions.CovarSampAggregate)
                 || method.Name == nameof(DuckDBGroupingExtensions.RegrAvgxAggregate)
                 || method.Name == nameof(DuckDBGroupingExtensions.RegrAvgyAggregate)
-                || method.Name == nameof(DuckDBGroupingExtensions.RegrCountAggregate))
+                || method.Name == nameof(DuckDBGroupingExtensions.RegrCountAggregate)
+                || method.Name == nameof(DuckDBGroupingExtensions.RegrInterceptAggregate))
             && source.Selector is DuckDBRowValueExpression { Values.Count: 2 } pairRowValue
             && !source.IsDistinct)
         {
@@ -419,7 +420,8 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                 nameof(DuckDBGroupingExtensions.CovarSampAggregate) => "COVAR_SAMP",
                 nameof(DuckDBGroupingExtensions.RegrAvgxAggregate) => "REGR_AVGX",
                 nameof(DuckDBGroupingExtensions.RegrAvgyAggregate) => "REGR_AVGY",
-                _ => "REGR_COUNT"
+                nameof(DuckDBGroupingExtensions.RegrCountAggregate) => "REGR_COUNT",
+                _ => "REGR_INTERCEPT"
             };
 
             return _sqlExpressionFactory.Function(
