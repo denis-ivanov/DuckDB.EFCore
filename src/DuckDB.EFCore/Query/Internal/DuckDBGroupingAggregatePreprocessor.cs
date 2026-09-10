@@ -64,6 +64,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                 or nameof(DuckDBGroupingExtensions.RegrAvgx)
                 or nameof(DuckDBGroupingExtensions.RegrAvgy)
                 or nameof(DuckDBGroupingExtensions.RegrCount)
+                or nameof(DuckDBGroupingExtensions.RegrIntercept)
                     when methodCallExpression.Arguments.Count == 3
                         && UnwrapLambda(methodCallExpression.Arguments[1]) is { } ySelector
                         && UnwrapLambda(methodCallExpression.Arguments[2]) is { } xSelector:
@@ -78,7 +79,8 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                             nameof(DuckDBGroupingExtensions.CovarSamp) => DuckDBGroupingExtensions.CovarSampAggregateMethod,
                             nameof(DuckDBGroupingExtensions.RegrAvgx) => DuckDBGroupingExtensions.RegrAvgxAggregateMethod,
                             nameof(DuckDBGroupingExtensions.RegrAvgy) => DuckDBGroupingExtensions.RegrAvgyAggregateMethod,
-                            _ => DuckDBGroupingExtensions.RegrCountAggregateMethod
+                            nameof(DuckDBGroupingExtensions.RegrCount) => DuckDBGroupingExtensions.RegrCountAggregateMethod,
+                            _ => DuckDBGroupingExtensions.RegrInterceptAggregateMethod
                         });
 
                 case nameof(DuckDBGroupingExtensions.ApproxQuantile)
