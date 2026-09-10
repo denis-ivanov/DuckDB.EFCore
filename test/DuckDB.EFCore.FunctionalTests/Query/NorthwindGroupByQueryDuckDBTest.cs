@@ -1961,6 +1961,58 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
+    [ConditionalFact]
+    public void GroupBy_RegrR2_translates_to_REGR_R2()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                R2 = g.RegrR2(o => o.EmployeeID, o => o.OrderID)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", REGR_R2(o."EmployeeID", o."OrderID") AS "R2"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_RegrR2_with_nullable_selector_returns_null_for_all_null_group()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                R2 = g.RegrR2(o => o.OrderID > 11000 ? o.EmployeeID : (uint?)null, o => o.OrderID)
+            })
+            .ToList();
+
+        Assert.Contains(results, r => r.R2 == null);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", REGR_R2(CASE
+                WHEN o."OrderID" > 11000 THEN o."EmployeeID"
+            END, o."OrderID") AS "R2"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
