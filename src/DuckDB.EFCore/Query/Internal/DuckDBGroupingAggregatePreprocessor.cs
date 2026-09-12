@@ -69,6 +69,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                 or nameof(DuckDBGroupingExtensions.RegrSlope)
                 or nameof(DuckDBGroupingExtensions.RegrSxx)
                 or nameof(DuckDBGroupingExtensions.RegrSxy)
+                or nameof(DuckDBGroupingExtensions.RegrSyy)
                     when methodCallExpression.Arguments.Count == 3
                         && UnwrapLambda(methodCallExpression.Arguments[1]) is { } ySelector
                         && UnwrapLambda(methodCallExpression.Arguments[2]) is { } xSelector:
@@ -88,7 +89,8 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                             nameof(DuckDBGroupingExtensions.RegrR2) => DuckDBGroupingExtensions.RegrR2AggregateMethod,
                             nameof(DuckDBGroupingExtensions.RegrSlope) => DuckDBGroupingExtensions.RegrSlopeAggregateMethod,
                             nameof(DuckDBGroupingExtensions.RegrSxx) => DuckDBGroupingExtensions.RegrSxxAggregateMethod,
-                            _ => DuckDBGroupingExtensions.RegrSxyAggregateMethod
+                            nameof(DuckDBGroupingExtensions.RegrSxy) => DuckDBGroupingExtensions.RegrSxyAggregateMethod,
+                            _ => DuckDBGroupingExtensions.RegrSyyAggregateMethod
                         });
 
                 case nameof(DuckDBGroupingExtensions.ApproxQuantile)
