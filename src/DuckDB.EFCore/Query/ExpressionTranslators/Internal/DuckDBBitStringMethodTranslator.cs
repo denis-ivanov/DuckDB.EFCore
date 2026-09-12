@@ -23,6 +23,7 @@ public class DuckDBBitStringMethodTranslator : IMethodCallTranslator
     private static readonly MethodInfo Xor = typeof(BitArray).GetMethod(nameof(BitArray.Xor), [typeof(BitArray)])!;
     private static readonly MethodInfo Not = typeof(BitArray).GetMethod(nameof(BitArray.Not), Type.EmptyTypes)!;
     private static readonly MethodInfo LeftShift = typeof(BitArray).GetMethod(nameof(BitArray.LeftShift), [typeof(int)])!;
+    private static readonly MethodInfo RightShift = typeof(BitArray).GetMethod(nameof(BitArray.RightShift), [typeof(int)])!;
 
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
     private readonly ITypeMappingSource _typeMappingSource;
@@ -94,6 +95,16 @@ public class DuckDBBitStringMethodTranslator : IMethodCallTranslator
             {
                 return new DuckDBBinaryExpression(
                     ExpressionType.LeftShift,
+                    instance,
+                    _sqlExpressionFactory.ApplyDefaultTypeMapping(arguments[0]),
+                    instance.Type,
+                    (RelationalTypeMapping?)_typeMappingSource.FindMapping(typeof(BitArray)));
+            }
+
+            if (method == RightShift)
+            {
+                return new DuckDBBinaryExpression(
+                    ExpressionType.RightShift,
                     instance,
                     _sqlExpressionFactory.ApplyDefaultTypeMapping(arguments[0]),
                     instance.Type,
