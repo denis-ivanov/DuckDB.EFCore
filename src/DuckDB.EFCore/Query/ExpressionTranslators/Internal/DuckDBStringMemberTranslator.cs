@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DuckDB.EFCore.Query.Internal;
+using DuckDB.EFCore.Storage.Internal;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -14,7 +16,7 @@ namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
 /// </summary>
 public class DuckDBStringMemberTranslator : IMemberTranslator
 {
-    private readonly ISqlExpressionFactory _sqlExpressionFactory;
+    private readonly DuckDBSqlExpressionFactory _sqlExpressionFactory;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -24,7 +26,7 @@ public class DuckDBStringMemberTranslator : IMemberTranslator
     /// </summary>
     public DuckDBStringMemberTranslator(ISqlExpressionFactory sqlExpressionFactory)
     {
-        _sqlExpressionFactory = sqlExpressionFactory;
+        _sqlExpressionFactory = (DuckDBSqlExpressionFactory)sqlExpressionFactory;
     }
 
     /// <summary>
@@ -37,6 +39,16 @@ public class DuckDBStringMemberTranslator : IMemberTranslator
     {
         if (member.DeclaringType == typeof(string) && member.Name == nameof(string.Length))
         {
+            if (instance is { TypeMapping: null })
+            {
+                instance = _sqlExpressionFactory.ApplyDefaultTypeMapping(instance);
+            }
+
+            if (instance?.TypeMapping is DuckDBBitStringTypeMapping)
+            {
+                return _sqlExpressionFactory.BitLength(instance);
+            }
+
             return _sqlExpressionFactory.Function(
                 name: "length",
                 arguments: [instance],

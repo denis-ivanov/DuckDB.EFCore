@@ -22,6 +22,7 @@ public class DuckDBMemberTranslatorProvider : RelationalMemberTranslatorProvider
         : base(dependencies)
     {
         AddTranslators([
+            new DuckDBBitStringMemberTranslator(dependencies.SqlExpressionFactory),
             new DuckDBStringMemberTranslator(dependencies.SqlExpressionFactory),
             new DuckDBDateOnlyMemberTranslator(dependencies.SqlExpressionFactory),
             new DuckDBDateTimeMemberTranslator(dependencies.SqlExpressionFactory, typeMappingSource),
