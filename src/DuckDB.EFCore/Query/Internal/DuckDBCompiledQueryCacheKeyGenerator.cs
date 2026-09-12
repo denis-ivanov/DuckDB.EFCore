@@ -39,8 +39,7 @@ public class DuckDBCompiledQueryCacheKeyGenerator : RelationalCompiledQueryCache
         private readonly bool _reverseNullOrdering = reverseNullOrdering;
 
         public override bool Equals(object? obj)
-            => !(obj is null)
-               && obj is DuckDBCompiledQueryCacheKey key
+            => obj is DuckDBCompiledQueryCacheKey key
                && Equals(key);
 
         private bool Equals(DuckDBCompiledQueryCacheKey other)
