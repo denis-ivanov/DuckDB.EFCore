@@ -94,11 +94,11 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     {
         using var context = CreateContext();
 
-        context.Entities.Add(new BitStringEntity { Id = 5, BitString = "1100", Bits = new BitArray(1) });
+        context.Entities.Add(new BitStringEntity { Id = 5, BitString = "110000000001", Bits = new BitArray(1) });
         context.SaveChanges();
         context.ChangeTracker.Clear();
 
-        var value = "1100";
+        var value = "110000000001";
         var entity = context.Entities.Single(e => e.BitString == value);
 
         Assert.Equal(5, entity.Id);
@@ -415,6 +415,101 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
             SELECT e."Bits" | e."NullableBits" AS "Result"
             FROM "Entities" AS e
             WHERE e."Id" = 32
+            LIMIT 2
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void Can_translate_Xor_for_BitArray()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(new BitStringEntity { Id = 40, BitString = "10100", Bits = new BitArray([true, false, true, false, false]) });
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var otherBits = new BitArray([true, true, false, false, true]);
+        var expected = new BitArray([false, true, true, false, true]);
+        var entity = context.Entities.Where(e => e.Id == 40).Single(e => e.Bits.Xor(otherBits) == expected);
+
+        Assert.Equal(40, entity.Id);
+        AssertSql(
+            """
+            otherBits='?'
+            expected='?'
+
+            SELECT e."Id", e."BitString", e."Bits", e."NullableBits"
+            FROM "Entities" AS e
+            WHERE e."Id" = 40 AND xor(e."Bits", $otherBits) = $expected
+            LIMIT 2
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void Can_project_Xor_for_BitArray()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(new BitStringEntity { Id = 41, BitString = "1100", Bits = new BitArray([true, true, false, false]) });
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var otherBits = new BitArray([false, true, true, false]);
+        var result = context.Entities
+            .Where(e => e.Id == 41)
+            .Select(e => new
+            {
+                Result = e.Bits.Xor(otherBits)
+            })
+            .Single();
+
+        Assert.Equal(new BitArray([true, false, true, false]).Cast<bool>(), result.Result.Cast<bool>());
+        AssertSql(
+            """
+            otherBits='?'
+
+            SELECT xor(e."Bits", $otherBits) AS "Result"
+            FROM "Entities" AS e
+            WHERE e."Id" = 41
+            LIMIT 2
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void Can_translate_Xor_between_columns_for_BitArray()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(new BitStringEntity
+        {
+            Id = 42,
+            BitString = "1010",
+            Bits = new BitArray([true, false, true, false]),
+            NullableBits = new BitArray([false, true, true, false])
+        });
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var result = context.Entities
+            .Where(e => e.Id == 42)
+            .Select(e => new
+            {
+                Result = e.Bits.Xor(e.NullableBits!)
+            })
+            .Single();
+
+        Assert.Equal(new BitArray([true, true, false, false]).Cast<bool>(), result.Result.Cast<bool>());
+        AssertSql(
+            """
+            SELECT xor(e."Bits", e."NullableBits") AS "Result"
+            FROM "Entities" AS e
+            WHERE e."Id" = 42
             LIMIT 2
             """
         );
