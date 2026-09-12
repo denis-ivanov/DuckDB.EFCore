@@ -20,6 +20,7 @@ public class DuckDBBitStringMethodTranslator : IMethodCallTranslator
     private static readonly MethodInfo And = typeof(BitArray).GetMethod(nameof(BitArray.And), [typeof(BitArray)])!;
     private static readonly MethodInfo Or = typeof(BitArray).GetMethod(nameof(BitArray.Or), [typeof(BitArray)])!;
     private static readonly MethodInfo Xor = typeof(BitArray).GetMethod(nameof(BitArray.Xor), [typeof(BitArray)])!;
+    private static readonly MethodInfo Not = typeof(BitArray).GetMethod(nameof(BitArray.Not), Type.EmptyTypes)!;
 
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
     private readonly ITypeMappingSource _typeMappingSource;
@@ -76,6 +77,15 @@ public class DuckDBBitStringMethodTranslator : IMethodCallTranslator
                     nullable: true,
                     argumentsPropagateNullability: [true, true],
                     method.ReturnType);
+            }
+
+            if (method == Not)
+            {
+                return _sqlExpressionFactory.MakeUnary(
+                    ExpressionType.Not,
+                    instance,
+                    instance.Type,
+                    (RelationalTypeMapping?)_typeMappingSource.FindMapping(typeof(BitArray)));
             }
         }
 

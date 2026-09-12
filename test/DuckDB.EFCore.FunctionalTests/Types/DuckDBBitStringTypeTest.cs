@@ -515,6 +515,61 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         );
     }
 
+    [ConditionalFact]
+    public void Can_translate_Not_for_BitArray()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(new BitStringEntity { Id = 50, BitString = "10100", Bits = new BitArray([true, false, true, false, false]) });
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var expected = new BitArray([false, true, false, true, true]);
+        var entity = context.Entities.Where(e => e.Id == 50).Single(e => e.Bits.Not() == expected);
+
+        Assert.Equal(50, entity.Id);
+        AssertSql(
+            """
+            expected='?'
+
+            SELECT e."Id", e."BitString", e."Bits", e."NullableBits"
+            FROM "Entities" AS e
+            WHERE e."Id" = 50 AND ~e."Bits" = $expected
+            LIMIT 2
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void Can_project_Not_for_BitArray()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(new BitStringEntity { Id = 51, BitString = "101", Bits = new BitArray([true, false, true]) });
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var result = context.Entities
+            .Where(e => e.Id == 51)
+            .Select(e => new
+            {
+                Result = e.Bits.Not()
+            })
+            .Single();
+
+        Assert.Equal(new BitArray([false, true, false]).Cast<bool>(), result.Result.Cast<bool>());
+        AssertSql(
+            """
+            SELECT ~e."Bits" AS "Result"
+            FROM "Entities" AS e
+            WHERE e."Id" = 51
+            LIMIT 2
+            """
+        );
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 
