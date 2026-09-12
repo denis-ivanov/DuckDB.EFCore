@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using Microsoft.EntityFrameworkCore.TestModels.BasicTypesModel;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query.Translations;
@@ -41,4 +42,20 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
     {
         return base.Index();
     }
+
+    [ConditionalFact]
+    public async Task Convert_ToBase64String()
+    {
+        await AssertQuery(
+            ss => ss.Set<BasicTypesEntity>().Select(b => Convert.ToBase64String(b.ByteArray)));
+
+        AssertSql(
+            """
+            SELECT to_base64(b."ByteArray")
+            FROM "BasicTypesEntities" AS b
+            """);
+    }
+
+    private void AssertSql(params string[] expected)
+        => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
