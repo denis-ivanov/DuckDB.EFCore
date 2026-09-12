@@ -229,6 +229,11 @@ public static class DuckDBGroupingExtensions
             nameof(SemAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo SkewnessAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(SkewnessAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     internal static readonly MethodInfo FAvgAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(FAvgAggregate),
@@ -897,6 +902,17 @@ public static class DuckDBGroupingExtensions
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Sem)));
 
     /// <summary>
+    /// Translates to the DuckDB <c>SKEWNESS</c> aggregate function, returning the skewness
+    /// of all non-null values selected in the group.
+    /// Returns <see langword="null" /> when the group contains no non-null values.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static double? Skewness<TKey, TSource, TValue>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TValue> selector)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Skewness)));
+
+    /// <summary>
     /// Translates to the DuckDB <c>FAVG</c> aggregate function, returning the average of all non-null values
     /// selected in the group using Kahan compensated summation, which is more accurate than <c>AVG</c> when
     /// the values differ widely in magnitude.
@@ -1058,6 +1074,9 @@ public static class DuckDBGroupingExtensions
 
     internal static double? SemAggregate<TValue>(IEnumerable<TValue> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(SemAggregate)));
+
+    internal static double? SkewnessAggregate<TValue>(IEnumerable<TValue> source)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(SkewnessAggregate)));
 
     internal static double? CorrAggregate<TY, TX>(IEnumerable<ValueTuple<TY, TX>> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(CorrAggregate)));
