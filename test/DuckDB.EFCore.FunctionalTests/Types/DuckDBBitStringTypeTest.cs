@@ -153,6 +153,86 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         Assert.Throws<InvalidOperationException>(() => context.Model);
     }
 
+    [ConditionalFact]
+    public void Can_translate_bit_length_for_BitArray()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(new BitStringEntity { Id = 10, BitString = "101", Bits = new BitArray([true, false, true, false, true]) });
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var entity = context.Entities.Single(e => e.Bits.Length == 5);
+
+        Assert.Equal(10, entity.Id);
+        AssertSql(
+            """
+            SELECT e."Id", e."BitString", e."Bits", e."NullableBits"
+            FROM "Entities" AS e
+            WHERE bit_length(e."Bits") = 5
+            LIMIT 2
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void Can_translate_bit_length_for_string_mapped_to_bit()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(new BitStringEntity { Id = 11, BitString = "1010111", Bits = new BitArray(1) });
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var entity = context.Entities.Single(e => e.BitString.Length == 7);
+
+        Assert.Equal(11, entity.Id);
+        AssertSql(
+            """
+            SELECT e."Id", e."BitString", e."Bits", e."NullableBits"
+            FROM "Entities" AS e
+            WHERE bit_length(e."BitString") = 7
+            LIMIT 2
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void Can_project_bit_length()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(new BitStringEntity { Id = 12, BitString = "11001", Bits = new BitArray([true, false, false, true]) });
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var lengths = context.Entities
+            .Where(e => e.Id == 12)
+            .Select(e => new
+            {
+                BitStringLength = e.BitString.Length,
+                BitsLength = e.Bits.Length
+            })
+            .Single();
+
+        Assert.Equal(5, lengths.BitStringLength);
+        Assert.Equal(4, lengths.BitsLength);
+        AssertSql(
+            """
+            SELECT bit_length(e."BitString") AS "BitStringLength", bit_length(e."Bits") AS "BitsLength"
+            FROM "Entities" AS e
+            WHERE e."Id" = 12
+            LIMIT 2
+            """
+        );
+    }
+
+    private void AssertSql(params string[] expected)
+        => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
+
     private BitStringContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<BitStringContext>()

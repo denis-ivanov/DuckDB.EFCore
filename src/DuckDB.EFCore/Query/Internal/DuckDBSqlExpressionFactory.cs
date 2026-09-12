@@ -350,6 +350,16 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
         return base.ApplyTypeMapping(sqlExpression, typeMapping);
     }
 
+    public virtual SqlExpression BitLength(SqlExpression instance)
+    {
+        return Function(
+            name: "bit_length",
+            arguments: [instance],
+            nullable: true,
+            argumentsPropagateNullability: [true],
+            returnType: typeof(int));
+    }
+
     private SqlBinaryExpression ApplyTypeMappingOnSqlBinary(SqlBinaryExpression binary, RelationalTypeMapping? typeMapping)
     {
         if (IsComparison(binary.OperatorType)
