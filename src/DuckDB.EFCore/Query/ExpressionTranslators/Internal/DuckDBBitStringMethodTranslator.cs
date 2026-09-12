@@ -17,6 +17,7 @@ namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
 public class DuckDBBitStringMethodTranslator : IMethodCallTranslator
 {
     private static readonly MethodInfo And = typeof(BitArray).GetMethod(nameof(BitArray.And), [typeof(BitArray)])!;
+    private static readonly MethodInfo Or = typeof(BitArray).GetMethod(nameof(BitArray.Or), [typeof(BitArray)])!;
 
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
 
@@ -43,9 +44,17 @@ public class DuckDBBitStringMethodTranslator : IMethodCallTranslator
         IReadOnlyList<SqlExpression> arguments,
         IDiagnosticsLogger<DbLoggerCategory.Query> logger)
     {
-        if (method == And && instance != null)
+        if (instance is not null)
         {
-            return _sqlExpressionFactory.MakeBinary(ExpressionType.And, instance, arguments[0], typeMapping: null);
+            if (method == And)
+            {
+                return _sqlExpressionFactory.MakeBinary(ExpressionType.And, instance, arguments[0], typeMapping: null);
+            }
+
+            if (method == Or)
+            {
+                return _sqlExpressionFactory.MakeBinary(ExpressionType.Or, instance, arguments[0], typeMapping: null);
+            }
         }
 
         return null;
