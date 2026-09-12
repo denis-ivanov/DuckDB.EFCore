@@ -84,6 +84,21 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
+    [ConditionalFact]
+    public async Task Convert_ToHexString()
+    {
+        await AssertQuery(
+            ss => ss.Set<BasicTypesEntity>().OrderBy(b => b.Id).Select(b => Convert.ToHexString(b.ByteArray)),
+            assertOrder: true);
+
+        AssertSql(
+            """
+            SELECT to_hex(b."ByteArray")
+            FROM "BasicTypesEntities" AS b
+            ORDER BY b."Id" NULLS FIRST
+            """);
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
