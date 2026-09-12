@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Collections;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -18,8 +19,10 @@ public class DuckDBBitStringMethodTranslator : IMethodCallTranslator
 {
     private static readonly MethodInfo And = typeof(BitArray).GetMethod(nameof(BitArray.And), [typeof(BitArray)])!;
     private static readonly MethodInfo Or = typeof(BitArray).GetMethod(nameof(BitArray.Or), [typeof(BitArray)])!;
+    private static readonly MethodInfo Xor = typeof(BitArray).GetMethod(nameof(BitArray.Xor), [typeof(BitArray)])!;
 
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
+    private readonly ITypeMappingSource _typeMappingSource;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -27,9 +30,10 @@ public class DuckDBBitStringMethodTranslator : IMethodCallTranslator
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public DuckDBBitStringMethodTranslator(ISqlExpressionFactory sqlExpressionFactory)
+    public DuckDBBitStringMethodTranslator(ISqlExpressionFactory sqlExpressionFactory, ITypeMappingSource typeMappingSource)
     {
         _sqlExpressionFactory = sqlExpressionFactory;
+        _typeMappingSource = typeMappingSource;
     }
 
     /// <summary>
@@ -48,12 +52,30 @@ public class DuckDBBitStringMethodTranslator : IMethodCallTranslator
         {
             if (method == And)
             {
-                return _sqlExpressionFactory.MakeBinary(ExpressionType.And, instance, arguments[0], typeMapping: null);
+                return _sqlExpressionFactory.MakeBinary(
+                    ExpressionType.And,
+                    instance,
+                    arguments[0], 
+                    typeMapping: (RelationalTypeMapping?)_typeMappingSource.FindMapping(typeof(BitArray)));
             }
 
             if (method == Or)
             {
-                return _sqlExpressionFactory.MakeBinary(ExpressionType.Or, instance, arguments[0], typeMapping: null);
+                return _sqlExpressionFactory.MakeBinary(
+                    ExpressionType.Or,
+                    instance,
+                    arguments[0],
+                    typeMapping: (RelationalTypeMapping?)_typeMappingSource.FindMapping(typeof(BitArray)));
+            }
+
+            if (method == Xor)
+            {
+                return _sqlExpressionFactory.Function(
+                    "xor",
+                    arguments: [instance, arguments[0]],
+                    nullable: true,
+                    argumentsPropagateNullability: [true, true],
+                    method.ReturnType);
             }
         }
 
