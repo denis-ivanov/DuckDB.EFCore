@@ -158,19 +158,19 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     {
         using var context = CreateContext();
 
-        context.Entities.Add(new BitStringEntity { Id = 10, BitString = "101", Bits = new BitArray([true, false, true, false, true]) });
+        context.Entities.Add(new BitStringEntity { Id = 10, BitString = "101", Bits = new BitArray([true, false, true, false, true, true, false, false, true]) });
         context.SaveChanges();
         context.ChangeTracker.Clear();
         Fixture.TestSqlLoggerFactory.Clear();
 
-        var entity = context.Entities.Single(e => e.Bits.Length == 5);
+        var entity = context.Entities.Single(e => e.Bits.Length == 9);
 
         Assert.Equal(10, entity.Id);
         AssertSql(
             """
             SELECT e."Id", e."BitString", e."Bits", e."NullableBits"
             FROM "Entities" AS e
-            WHERE bit_length(e."Bits") = 5
+            WHERE bit_length(e."Bits") = 9
             LIMIT 2
             """
         );
@@ -225,6 +225,101 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
             SELECT bit_length(e."BitString") AS "BitStringLength", bit_length(e."Bits") AS "BitsLength"
             FROM "Entities" AS e
             WHERE e."Id" = 12
+            LIMIT 2
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void Can_translate_And_for_BitArray()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(new BitStringEntity { Id = 20, BitString = "10101", Bits = new BitArray([true, false, true, false, true]) });
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var otherBits = new BitArray([true, true, false, false, true]);
+        var expected = new BitArray([true, false, false, false, true]);
+        var entity = context.Entities.Single(e => e.Bits.And(otherBits) == expected);
+
+        Assert.Equal(20, entity.Id);
+        AssertSql(
+            """
+            otherBits='?'
+            expected='?'
+
+            SELECT e."Id", e."BitString", e."Bits", e."NullableBits"
+            FROM "Entities" AS e
+            WHERE (e."Bits" & $otherBits) = $expected
+            LIMIT 2
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void Can_project_And_for_BitArray()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(new BitStringEntity { Id = 21, BitString = "1100", Bits = new BitArray([true, true, false, false]) });
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var otherBits = new BitArray([true, false, true, false]);
+        var result = context.Entities
+            .Where(e => e.Id == 21)
+            .Select(e => new
+            {
+                Result = e.Bits.And(otherBits)
+            })
+            .Single();
+
+        Assert.Equal(new BitArray([true, false, false, false]).Cast<bool>(), result.Result.Cast<bool>());
+        AssertSql(
+            """
+            otherBits='?'
+
+            SELECT e."Bits" & $otherBits AS "Result"
+            FROM "Entities" AS e
+            WHERE e."Id" = 21
+            LIMIT 2
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void Can_translate_And_between_columns_for_BitArray()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(new BitStringEntity
+        {
+            Id = 22,
+            BitString = "1111",
+            Bits = new BitArray([true, true, true, false]),
+            NullableBits = new BitArray([true, false, true, false])
+        });
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var result = context.Entities
+            .Where(e => e.Id == 22)
+            .Select(e => new
+            {
+                Result = e.Bits.And(e.NullableBits!)
+            })
+            .Single();
+
+        Assert.Equal(new BitArray([true, false, true, false]).Cast<bool>(), result.Result.Cast<bool>());
+        AssertSql(
+            """
+            SELECT e."Bits" & e."NullableBits" AS "Result"
+            FROM "Entities" AS e
+            WHERE e."Id" = 22
             LIMIT 2
             """
         );
