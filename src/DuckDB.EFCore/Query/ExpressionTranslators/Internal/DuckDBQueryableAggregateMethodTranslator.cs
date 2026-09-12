@@ -200,6 +200,7 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                 nameof(DuckDBGroupingExtensions.SemAggregate) => "SEM",
                 nameof(DuckDBGroupingExtensions.SkewnessAggregate) => "SKEWNESS",
                 nameof(DuckDBGroupingExtensions.StddevPopAggregate) => "STDDEV_POP",
+                nameof(DuckDBGroupingExtensions.StddevSampAggregate) => "STDDEV_SAMP",
                 nameof(DuckDBGroupingExtensions.FAvgAggregate) => "FAVG",
                 nameof(DuckDBGroupingExtensions.FSumAggregate) => "FSUM",
                 nameof(DuckDBGroupingExtensions.GeometricMeanAggregate) => "GEOMETRIC_MEAN",

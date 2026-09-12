@@ -49,6 +49,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
                     or nameof(DuckDBGroupingExtensions.Sem)
                     or nameof(DuckDBGroupingExtensions.Skewness)
                     or nameof(DuckDBGroupingExtensions.StddevPop)
+                    or nameof(DuckDBGroupingExtensions.StddevSamp)
                     or nameof(DuckDBGroupingExtensions.FAvg)
                     or nameof(DuckDBGroupingExtensions.FSum)
                     or nameof(DuckDBGroupingExtensions.Histogram)
@@ -247,6 +248,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
             nameof(DuckDBGroupingExtensions.Sem) => DuckDBGroupingExtensions.SemAggregateMethod,
             nameof(DuckDBGroupingExtensions.Skewness) => DuckDBGroupingExtensions.SkewnessAggregateMethod,
             nameof(DuckDBGroupingExtensions.StddevPop) => DuckDBGroupingExtensions.StddevPopAggregateMethod,
+            nameof(DuckDBGroupingExtensions.StddevSamp) => DuckDBGroupingExtensions.StddevSampAggregateMethod,
             nameof(DuckDBGroupingExtensions.FAvg) => DuckDBGroupingExtensions.FAvgAggregateMethod,
             nameof(DuckDBGroupingExtensions.FSum) => DuckDBGroupingExtensions.FSumAggregateMethod,
             nameof(DuckDBGroupingExtensions.Histogram) => DuckDBGroupingExtensions.HistogramAggregateMethod,
