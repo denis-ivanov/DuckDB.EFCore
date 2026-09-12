@@ -43,6 +43,18 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
         return base.Index();
     }
 
+    public override async Task Length()
+    {
+        await base.Length();
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE octet_length(b."ByteArray") = 4
+            """);
+    }
+
     [ConditionalFact]
     public async Task Convert_ToBase64String()
     {
