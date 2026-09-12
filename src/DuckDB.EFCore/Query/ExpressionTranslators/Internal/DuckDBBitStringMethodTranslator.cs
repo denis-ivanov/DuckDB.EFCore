@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DuckDB.EFCore.Query.Expressions.Internal;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -21,6 +22,7 @@ public class DuckDBBitStringMethodTranslator : IMethodCallTranslator
     private static readonly MethodInfo Or = typeof(BitArray).GetMethod(nameof(BitArray.Or), [typeof(BitArray)])!;
     private static readonly MethodInfo Xor = typeof(BitArray).GetMethod(nameof(BitArray.Xor), [typeof(BitArray)])!;
     private static readonly MethodInfo Not = typeof(BitArray).GetMethod(nameof(BitArray.Not), Type.EmptyTypes)!;
+    private static readonly MethodInfo LeftShift = typeof(BitArray).GetMethod(nameof(BitArray.LeftShift), [typeof(int)])!;
 
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
     private readonly ITypeMappingSource _typeMappingSource;
@@ -84,6 +86,16 @@ public class DuckDBBitStringMethodTranslator : IMethodCallTranslator
                 return _sqlExpressionFactory.MakeUnary(
                     ExpressionType.Not,
                     instance,
+                    instance.Type,
+                    (RelationalTypeMapping?)_typeMappingSource.FindMapping(typeof(BitArray)));
+            }
+
+            if (method == LeftShift)
+            {
+                return new DuckDBBinaryExpression(
+                    ExpressionType.LeftShift,
+                    instance,
+                    _sqlExpressionFactory.ApplyDefaultTypeMapping(arguments[0]),
                     instance.Type,
                     (RelationalTypeMapping?)_typeMappingSource.FindMapping(typeof(BitArray)));
             }

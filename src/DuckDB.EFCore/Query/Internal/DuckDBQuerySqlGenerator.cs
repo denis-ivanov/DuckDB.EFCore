@@ -196,7 +196,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         Sql.Append(AliasSeparator)
             .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(expression.Alias));
 
-        if (!expression.WithOrdinality && expression.ColumnInfos is { Count: > 0 } colInfos)
+        if (expression is { WithOrdinality: false, ColumnInfos: { Count: > 0 } colInfos })
         {
             Sql.Append("(");
             for (var i = 0; i < colInfos.Count; i++)
@@ -331,6 +331,31 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
     /// </summary>
     protected virtual Expression VisitBinary(DuckDBBinaryExpression binaryExpression)
     {
+        if (binaryExpression.Left.TypeMapping is DuckDBBitStringTypeMapping &&
+            binaryExpression.Right.TypeMapping is DuckDBInt32TypeMapping &&
+            binaryExpression.OperatorType is ExpressionType.LeftShift or ExpressionType.RightShift)
+        {
+            Visit(binaryExpression.Left);
+
+            switch (binaryExpression.OperatorType)
+            {
+                case ExpressionType.LeftShift:
+                    Sql.Append(" << ");
+                    break;
+
+                case ExpressionType.RightShift:
+                    Sql.Append(" >> ");
+                    break;
+                
+                default:
+                    throw new UnreachableException("Unknown binary operator");
+            }
+
+            Visit(binaryExpression.Right);
+
+            return binaryExpression;
+        }
+
         switch (binaryExpression.OperatorType)
         {
             case ExpressionType.LeftShift:

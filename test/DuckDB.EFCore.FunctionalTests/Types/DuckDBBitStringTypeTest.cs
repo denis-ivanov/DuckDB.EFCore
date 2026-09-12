@@ -570,6 +570,61 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         );
     }
 
+    [ConditionalFact]
+    public void Can_translate_LeftShift_for_BitArray()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(new BitStringEntity { Id = 60, BitString = "10010", Bits = new BitArray([true, false, false, true, false, true, true]) });
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var expected = new BitArray([true, false, true, true, false, false, false]);
+        var entity = context.Entities.Where(e => e.Id == 60).Single(e => e.Bits.LeftShift(3) == expected);
+
+        Assert.Equal(60, entity.Id);
+        AssertSql(
+            """
+            expected='?'
+
+            SELECT e."Id", e."BitString", e."Bits", e."NullableBits"
+            FROM "Entities" AS e
+            WHERE e."Id" = 60 AND e."Bits" << 3 = $expected
+            LIMIT 2
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void Can_project_LeftShift_for_BitArray()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(new BitStringEntity { Id = 61, BitString = "10010", Bits = new BitArray([true, false, false, true, false, true, true]) });
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var result = context.Entities
+            .Where(e => e.Id == 61)
+            .Select(e => new
+            {
+                Result = e.Bits.LeftShift(3)
+            })
+            .Single();
+
+        Assert.Equal(new BitArray([true, false, true, true, false, false, false]).Cast<bool>(), result.Result.Cast<bool>());
+        AssertSql(
+            """
+            SELECT e."Bits" << 3 AS "Result"
+            FROM "Entities" AS e
+            WHERE e."Id" = 61
+            LIMIT 2
+            """
+        );
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 

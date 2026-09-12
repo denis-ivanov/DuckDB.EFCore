@@ -21,7 +21,7 @@ public class DuckDBBitStringMemberTranslator : IMemberTranslator
 
     public SqlExpression? Translate(SqlExpression? instance, MemberInfo member, Type returnType, IDiagnosticsLogger<DbLoggerCategory.Query> logger)
     {
-        if (member == Length)
+        if (instance is not null && member == Length)
         {
             return _sqlExpressionFactory.BitLength(instance);
         }
