@@ -74,7 +74,7 @@ public class DuckDBBinaryExpression : SqlExpression
     public virtual DuckDBBinaryExpression Update(SqlExpression left, SqlExpression right)
     {
         return left != Left || right != Right
-            ? new DuckDBBinaryExpression(OperatorType, left, Right, Type, TypeMapping)
+            ? new DuckDBBinaryExpression(OperatorType, left, right, Type, TypeMapping)
             : this;
     }
 
