@@ -15,6 +15,7 @@ namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
 public class DuckDBBlobMethodTranslator : IMethodCallTranslator
 {
     private static readonly MethodInfo ToBase64String = typeof(Convert).GetRuntimeMethod(nameof(Convert.ToBase64String), [typeof(byte[])])!;
+    private static readonly MethodInfo FromBase64String = typeof(Convert).GetRuntimeMethod(nameof(Convert.FromBase64String), [typeof(string)])!;
 
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
 
@@ -49,6 +50,16 @@ public class DuckDBBlobMethodTranslator : IMethodCallTranslator
                 nullable: true,
                 argumentsPropagateNullability: [true],
                 typeof(string));
+        }
+
+        if (method == FromBase64String)
+        {
+            return _sqlExpressionFactory.Function(
+                "from_base64",
+                [arguments[0]],
+                nullable: true,
+                argumentsPropagateNullability: [true],
+                typeof(byte[]));
         }
 
         return null;

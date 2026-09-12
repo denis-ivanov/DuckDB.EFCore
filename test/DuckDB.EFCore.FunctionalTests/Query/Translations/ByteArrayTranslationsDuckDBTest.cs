@@ -68,6 +68,22 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
+    [ConditionalFact]
+    public async Task Convert_FromBase64String()
+    {
+        await AssertQuery(
+            ss => ss.Set<BasicTypesEntity>().OrderBy(b => b.Id).Select(b => Convert.FromBase64String(Convert.ToBase64String(b.ByteArray))),
+            assertOrder: true,
+            elementAsserter: (e, a) => Assert.Equivalent(e, a));
+
+        AssertSql(
+            """
+            SELECT from_base64(to_base64(b."ByteArray"))
+            FROM "BasicTypesEntities" AS b
+            ORDER BY b."Id" NULLS FIRST
+            """);
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
