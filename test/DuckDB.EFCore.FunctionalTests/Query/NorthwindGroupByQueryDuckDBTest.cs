@@ -2429,6 +2429,58 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
+    [ConditionalFact]
+    public void GroupBy_VarPop_translates_to_VAR_POP()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                VarPop = g.VarPop(o => o.OrderID)
+            })
+            .ToList();
+
+        Assert.NotEmpty(results);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", VAR_POP(o."OrderID") AS "VarPop"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
+    [ConditionalFact]
+    public void GroupBy_VarPop_with_nullable_selector_returns_null_for_all_null_group()
+    {
+        using var context = CreateContext();
+
+        var results = context.Orders
+            .GroupBy(o => o.CustomerID)
+            .Select(g => new
+            {
+                CustomerID = g.Key,
+                VarPop = g.VarPop(o => o.OrderID > 11000 ? o.OrderID : (int?)null)
+            })
+            .ToList();
+
+        Assert.Contains(results, r => r.VarPop == null);
+
+        AssertSql(
+            """
+            SELECT o."CustomerID", VAR_POP(CASE
+                WHEN o."OrderID" > 11000 THEN o."OrderID"
+            END) AS "VarPop"
+            FROM "Orders" AS o
+            GROUP BY o."CustomerID"
+            """
+        );
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
