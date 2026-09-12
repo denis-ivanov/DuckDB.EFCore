@@ -239,6 +239,11 @@ public static class DuckDBGroupingExtensions
             nameof(StddevPopAggregate),
             BindingFlags.NonPublic | BindingFlags.Static)!;
 
+    internal static readonly MethodInfo StddevSampAggregateMethod
+        = typeof(DuckDBGroupingExtensions).GetMethod(
+            nameof(StddevSampAggregate),
+            BindingFlags.NonPublic | BindingFlags.Static)!;
+
     internal static readonly MethodInfo FAvgAggregateMethod
         = typeof(DuckDBGroupingExtensions).GetMethod(
             nameof(FAvgAggregate),
@@ -929,6 +934,17 @@ public static class DuckDBGroupingExtensions
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(StddevPop)));
 
     /// <summary>
+    /// Translates to the DuckDB <c>STDDEV_SAMP</c> aggregate function, returning the sample standard deviation
+    /// of all non-null values selected in the group.
+    /// Returns <see langword="null" /> when the group contains no non-null values.
+    /// Can only be used in LINQ queries; calling it on the client throws.
+    /// </summary>
+    public static double? StddevSamp<TKey, TSource, TValue>(
+        this IGrouping<TKey, TSource> source,
+        Func<TSource, TValue> selector)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(StddevSamp)));
+
+    /// <summary>
     /// Translates to the DuckDB <c>FAVG</c> aggregate function, returning the average of all non-null values
     /// selected in the group using Kahan compensated summation, which is more accurate than <c>AVG</c> when
     /// the values differ widely in magnitude.
@@ -1096,6 +1112,9 @@ public static class DuckDBGroupingExtensions
 
     internal static double? StddevPopAggregate<TValue>(IEnumerable<TValue> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(StddevPopAggregate)));
+
+    internal static double? StddevSampAggregate<TValue>(IEnumerable<TValue> source)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(StddevSampAggregate)));
 
     internal static double? CorrAggregate<TY, TX>(IEnumerable<ValueTuple<TY, TX>> source)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(CorrAggregate)));
