@@ -42,15 +42,27 @@ public class DuckDBMapMethodTranslator : IMethodCallTranslator
         if (instance is not null &&
             method.DeclaringType is not null &&
             method.DeclaringType.IsGenericType &&
-            method.DeclaringType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
-            method.Name == nameof(Dictionary<,>.ContainsKey))
+            method.DeclaringType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
         {
-            return _sqlExpressionFactory.Function(
-                name: "map_contains",
-                arguments: [instance, arguments[0]],
-                nullable: true,
-                argumentsPropagateNullability: [true, true],
-                returnType: method.ReturnType);
+            if (method.Name == nameof(Dictionary<,>.ContainsKey))
+            {
+                return _sqlExpressionFactory.Function(
+                    name: "map_contains",
+                    arguments: [instance, arguments[0]],
+                    nullable: true,
+                    argumentsPropagateNullability: [true, true],
+                    returnType: method.ReturnType);
+            }
+
+            if (method.Name == nameof(Dictionary<,>.ContainsValue))
+            {
+                return _sqlExpressionFactory.Function(
+                    name: "map_contains_value",
+                    arguments: [instance, arguments[0]],
+                    nullable: true,
+                    argumentsPropagateNullability: [true, true],
+                    returnType: method.ReturnType);
+            }
         }
 
         return null;

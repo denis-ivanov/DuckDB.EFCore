@@ -356,6 +356,53 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
+    [ConditionalFact]
+    public void Can_filter_by_map_contains_value()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(NewEntity(17, new Dictionary<string, int> { ["k1"] = 555 }));
+        context.Entities.Add(NewEntity(18, new Dictionary<string, int> { ["k2"] = 777 }));
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var entities = context.Entities.Where(e => e.Counters.ContainsValue(555)).ToList();
+
+        Assert.Single(entities);
+        Assert.Equal(17, entities[0].Id);
+
+        AssertSql(
+            """
+            SELECT e."Id", e."Amounts", e."Counters", e."ExplicitlyTyped", e."Flags", e."Labels", e."Measurements", e."NullableValues", e."OptionalCounters", e."Timestamps"
+            FROM "Entities" AS e
+            WHERE map_contains_value(e."Counters", 555)
+            """);
+    }
+
+    [ConditionalFact]
+    public void Can_project_map_contains_value()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(NewEntity(19, new Dictionary<string, int> { ["k1"] = 888 }));
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var contains = context.Entities.Where(e => e.Id == 19).Select(e => e.Counters.ContainsValue(888)).Single();
+
+        Assert.True(contains);
+
+        AssertSql(
+            """
+            SELECT map_contains_value(e."Counters", 888)
+            FROM "Entities" AS e
+            WHERE e."Id" = 19
+            LIMIT 2
+            """);
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 
