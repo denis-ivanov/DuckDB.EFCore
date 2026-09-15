@@ -141,6 +141,29 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
                 typeof(byte[]));
         }
 
+        if (method.DeclaringType == typeof(Encoding)
+            && method.Name == nameof(Encoding.GetString)
+            && methodCallExpression.Arguments.Count == 1)
+        {
+            if (methodCallExpression.Object is ConstantExpression { Value: Encoding enc }
+                && !(enc is UTF8Encoding || enc.CodePage == 65001))
+            {
+                return base.VisitMethodCall(methodCallExpression);
+            }
+
+            if (TranslationFailed(methodCallExpression.Arguments[0], Visit(methodCallExpression.Arguments[0]), out var sqlArgument))
+            {
+                return QueryCompilationContext.NotTranslatedExpression;
+            }
+
+            return Dependencies.SqlExpressionFactory.Function(
+                "decode",
+                [sqlArgument!],
+                nullable: true,
+                argumentsPropagateNullability: [true],
+                typeof(string));
+        }
+
         return base.VisitMethodCall(methodCallExpression);
     }
 
