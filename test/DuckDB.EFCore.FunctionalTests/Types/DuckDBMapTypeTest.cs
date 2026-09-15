@@ -262,6 +262,56 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
         Assert.Equal(amounts, loaded.Amounts);
     }
 
+    [ConditionalFact]
+    public void Can_filter_by_map_count()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(NewEntity(11, new Dictionary<string, int> { ["a"] = 1, ["b"] = 2 }));
+        context.Entities.Add(NewEntity(12, new Dictionary<string, int> { ["a"] = 1 }));
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var entities = context.Entities.Where(e => e.Counters.Count == 2).ToList();
+
+        Assert.Single(entities);
+        Assert.Equal(11, entities[0].Id);
+
+        AssertSql(
+            """
+            SELECT e."Id", e."Amounts", e."Counters", e."ExplicitlyTyped", e."Flags", e."Labels", e."Measurements", e."NullableValues", e."OptionalCounters", e."Timestamps"
+            FROM "Entities" AS e
+            WHERE cardinality(e."Counters") = 2
+            """);
+    }
+
+    [ConditionalFact]
+    public void Can_project_map_count()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(NewEntity(13, new Dictionary<string, int> { ["x"] = 10, ["y"] = 20, ["z"] = 30 }));
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var count = context.Entities.Where(e => e.Id == 13).Select(e => e.Counters.Count).Single();
+
+        Assert.Equal(3, count);
+
+        AssertSql(
+            """
+            SELECT cardinality(e."Counters")
+            FROM "Entities" AS e
+            WHERE e."Id" = 13
+            LIMIT 2
+            """);
+    }
+
+    private void AssertSql(params string[] expected)
+        => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
+
     private static MapEntity NewEntity(
         int id,
         Dictionary<string, int> counters,
