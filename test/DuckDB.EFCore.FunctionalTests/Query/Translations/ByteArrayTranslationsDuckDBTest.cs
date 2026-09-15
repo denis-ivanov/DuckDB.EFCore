@@ -146,6 +146,35 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
+    [ConditionalFact]
+    public async Task Encoding_UTF8_GetString()
+    {
+        await AssertQuery(
+            ss => ss.Set<BasicTypesEntity>().OrderBy(b => b.Id).Select(b => Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(b.String))),
+            assertOrder: true);
+
+        AssertSql(
+            """
+            SELECT decode(encode(b."String"))
+            FROM "BasicTypesEntities" AS b
+            ORDER BY b."Id" NULLS FIRST
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task Encoding_UTF8_GetString_in_where()
+    {
+        await AssertQuery(
+            ss => ss.Set<BasicTypesEntity>().Where(b => Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(b.String)) == "Seattle"));
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE decode(encode(b."String")) = 'Seattle'
+            """);
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
