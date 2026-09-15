@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace DuckDB.EFCore.Query.Internal;
 
@@ -39,6 +40,9 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
 
     private static readonly MethodInfo StringJoinWithCharObjectArray =
         typeof(string).GetMethod(nameof(string.Join), [typeof(char), typeof(object[])])!;
+
+    private static readonly MethodInfo EncodingGetBytes =
+        typeof(Encoding).GetMethod(nameof(Encoding.GetBytes), [typeof(string)])!;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -112,6 +116,29 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
                 nullable: true,
                 argumentsPropagateNullability,
                 typeof(string));
+        }
+
+        if (method.DeclaringType == typeof(Encoding)
+            && method.Name == nameof(Encoding.GetBytes)
+            && methodCallExpression.Arguments.Count == 1)
+        {
+            if (methodCallExpression.Object is ConstantExpression { Value: Encoding enc }
+                && !(enc is UTF8Encoding || enc.CodePage == 65001))
+            {
+                return base.VisitMethodCall(methodCallExpression);
+            }
+
+            if (TranslationFailed(methodCallExpression.Arguments[0], Visit(methodCallExpression.Arguments[0]), out var sqlArgument))
+            {
+                return QueryCompilationContext.NotTranslatedExpression;
+            }
+
+            return Dependencies.SqlExpressionFactory.Function(
+                "encode",
+                [sqlArgument!],
+                nullable: true,
+                argumentsPropagateNullability: [true],
+                typeof(byte[]));
         }
 
         return base.VisitMethodCall(methodCallExpression);
