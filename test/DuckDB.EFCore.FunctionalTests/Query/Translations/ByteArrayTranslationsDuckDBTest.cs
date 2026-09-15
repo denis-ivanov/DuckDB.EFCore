@@ -93,7 +93,23 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
 
         AssertSql(
             """
-            SELECT to_hex(b."ByteArray")
+            SELECT hex(b."ByteArray")
+            FROM "BasicTypesEntities" AS b
+            ORDER BY b."Id" NULLS FIRST
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task Convert_FromHexString()
+    {
+        await AssertQuery(
+            ss => ss.Set<BasicTypesEntity>().OrderBy(b => b.Id).Select(b => Convert.FromHexString(Convert.ToHexString(b.ByteArray))),
+            assertOrder: true,
+            elementAsserter: (e, a) => Assert.Equivalent(e, a));
+
+        AssertSql(
+            """
+            SELECT unhex(hex(b."ByteArray"))
             FROM "BasicTypesEntities" AS b
             ORDER BY b."Id" NULLS FIRST
             """);

@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.TestUtilities;
+﻿using DuckDB.EFCore.Storage.Internal;
+using DuckDB.EFCore.Update.Internal;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.TestUtilities;
 using System.Text;
 using Xunit;
 
@@ -6,18 +9,6 @@ namespace Microsoft.EntityFrameworkCore.Update;
 
 public class DuckDBUpdateSqlGeneratorTest : UpdateSqlGeneratorTestBase
 {
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override void AppendDeleteOperation_creates_full_delete_command_text()
-    {
-        base.AppendDeleteOperation_creates_full_delete_command_text();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override void AppendDeleteOperation_creates_full_delete_command_text_with_concurrency_check()
-    {
-        base.AppendDeleteOperation_creates_full_delete_command_text_with_concurrency_check();
-    }
-
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override void AppendInsertOperation_appends_insert_and_select_rowcount_if_no_store_generated_columns_exist_or_conditions_exist()
     {
@@ -92,13 +83,25 @@ public class DuckDBUpdateSqlGeneratorTest : UpdateSqlGeneratorTestBase
 
     protected override void AppendDeleteOperation_creates_full_delete_command_text_verification(StringBuilder stringBuilder)
     {
-        throw new NotImplementedException();
+        AssertBaseline(
+            """
+            DELETE FROM main."Ducks"
+            WHERE "Id" = $p0
+            RETURNING 1;
+            """,
+            stringBuilder.ToString());
     }
 
     protected override void AppendDeleteOperation_creates_full_delete_command_text_with_concurrency_check_verification(
         StringBuilder stringBuilder)
     {
-        throw new NotImplementedException();
+        AssertBaseline(
+            """
+            DELETE FROM main."Ducks"
+            WHERE "Id" = $p0 AND "ConcurrencyToken" IS NULL
+            RETURNING 1;
+            """,
+            stringBuilder.ToString());
     }
 
     protected override void AppendInsertOperation_insert_if_store_generated_columns_exist_verification(StringBuilder stringBuilder)
@@ -148,10 +151,21 @@ public class DuckDBUpdateSqlGeneratorTest : UpdateSqlGeneratorTestBase
 
     protected override IUpdateSqlGenerator CreateSqlGenerator()
     {
-        throw new NotImplementedException();
+        return new DuckDBUpdateSqlGenerator(
+            new UpdateSqlGeneratorDependencies(
+                new DuckDBSqlGenerationHelper(
+                    new RelationalSqlGenerationHelperDependencies()),
+                TestServiceFactory.Instance.Create<DuckDBTypeMappingSource>()));
     }
 
     protected override string RowsAffected { get; } = "TODO";
 
     protected override TestHelpers TestHelpers => DuckDBTestHelpers.Instance;
+
+    protected override string Schema => "main";
+
+    protected override string SchemaPrefix => Schema + ".";
+
+    private void AssertBaseline(string expected, string actual)
+        => Assert.Equal(expected.TrimEnd(), actual.TrimEnd(), ignoreLineEndingDifferences: true);
 }
