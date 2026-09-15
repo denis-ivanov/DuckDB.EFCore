@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DuckDB.EFCore.Storage.Internal;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -62,6 +63,19 @@ public class DuckDBMapMethodTranslator : IMethodCallTranslator
                     nullable: true,
                     argumentsPropagateNullability: [true, true],
                     returnType: method.ReturnType);
+            }
+
+            if (method.Name == "get_Item")
+            {
+                var typeMapping = (instance.TypeMapping as DuckDBMapTypeMapping)?.ValueTypeMapping;
+
+                return _sqlExpressionFactory.Function(
+                    name: "map_extract_value",
+                    arguments: [instance, arguments[0]],
+                    nullable: true,
+                    argumentsPropagateNullability: [true, true],
+                    returnType: method.ReturnType,
+                    typeMapping: typeMapping);
             }
         }
 
