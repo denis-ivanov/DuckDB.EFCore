@@ -403,6 +403,78 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
+    [ConditionalFact]
+    public void Can_filter_by_map_indexer()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(NewEntity(20, new Dictionary<string, int> { ["k1"] = 42, ["k2"] = 99 }));
+        context.Entities.Add(NewEntity(21, new Dictionary<string, int> { ["k1"] = 100 }));
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var entities = context.Entities.Where(e => e.Counters["k1"] == 42).ToList();
+
+        Assert.Single(entities);
+        Assert.Equal(20, entities[0].Id);
+
+        AssertSql(
+            """
+            SELECT e."Id", e."Amounts", e."Counters", e."ExplicitlyTyped", e."Flags", e."Labels", e."Measurements", e."NullableValues", e."OptionalCounters", e."Timestamps"
+            FROM "Entities" AS e
+            WHERE map_extract_value(e."Counters", 'k1') = 42
+            """);
+    }
+
+    [ConditionalFact]
+    public void Can_project_map_indexer()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(NewEntity(22, new Dictionary<string, int> { ["my_key"] = 321 }));
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var val = context.Entities.Where(e => e.Id == 22).Select(e => e.Counters["my_key"]).Single();
+
+        Assert.Equal(321, val);
+
+        AssertSql(
+            """
+            SELECT map_extract_value(e."Counters", 'my_key')
+            FROM "Entities" AS e
+            WHERE e."Id" = 22
+            LIMIT 2
+            """);
+    }
+
+    [ConditionalFact]
+    public void Can_filter_and_project_map_indexer_non_string_key()
+    {
+        using var context = CreateContext();
+
+        var entity = NewEntity(23, new Dictionary<string, int>());
+        entity.Measurements = new Dictionary<int, double> { [10] = 3.14, [20] = 2.71 };
+        context.Entities.Add(entity);
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var val = context.Entities.Where(e => e.Measurements[10] > 3.0).Select(e => e.Measurements[10]).Single();
+
+        Assert.Equal(3.14, val);
+
+        AssertSql(
+            """
+            SELECT map_extract_value(e."Measurements", 10)
+            FROM "Entities" AS e
+            WHERE map_extract_value(e."Measurements", 10) > 3.0
+            LIMIT 2
+            """);
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 
