@@ -1,11 +1,15 @@
-﻿using Xunit;
+﻿using Microsoft.EntityFrameworkCore.TestUtilities;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
 public class JsonQueryDuckDBTest : JsonQueryRelationalTestBase<JsonQueryDuckDBFixture>
 {
-    public JsonQueryDuckDBTest(JsonQueryDuckDBFixture fixture) : base(fixture)
+    public JsonQueryDuckDBTest(JsonQueryDuckDBFixture fixture, ITestOutputHelper testOutputHelper) : base(fixture)
     {
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -1154,10 +1158,16 @@ public class JsonQueryDuckDBTest : JsonQueryRelationalTestBase<JsonQueryDuckDBFi
         return base.Json_property_in_predicate(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Json_scalar_length(bool async)
+    public override async Task Json_scalar_length(bool async)
     {
-        return base.Json_scalar_length(async);
+        await base.Json_scalar_length(async);
+
+        AssertSql(
+            """
+            SELECT j."Name"
+            FROM "JsonEntitiesBasic" AS j
+            WHERE length(j."OwnedReferenceRoot" ->> 'Name') > 2
+            """);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -1321,4 +1331,7 @@ public class JsonQueryDuckDBTest : JsonQueryRelationalTestBase<JsonQueryDuckDBFi
     {
         return base.RightJoin_json_entities(async);
     }
+
+    private void AssertSql(params string[] expected)
+        => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
