@@ -17,6 +17,7 @@ public class DuckDBBlobMethodTranslator : IMethodCallTranslator
     private static readonly MethodInfo ToBase64String = typeof(Convert).GetRuntimeMethod(nameof(Convert.ToBase64String), [typeof(byte[])])!;
     private static readonly MethodInfo FromBase64String = typeof(Convert).GetRuntimeMethod(nameof(Convert.FromBase64String), [typeof(string)])!;
     private static readonly MethodInfo ToHexString = typeof(Convert).GetRuntimeMethod(nameof(Convert.ToHexString), [typeof(byte[])])!;
+    private static readonly MethodInfo FromHexString = typeof(Convert).GetRuntimeMethod(nameof(Convert.FromHexString), [typeof(string)])!;
 
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
 
@@ -66,11 +67,21 @@ public class DuckDBBlobMethodTranslator : IMethodCallTranslator
         if (method == ToHexString)
         {
             return _sqlExpressionFactory.Function(
-                "to_hex",
+                "hex",
                 [arguments[0]],
                 nullable: true,
                 argumentsPropagateNullability: [true],
                 typeof(string));
+        }
+
+        if (method == FromHexString)
+        {
+            return _sqlExpressionFactory.Function(
+                "unhex",
+                [arguments[0]],
+                nullable: true,
+                argumentsPropagateNullability: [true],
+                typeof(byte[]));
         }
 
         return null;

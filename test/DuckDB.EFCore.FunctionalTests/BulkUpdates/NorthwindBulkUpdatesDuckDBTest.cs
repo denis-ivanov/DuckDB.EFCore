@@ -102,12 +102,6 @@ public class NorthwindBulkUpdatesDuckDBTest : NorthwindBulkUpdatesRelationalTest
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_with_cross_apply_set_constant(bool async)
-    {
-        return base.Update_with_cross_apply_set_constant(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Update_with_cross_join_cross_apply_set_constant(bool async)
     {
         return base.Update_with_cross_join_cross_apply_set_constant(async);
@@ -129,12 +123,6 @@ public class NorthwindBulkUpdatesDuckDBTest : NorthwindBulkUpdatesRelationalTest
     public override Task Update_with_cross_join_set_constant(bool async)
     {
         return base.Update_with_cross_join_set_constant(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_with_outer_apply_set_constant(bool async)
-    {
-        return base.Update_with_outer_apply_set_constant(async);
     }
 
     private void AssertSql(params string[] expected)
