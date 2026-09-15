@@ -168,10 +168,16 @@ public class JsonQueryDuckDBTest : JsonQueryRelationalTestBase<JsonQueryDuckDBFi
         return base.Project_json_reference_in_tracking_query_fails(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Basic_json_projection_enum_inside_json_entity(bool async)
+    [ConditionalTheory]
+    public override async Task Basic_json_projection_enum_inside_json_entity(bool async)
     {
-        return base.Basic_json_projection_enum_inside_json_entity(async);
+        await base.Basic_json_projection_enum_inside_json_entity(async);
+        
+        AssertSql(
+            """
+            SELECT j."Id", CAST(j."OwnedReferenceRoot" ->> '$.OwnedReferenceBranch.Enum' AS INTEGER) AS "Enum"
+            FROM "JsonEntitiesBasic" AS j
+            """);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -232,12 +238,6 @@ public class JsonQueryDuckDBTest : JsonQueryRelationalTestBase<JsonQueryDuckDBFi
     public override Task Basic_json_projection_owner_entity_NoTrackingWithIdentityResolution(bool async)
     {
         return base.Basic_json_projection_owner_entity_NoTrackingWithIdentityResolution(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Basic_json_projection_scalar(bool async)
-    {
-        return base.Basic_json_projection_scalar(async);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
