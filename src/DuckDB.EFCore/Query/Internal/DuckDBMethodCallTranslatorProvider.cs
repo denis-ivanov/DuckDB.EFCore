@@ -1,5 +1,6 @@
 ﻿using DuckDB.EFCore.Query.ExpressionTranslators.Internal;
 using Microsoft.EntityFrameworkCore.Query;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DuckDB.EFCore.Query.Internal;
 
@@ -17,6 +18,7 @@ public class DuckDBMethodCallTranslatorProvider : RelationalMethodCallTranslator
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
+    [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
     public DuckDBMethodCallTranslatorProvider(RelationalMethodCallTranslatorProviderDependencies dependencies) : base(dependencies)
     {
         AddTranslators([
@@ -33,7 +35,8 @@ public class DuckDBMethodCallTranslatorProvider : RelationalMethodCallTranslator
             new DuckDBObjectToStringTranslator(dependencies.RelationalTypeMappingSource, dependencies.SqlExpressionFactory),
             new DuckDBRandomMethodTranslator(dependencies.SqlExpressionFactory),
             new DuckDBRegexMethodTranslator(dependencies.SqlExpressionFactory),
-            new DuckDBRowValueTranslator(dependencies.SqlExpressionFactory)
+            new DuckDBRowValueTranslator(dependencies.SqlExpressionFactory),
+            new DuckDBMapMethodTranslator(dependencies.SqlExpressionFactory)
         ]);
     }
 }
