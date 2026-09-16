@@ -65,10 +65,24 @@ public class NorthwindBulkUpdatesDuckDBTest : NorthwindBulkUpdatesRelationalTest
             """);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_Where_GroupBy_aggregate_set_constant(bool async)
+    [ConditionalTheory]
+    public override async Task Update_Where_GroupBy_aggregate_set_constant(bool async)
     {
-        return base.Update_Where_GroupBy_aggregate_set_constant(async);
+        await base.Update_Where_GroupBy_aggregate_set_constant(async);
+
+        AssertExecuteUpdateSql(
+            """
+            p='Updated'
+
+            UPDATE "Customers" AS c
+            SET "ContactName" = $p
+            WHERE c."CustomerID" = (
+                SELECT o."CustomerID"
+                FROM "Orders" AS o
+                GROUP BY o."CustomerID"
+                HAVING COUNT(*) > 11
+                LIMIT 1)
+            """);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -127,4 +141,7 @@ public class NorthwindBulkUpdatesDuckDBTest : NorthwindBulkUpdatesRelationalTest
 
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
+
+    private void AssertExecuteUpdateSql(params string[] expected)
+        => Fixture.TestSqlLoggerFactory.AssertBaseline(expected, forUpdate: true);
 }
