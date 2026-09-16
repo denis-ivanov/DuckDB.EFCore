@@ -125,6 +125,7 @@ public class DuckDBTestStore : RelationalTestStore
         if (connection.State != ConnectionState.Open)
         {
             connection.Open();
+            ExecuteNonQuery("PRAGMA threads=1");
             LoadSpatialExtensionIfNeeded();
         }
     }
@@ -136,6 +137,7 @@ public class DuckDBTestStore : RelationalTestStore
         if (connection.State != ConnectionState.Open)
         {
             await connection.OpenAsync();
+            ExecuteNonQuery("PRAGMA threads=1");
             LoadSpatialExtensionIfNeeded();
         }
     }
