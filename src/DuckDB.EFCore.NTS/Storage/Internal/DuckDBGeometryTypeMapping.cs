@@ -1,8 +1,4 @@
-﻿using System.Data.Common;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using DuckDB.EFCore.NTS.Storage.Json;
+﻿using DuckDB.EFCore.NTS.Storage.Json;
 using DuckDB.EFCore.NTS.Storage.ValueConversion.Internal;
 using DuckDB.NET.Data;
 using Microsoft.EntityFrameworkCore.Query;
@@ -11,6 +7,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
+using System.Data.Common;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Text;
 
 namespace DuckDB.EFCore.NTS.Storage.Internal;
 

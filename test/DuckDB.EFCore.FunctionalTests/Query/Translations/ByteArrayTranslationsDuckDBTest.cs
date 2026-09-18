@@ -1,5 +1,6 @@
-﻿using System.Text;
-using Microsoft.EntityFrameworkCore.TestModels.BasicTypesModel;
+﻿using Microsoft.EntityFrameworkCore.TestModels.BasicTypesModel;
+using System.Security.Cryptography;
+using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -113,6 +114,147 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             SELECT unhex(hex(b."ByteArray"))
             FROM "BasicTypesEntities" AS b
             ORDER BY b."Id" NULLS FIRST
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task MD5_HashData()
+    {
+        await AssertQuery(
+            ss => ss.Set<BasicTypesEntity>().OrderBy(b => b.Id).Select(b => MD5.HashData(b.ByteArray)),
+            assertOrder: true,
+            elementAsserter: (e, a) => Assert.Equivalent(e, a));
+
+        AssertSql(
+            """
+            SELECT unhex(md5(b."ByteArray"))
+            FROM "BasicTypesEntities" AS b
+            ORDER BY b."Id" NULLS FIRST
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task Convert_ToHexString_MD5_HashData()
+    {
+        await AssertQuery(
+            ss => ss.Set<BasicTypesEntity>().OrderBy(b => b.Id).Select(b => Convert.ToHexString(MD5.HashData(b.ByteArray))),
+            assertOrder: true,
+            elementAsserter: (e, a) => Assert.Equal(e, a, ignoreCase: true));
+
+        AssertSql(
+            """
+            SELECT md5(b."ByteArray")
+            FROM "BasicTypesEntities" AS b
+            ORDER BY b."Id" NULLS FIRST
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task Convert_ToHexString_MD5_HashData_in_where()
+    {
+        await AssertQuery(
+            ss => ss.Set<BasicTypesEntity>().Where(b => Convert.ToHexString(MD5.HashData(b.ByteArray)) == "0000"),
+            assertEmpty: true);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE md5(b."ByteArray") = '0000'
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task SHA1_HashData()
+    {
+        await AssertQuery(
+            ss => ss.Set<BasicTypesEntity>().OrderBy(b => b.Id).Select(b => SHA1.HashData(b.ByteArray)),
+            assertOrder: true,
+            elementAsserter: (e, a) => Assert.Equivalent(e, a));
+
+        AssertSql(
+            """
+            SELECT unhex(sha1(b."ByteArray"))
+            FROM "BasicTypesEntities" AS b
+            ORDER BY b."Id" NULLS FIRST
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task Convert_ToHexString_SHA1_HashData()
+    {
+        await AssertQuery(
+            ss => ss.Set<BasicTypesEntity>().OrderBy(b => b.Id).Select(b => Convert.ToHexString(SHA1.HashData(b.ByteArray))),
+            assertOrder: true,
+            elementAsserter: (e, a) => Assert.Equal(e, a, ignoreCase: true));
+
+        AssertSql(
+            """
+            SELECT sha1(b."ByteArray")
+            FROM "BasicTypesEntities" AS b
+            ORDER BY b."Id" NULLS FIRST
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task Convert_ToHexString_SHA1_HashData_in_where()
+    {
+        await AssertQuery(
+            ss => ss.Set<BasicTypesEntity>().Where(b => Convert.ToHexString(SHA1.HashData(b.ByteArray)) == "0000"),
+            assertEmpty: true);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE sha1(b."ByteArray") = '0000'
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task SHA256_HashData()
+    {
+        await AssertQuery(
+            ss => ss.Set<BasicTypesEntity>().OrderBy(b => b.Id).Select(b => SHA256.HashData(b.ByteArray)),
+            assertOrder: true,
+            elementAsserter: (e, a) => Assert.Equivalent(e, a));
+
+        AssertSql(
+            """
+            SELECT unhex(sha256(b."ByteArray"))
+            FROM "BasicTypesEntities" AS b
+            ORDER BY b."Id" NULLS FIRST
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task Convert_ToHexString_SHA256_HashData()
+    {
+        await AssertQuery(
+            ss => ss.Set<BasicTypesEntity>().OrderBy(b => b.Id).Select(b => Convert.ToHexString(SHA256.HashData(b.ByteArray))),
+            assertOrder: true,
+            elementAsserter: (e, a) => Assert.Equal(e, a, ignoreCase: true));
+
+        AssertSql(
+            """
+            SELECT sha256(b."ByteArray")
+            FROM "BasicTypesEntities" AS b
+            ORDER BY b."Id" NULLS FIRST
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task Convert_ToHexString_SHA256_HashData_in_where()
+    {
+        await AssertQuery(
+            ss => ss.Set<BasicTypesEntity>().Where(b => Convert.ToHexString(SHA256.HashData(b.ByteArray)) == "0000"),
+            assertEmpty: true);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE sha256(b."ByteArray") = '0000'
             """);
     }
 
