@@ -1,9 +1,9 @@
-﻿using System.Linq.Expressions;
-using System.Reflection;
-using System.Text.Json;
-using Microsoft.EntityFrameworkCore.Storage.Json;
+﻿using Microsoft.EntityFrameworkCore.Storage.Json;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Text.Json;
 
 namespace DuckDB.EFCore.NTS.Storage.Json;
 

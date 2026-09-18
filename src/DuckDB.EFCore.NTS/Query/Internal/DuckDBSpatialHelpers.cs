@@ -1,7 +1,6 @@
 ﻿using DuckDB.EFCore.NTS.Storage.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using NetTopologySuite.Geometries;
 
 namespace DuckDB.EFCore.NTS.Query.Internal;
 
