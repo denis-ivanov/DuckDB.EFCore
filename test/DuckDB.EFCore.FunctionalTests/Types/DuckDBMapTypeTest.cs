@@ -571,6 +571,102 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
+    [ConditionalFact]
+    public void Can_project_map_values_to_array()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(NewEntity(28, new Dictionary<string, int> { ["k1"] = 1, ["k2"] = 2, ["k3"] = 3 }));
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var values = context.Entities.Where(e => e.Id == 28).Select(e => e.Counters.Values.ToArray()).Single();
+
+        Assert.Equal([1, 2, 3], values);
+
+        AssertSql(
+            """
+            SELECT map_values(e."Counters")
+            FROM "Entities" AS e
+            WHERE e."Id" = 28
+            LIMIT 2
+            """);
+    }
+
+    [ConditionalFact]
+    public void Can_project_map_values_to_list()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(NewEntity(29, new Dictionary<string, int> { ["k1"] = 10 }));
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var values = context.Entities.Where(e => e.Id == 29).Select(e => e.Counters.Values.ToList()).Single();
+
+        Assert.Equal(new List<int> { 10 }, values);
+
+        AssertSql(
+            """
+            SELECT map_values(e."Counters")
+            FROM "Entities" AS e
+            WHERE e."Id" = 29
+            LIMIT 2
+            """);
+    }
+
+    [ConditionalFact]
+    public void Can_project_map_values_to_array_non_string()
+    {
+        using var context = CreateContext();
+
+        var entity = NewEntity(30, new Dictionary<string, int>());
+        entity.Measurements = new Dictionary<int, double> { [100] = 3.14, [200] = 2.71 };
+        context.Entities.Add(entity);
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var values = context.Entities.Where(e => e.Id == 30).Select(e => e.Measurements.Values.ToArray()).Single();
+
+        Assert.Equal([3.14, 2.71], values);
+
+        AssertSql(
+            """
+            SELECT map_values(e."Measurements")
+            FROM "Entities" AS e
+            WHERE e."Id" = 30
+            LIMIT 2
+            """);
+    }
+
+    [ConditionalFact]
+    public void Can_project_map_values_to_list_non_string()
+    {
+        using var context = CreateContext();
+
+        var entity = NewEntity(31, new Dictionary<string, int>());
+        entity.Measurements = new Dictionary<int, double> { [300] = 1.11, [400] = 2.22 };
+        context.Entities.Add(entity);
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var values = context.Entities.Where(e => e.Id == 31).Select(e => e.Measurements.Values.ToList()).Single();
+
+        Assert.Equal(new List<double> { 1.11, 2.22 }, values);
+
+        AssertSql(
+            """
+            SELECT map_values(e."Measurements")
+            FROM "Entities" AS e
+            WHERE e."Id" = 31
+            LIMIT 2
+            """);
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 

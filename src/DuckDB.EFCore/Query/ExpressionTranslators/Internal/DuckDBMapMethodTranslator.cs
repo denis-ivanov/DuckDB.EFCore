@@ -88,16 +88,19 @@ public class DuckDBMapMethodTranslator : IMethodCallTranslator
             method.DeclaringType == typeof(Enumerable) &&
             method.Name is nameof(Enumerable.ToArray) or nameof(Enumerable.ToList) &&
             arguments.Count == 1 &&
-            arguments[0] is SqlFunctionExpression { Name: "map_keys" } mapKeysFunction)
+            arguments[0] is SqlFunctionExpression { Name: "map_keys" or "map_values" } mapFunction)
         {
-            var mapInstance = mapKeysFunction.Arguments[0];
-            var keyTypeMapping = (mapInstance.TypeMapping as DuckDBMapTypeMapping)?.KeyTypeMapping;
-            var typeMapping = (_typeMappingSource as DuckDBTypeMappingSource)?.FindCollectionMapping(null, method.ReturnType, null, keyTypeMapping)
+            var mapInstance = mapFunction.Arguments[0];
+            var elementTypeMapping = mapFunction.Name == "map_keys"
+                ? (mapInstance.TypeMapping as DuckDBMapTypeMapping)?.KeyTypeMapping
+                : (mapInstance.TypeMapping as DuckDBMapTypeMapping)?.ValueTypeMapping;
+
+            var typeMapping = (_typeMappingSource as DuckDBTypeMappingSource)?.FindCollectionMapping(null, method.ReturnType, null, elementTypeMapping)
                 ?? _typeMappingSource.FindMapping(method.ReturnType);
 
             return _sqlExpressionFactory.Function(
-                name: "map_keys",
-                arguments: mapKeysFunction.Arguments,
+                name: mapFunction.Name,
+                arguments: mapFunction.Arguments,
                 nullable: true,
                 argumentsPropagateNullability: [true],
                 returnType: method.ReturnType,
