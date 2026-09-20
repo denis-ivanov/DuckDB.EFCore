@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DuckDB.EFCore.Storage.Internal;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Reflection;
 
 namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
@@ -15,6 +17,7 @@ namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
 public class DuckDBMapMemberTranslator : IMemberTranslator
 {
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
+    private readonly IRelationalTypeMappingSource _typeMappingSource;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -22,9 +25,12 @@ public class DuckDBMapMemberTranslator : IMemberTranslator
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public DuckDBMapMemberTranslator(ISqlExpressionFactory sqlExpressionFactory)
+    public DuckDBMapMemberTranslator(
+        ISqlExpressionFactory sqlExpressionFactory,
+        IRelationalTypeMappingSource typeMappingSource)
     {
         _sqlExpressionFactory = sqlExpressionFactory;
+        _typeMappingSource = typeMappingSource;
     }
 
     /// <summary>
@@ -38,15 +44,32 @@ public class DuckDBMapMemberTranslator : IMemberTranslator
         if (instance is not null &&
             member.DeclaringType is not null &&
             member.DeclaringType.IsGenericType &&
-            member.DeclaringType.GetGenericTypeDefinition() == typeof(Dictionary<,>) &&
-            member.Name == nameof(Dictionary<,>.Count))
+            member.DeclaringType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
         {
-            return _sqlExpressionFactory.Function(
-                name: "cardinality",
-                arguments: [instance],
-                nullable: true,
-                argumentsPropagateNullability: [true],
-                returnType: returnType);
+            if (member.Name == nameof(Dictionary<,>.Count))
+            {
+                return _sqlExpressionFactory.Function(
+                    name: "cardinality",
+                    arguments: [instance],
+                    nullable: true,
+                    argumentsPropagateNullability: [true],
+                    returnType: returnType);
+            }
+
+            if (member.Name == nameof(Dictionary<,>.Keys))
+            {
+                var keyTypeMapping = (instance.TypeMapping as DuckDBMapTypeMapping)?.KeyTypeMapping;
+                var typeMapping = (_typeMappingSource as DuckDBTypeMappingSource)?.FindCollectionMapping(null, returnType, null, keyTypeMapping)
+                    ?? _typeMappingSource.FindMapping(returnType);
+
+                return _sqlExpressionFactory.Function(
+                    name: "map_keys",
+                    arguments: [instance],
+                    nullable: true,
+                    argumentsPropagateNullability: [true],
+                    returnType: returnType,
+                    typeMapping: typeMapping);
+            }
         }
 
         return null;

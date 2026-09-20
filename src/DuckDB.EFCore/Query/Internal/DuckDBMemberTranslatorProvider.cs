@@ -30,7 +30,7 @@ public class DuckDBMemberTranslatorProvider : RelationalMemberTranslatorProvider
             new DuckDBTimeOnlyMemberTranslator(dependencies.SqlExpressionFactory),
             new DuckDBTimeSpanMemberTranslator(dependencies.SqlExpressionFactory),
             new DuckDBBlobMemberTranslator(dependencies.SqlExpressionFactory),
-            new DuckDBMapMemberTranslator(dependencies.SqlExpressionFactory)
+            new DuckDBMapMemberTranslator(dependencies.SqlExpressionFactory, typeMappingSource)
         ]);
     }
 }
