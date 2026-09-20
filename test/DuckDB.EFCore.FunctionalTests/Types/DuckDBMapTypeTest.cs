@@ -475,6 +475,102 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
+    [ConditionalFact]
+    public void Can_project_map_keys_to_array()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(NewEntity(24, new Dictionary<string, int> { ["k1"] = 1, ["k2"] = 2, ["k3"] = 3 }));
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var keys = context.Entities.Where(e => e.Id == 24).Select(e => e.Counters.Keys.ToArray()).Single();
+
+        Assert.Equal(["k1", "k2", "k3"], keys);
+
+        AssertSql(
+            """
+            SELECT map_keys(e."Counters")
+            FROM "Entities" AS e
+            WHERE e."Id" = 24
+            LIMIT 2
+            """);
+    }
+
+    [ConditionalFact]
+    public void Can_project_map_keys_to_list()
+    {
+        using var context = CreateContext();
+
+        context.Entities.Add(NewEntity(25, new Dictionary<string, int> { ["k1"] = 10 }));
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var keys = context.Entities.Where(e => e.Id == 25).Select(e => e.Counters.Keys.ToList()).Single();
+
+        Assert.Equal(new List<string> { "k1" }, keys);
+
+        AssertSql(
+            """
+            SELECT map_keys(e."Counters")
+            FROM "Entities" AS e
+            WHERE e."Id" = 25
+            LIMIT 2
+            """);
+    }
+
+    [ConditionalFact]
+    public void Can_project_map_keys_to_array_non_string()
+    {
+        using var context = CreateContext();
+
+        var entity = NewEntity(26, new Dictionary<string, int>());
+        entity.Measurements = new Dictionary<int, double> { [100] = 3.14, [200] = 2.71 };
+        context.Entities.Add(entity);
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var keys = context.Entities.Where(e => e.Id == 26).Select(e => e.Measurements.Keys.ToArray()).Single();
+
+        Assert.Equal([100, 200], keys);
+
+        AssertSql(
+            """
+            SELECT map_keys(e."Measurements")
+            FROM "Entities" AS e
+            WHERE e."Id" = 26
+            LIMIT 2
+            """);
+    }
+
+    [ConditionalFact]
+    public void Can_project_map_keys_to_list_non_string()
+    {
+        using var context = CreateContext();
+
+        var entity = NewEntity(27, new Dictionary<string, int>());
+        entity.Measurements = new Dictionary<int, double> { [300] = 1.11, [400] = 2.22 };
+        context.Entities.Add(entity);
+        context.SaveChanges();
+        context.ChangeTracker.Clear();
+        Fixture.TestSqlLoggerFactory.Clear();
+
+        var keys = context.Entities.Where(e => e.Id == 27).Select(e => e.Measurements.Keys.ToList()).Single();
+
+        Assert.Equal(new List<int> { 300, 400 }, keys);
+
+        AssertSql(
+            """
+            SELECT map_keys(e."Measurements")
+            FROM "Entities" AS e
+            WHERE e."Id" = 27
+            LIMIT 2
+            """);
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 

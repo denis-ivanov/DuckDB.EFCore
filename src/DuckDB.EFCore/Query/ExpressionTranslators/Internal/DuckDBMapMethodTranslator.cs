@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Reflection;
 
 namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
@@ -16,6 +17,7 @@ namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
 public class DuckDBMapMethodTranslator : IMethodCallTranslator
 {
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
+    private readonly IRelationalTypeMappingSource _typeMappingSource;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -23,9 +25,12 @@ public class DuckDBMapMethodTranslator : IMethodCallTranslator
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public DuckDBMapMethodTranslator(ISqlExpressionFactory sqlExpressionFactory)
+    public DuckDBMapMethodTranslator(
+        ISqlExpressionFactory sqlExpressionFactory,
+        IRelationalTypeMappingSource typeMappingSource)
     {
         _sqlExpressionFactory = sqlExpressionFactory;
+        _typeMappingSource = typeMappingSource;
     }
 
     /// <summary>
@@ -77,6 +82,26 @@ public class DuckDBMapMethodTranslator : IMethodCallTranslator
                     returnType: method.ReturnType,
                     typeMapping: typeMapping);
             }
+        }
+
+        if (instance is null &&
+            method.DeclaringType == typeof(Enumerable) &&
+            method.Name is nameof(Enumerable.ToArray) or nameof(Enumerable.ToList) &&
+            arguments.Count == 1 &&
+            arguments[0] is SqlFunctionExpression { Name: "map_keys" } mapKeysFunction)
+        {
+            var mapInstance = mapKeysFunction.Arguments[0];
+            var keyTypeMapping = (mapInstance.TypeMapping as DuckDBMapTypeMapping)?.KeyTypeMapping;
+            var typeMapping = (_typeMappingSource as DuckDBTypeMappingSource)?.FindCollectionMapping(null, method.ReturnType, null, keyTypeMapping)
+                ?? _typeMappingSource.FindMapping(method.ReturnType);
+
+            return _sqlExpressionFactory.Function(
+                name: "map_keys",
+                arguments: mapKeysFunction.Arguments,
+                nullable: true,
+                argumentsPropagateNullability: [true],
+                returnType: method.ReturnType,
+                typeMapping: typeMapping);
         }
 
         return null;
