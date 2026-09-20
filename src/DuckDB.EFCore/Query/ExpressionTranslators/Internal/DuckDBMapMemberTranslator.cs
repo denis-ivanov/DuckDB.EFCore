@@ -70,6 +70,21 @@ public class DuckDBMapMemberTranslator : IMemberTranslator
                     returnType: returnType,
                     typeMapping: typeMapping);
             }
+
+            if (member.Name == nameof(Dictionary<,>.Values))
+            {
+                var valueTypeMapping = (instance.TypeMapping as DuckDBMapTypeMapping)?.ValueTypeMapping;
+                var typeMapping = (_typeMappingSource as DuckDBTypeMappingSource)?.FindCollectionMapping(null, returnType, null, valueTypeMapping)
+                    ?? _typeMappingSource.FindMapping(returnType);
+
+                return _sqlExpressionFactory.Function(
+                    name: "map_values",
+                    arguments: [instance],
+                    nullable: true,
+                    argumentsPropagateNullability: [true],
+                    returnType: returnType,
+                    typeMapping: typeMapping);
+            }
         }
 
         return null;
