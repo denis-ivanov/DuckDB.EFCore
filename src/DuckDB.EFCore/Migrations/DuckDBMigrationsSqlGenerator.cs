@@ -1,4 +1,5 @@
-﻿using DuckDB.EFCore.Metadata;
+﻿using DuckDB.EFCore.Extensions;
+using DuckDB.EFCore.Metadata;
 using DuckDB.EFCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -322,6 +323,20 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
         if (operation.IsStored == true)
         {
             builder.Append(" STORED");
+        }
+    }
+
+    protected override void ColumnDefinition(string? schema, string table, string name, ColumnOperation operation, IModel? model, MigrationCommandListBuilder builder)
+    {
+        base.ColumnDefinition(schema, table, name, operation, model, builder);
+
+        var compressionType = operation.GetCompressionType();
+
+        if (compressionType is not null && compressionType != CompressionType.AUTO)
+        {
+            builder
+                .Append(" USING COMPRESSION ")
+                .Append(compressionType.Value.ToString());
         }
     }
 

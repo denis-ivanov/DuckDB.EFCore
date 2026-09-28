@@ -28,6 +28,7 @@ public class DuckDBDesignTimeServices : IDesignTimeServices
         serviceCollection.AddEntityFrameworkDuckDB();
 #pragma warning disable EF1001 // Internal EF Core API usage.
         new EntityFrameworkRelationalDesignServicesBuilder(serviceCollection)
+            .TryAdd<IAnnotationCodeGenerator, DuckDBAnnotationCodeGenerator>()
             .TryAdd<ICSharpRuntimeAnnotationCodeGenerator, DuckDBCSharpRuntimeAnnotationCodeGenerator>()
 #pragma warning restore EF1001 // Internal EF Core API usage.
             .TryAdd<IDatabaseModelFactory, DuckDBDatabaseModelFactory>()
