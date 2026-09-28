@@ -1,4 +1,6 @@
-﻿using DuckDB.NET.Data;
+﻿using DuckDB.EFCore.Metadata;
+using DuckDB.EFCore.Metadata.Internal;
+using DuckDB.NET.Data;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -123,11 +125,31 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
         foreach (var table in database.Tables)
         {
             using var command = connection.CreateCommand();
-            command.CommandText = """
-                                  SELECT *
-                                    FROM duckdb_columns
-                                   WHERE table_name = $table_name AND schema_name = $table_schema
-                                  """;
+            if (table is DatabaseTable)
+            {
+                var tableName = string.IsNullOrEmpty(table.Schema)
+                    ? table.Name.Replace("'", "''")
+                    : $"{table.Schema.Replace("'", "''")}.{table.Name.Replace("'", "''")}";
+
+                command.CommandText = $"""
+                                      SELECT c.*, s.compression
+                                        FROM duckdb_columns c
+                                        LEFT
+                                        JOIN (SELECT column_name, FIRST(compression) AS compression FROM pragma_storage_info('{tableName}') GROUP BY column_name) s
+                                          ON c.column_name = s.column_name
+                                       WHERE c.table_name = $table_name
+                                         AND c.schema_name = $table_schema
+                                      """;
+            }
+            else
+            {
+                command.CommandText = """
+                                      SELECT c.*, NULL AS compression
+                                        FROM duckdb_columns c
+                                       WHERE c.table_name = $table_name
+                                         AND c.schema_name = $table_schema
+                                      """;
+            }
 
             command.Parameters.Add(new DuckDBParameter("table_name", table.Name));
             command.Parameters.Add(new DuckDBParameter("table_schema", table.Schema));
@@ -145,6 +167,7 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
                 var characterMaximumLength = reader.IsDBNull("character_maximum_length") ? (int?)null : reader.GetInt32("character_maximum_length");
                 var numericPrecision = reader.IsDBNull("numeric_precision") ? (int?)null : reader.GetInt32("numeric_precision");
                 var numericScale = reader.IsDBNull("numeric_scale") ? (int?)null : reader.GetInt32("numeric_scale");
+                var compression = reader.IsDBNull("compression") ? null : reader.GetString("compression");
 
                 var column = new DatabaseColumn
                 {
@@ -174,6 +197,11 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
                 if (numericScale.HasValue)
                 {
                     column.SetAnnotation(CoreAnnotationNames.Scale, numericScale.Value);
+                }
+
+                if (!string.IsNullOrWhiteSpace(compression) && Enum.TryParse<CompressionType>(compression, out var compressionType))
+                {
+                    column.SetAnnotation(DuckDBAnnotationNames.CompressionType, compressionType);
                 }
 
                 table.Columns.Add(column);

@@ -23,4 +23,25 @@ public static class DuckDBPropertyBuilderExtensions
 
         return columnBuilder;
     }
+
+    public static PropertyBuilder UseCompression(this PropertyBuilder propertyBuilder, CompressionType compressionType)
+    {
+        propertyBuilder.Metadata.SetCompressionType(compressionType);
+
+        return propertyBuilder;
+    }
+
+    public static PropertyBuilder<TProperty> UseCompression<TProperty>(
+        this PropertyBuilder<TProperty> propertyBuilder,
+        CompressionType compressionType)
+        => (PropertyBuilder<TProperty>)UseCompression((PropertyBuilder)propertyBuilder, compressionType);
+
+    public static ColumnBuilder UseCompression(
+        this ColumnBuilder columnBuilder,
+        CompressionType compressionType)
+    {
+        columnBuilder.Overrides.SetCompressionType(compressionType);
+
+        return columnBuilder;
+    }
 }

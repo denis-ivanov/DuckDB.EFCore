@@ -1,6 +1,9 @@
 ﻿using DuckDB.EFCore.Infrastructure;
+using DuckDB.EFCore.Metadata;
+using DuckDB.EFCore.Metadata.Internal;
 using DuckDB.EFCore.NTS.Extensions;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -728,5 +731,162 @@ CREATE TABLE dbo."TestLineBreaks" (
     public override void Sequence_restart_operation(long? startsAt)
     {
         base.Sequence_restart_operation(startsAt);
+    }
+
+    [Fact]
+    public void CreateTableOperation_with_compression()
+    {
+        var operation = new CreateTableOperation
+        {
+            Name = "Employees",
+            Schema = "dbo",
+            Columns =
+            {
+                new AddColumnOperation
+                {
+                    Name = "Id",
+                    Table = "Employees",
+                    Schema = "dbo",
+                    ClrType = typeof(int),
+                    ColumnType = "INTEGER",
+                    IsNullable = false
+                },
+                new AddColumnOperation
+                {
+                    Name = "Name",
+                    Table = "Employees",
+                    Schema = "dbo",
+                    ClrType = typeof(string),
+                    ColumnType = "VARCHAR",
+                    IsNullable = false
+                },
+                new AddColumnOperation
+                {
+                    Name = "Description",
+                    Table = "Employees",
+                    Schema = "dbo",
+                    ClrType = typeof(string),
+                    ColumnType = "VARCHAR",
+                    IsNullable = true
+                },
+                new AddColumnOperation
+                {
+                    Name = "Salary",
+                    Table = "Employees",
+                    Schema = "dbo",
+                    ClrType = typeof(decimal),
+                    ColumnType = "DECIMAL",
+                    IsNullable = false
+                }
+            },
+            PrimaryKey = new AddPrimaryKeyOperation
+            {
+                Name = "PK_Employees",
+                Table = "Employees",
+                Schema = "dbo",
+                Columns = ["Id"]
+            }
+        };
+
+        operation.Columns[1].SetAnnotation(DuckDBAnnotationNames.CompressionType, CompressionType.DICTIONARY);
+        operation.Columns[2].SetAnnotation(DuckDBAnnotationNames.CompressionType, CompressionType.FSST);
+        operation.Columns[3].SetAnnotation(DuckDBAnnotationNames.CompressionType, CompressionType.ALP);
+
+        Generate(operation);
+
+        AssertSql(
+            """
+            CREATE TABLE dbo."Employees" (
+                "Id" INTEGER NOT NULL,
+                "Name" VARCHAR NOT NULL USING COMPRESSION DICTIONARY,
+                "Description" VARCHAR NULL USING COMPRESSION FSST,
+                "Salary" DECIMAL NOT NULL USING COMPRESSION ALP,
+                CONSTRAINT "PK_Employees" PRIMARY KEY ("Id")
+            );
+            """);
+    }
+
+    [Fact]
+    public void AddColumnOperation_with_compression()
+    {
+        var operation = new AddColumnOperation
+        {
+            Name = "Name",
+            Table = "Employees",
+            Schema = "dbo",
+            ClrType = typeof(string),
+            ColumnType = "VARCHAR",
+            IsNullable = false
+        };
+
+        operation.SetAnnotation(DuckDBAnnotationNames.CompressionType, CompressionType.DICTIONARY);
+
+        Generate(operation);
+
+        AssertSql(
+            """
+            ALTER TABLE dbo."Employees" ADD "Name" VARCHAR NOT NULL USING COMPRESSION DICTIONARY;
+            """);
+    }
+
+    [Fact]
+    public void AddColumnOperation_with_compression_auto_should_not_generate_clause()
+    {
+        var operation = new AddColumnOperation
+        {
+            Name = "Name",
+            Table = "Employees",
+            Schema = "dbo",
+            ClrType = typeof(string),
+            ColumnType = "VARCHAR",
+            IsNullable = false
+        };
+
+        operation.SetAnnotation(DuckDBAnnotationNames.CompressionType, CompressionType.AUTO);
+
+        Generate(operation);
+
+        AssertSql(
+            """
+            ALTER TABLE dbo."Employees" ADD "Name" VARCHAR NOT NULL;
+            """);
+    }
+
+    [Theory]
+    [InlineData(CompressionType.UNCOMPRESSED)]
+    [InlineData(CompressionType.CONSTANT)]
+    [InlineData(CompressionType.RLE)]
+    [InlineData(CompressionType.DICTIONARY)]
+    [InlineData(CompressionType.PFOR_DELTA)]
+    [InlineData(CompressionType.BITPACKING)]
+    [InlineData(CompressionType.FSST)]
+    [InlineData(CompressionType.CHIMP)]
+    [InlineData(CompressionType.PATAS)]
+    [InlineData(CompressionType.ALP)]
+    [InlineData(CompressionType.ALPRD)]
+    [InlineData(CompressionType.ZSDT)]
+    [InlineData(CompressionType.ROARING)]
+    [InlineData(CompressionType.EMPTY)]
+    [InlineData(CompressionType.DICT_FSST)]
+    public void AddColumnOperation_with_all_compression_types(CompressionType compressionType)
+    {
+        var operation = new AddColumnOperation
+        {
+            Name = "Data",
+            Table = "TestTable",
+            Schema = "dbo",
+            ClrType = typeof(string),
+            ColumnType = "VARCHAR",
+            IsNullable = false
+        };
+
+        operation.SetAnnotation(DuckDBAnnotationNames.CompressionType, compressionType);
+
+        Generate(operation);
+
+        AssertSql(
+            $$"""
+            ALTER TABLE dbo."TestTable" ADD "Data" VARCHAR NOT NULL USING COMPRESSION {{compressionType}};
+            """);
     }
 }

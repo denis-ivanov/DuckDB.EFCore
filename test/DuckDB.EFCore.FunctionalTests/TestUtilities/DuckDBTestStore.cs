@@ -26,6 +26,8 @@ public class DuckDBTestStore : RelationalTestStore
     public static DuckDBTestStore Create(string name)
         => new(name, shared: false);
 
+    public new DuckDBConnection Connection => (DuckDBConnection)base.Connection;
+
     private readonly bool _seed;
     private bool _loadSpatial;
 

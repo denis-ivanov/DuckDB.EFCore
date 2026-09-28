@@ -106,4 +106,3 @@ public class DuckDBValueGenerationConvention :
         => property.FindTypeMapping()?.Converter != null
            || property.GetValueConverter() != null;
 }
-

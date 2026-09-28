@@ -30,6 +30,18 @@ public static class DuckDBPropertyExtensions
         return DuckDBValueGenerationStrategy.None;
     }
 
+    public static CompressionType? GetCompressionType(this IReadOnlyProperty property)
+    {
+        var annotation = property.FindAnnotation(DuckDBAnnotationNames.CompressionType);
+
+        if (annotation?.Value is CompressionType compressionType)
+        {
+            return compressionType;
+        }
+
+        return null;
+    }
+
     /// <summary>
     ///     Sets the <see cref="DuckDBValueGenerationStrategy"/> for the specified property.
     /// </summary>
@@ -55,6 +67,9 @@ public static class DuckDBPropertyExtensions
     /// <param name="value">
     ///     The <see cref="DuckDBValueGenerationStrategy"/> to set, or <c>null</c> to remove the strategy.
     /// </param>
+    /// <param name="fromDataAnnotation">
+    ///     Indicates whether the configuration was specified using a data annotation.
+    /// </param>
     public static DuckDBValueGenerationStrategy? SetValueGenerationStrategy(
         this IConventionProperty property,
         DuckDBValueGenerationStrategy? value,
@@ -63,9 +78,19 @@ public static class DuckDBPropertyExtensions
         property.SetOrRemoveAnnotation(DuckDBAnnotationNames.ValueGenerationStrategy, value, fromDataAnnotation);
         return value;
     }
-    
+
     public static void SetValueGenerationStrategy(
         this IMutableRelationalPropertyOverrides overrides,
         DuckDBValueGenerationStrategy? value)
         => overrides.SetOrRemoveAnnotation(DuckDBAnnotationNames.ValueGenerationStrategy, value);
+
+    public static void SetCompressionType(
+        this IMutableProperty property,
+        CompressionType? value)
+        => property.SetOrRemoveAnnotation(DuckDBAnnotationNames.CompressionType, value);
+
+    public static void SetCompressionType(
+        this IMutableRelationalPropertyOverrides overrides,
+        CompressionType? value)
+        => overrides.SetOrRemoveAnnotation(DuckDBAnnotationNames.CompressionType, value);
 }
