@@ -54,6 +54,17 @@ public class DuckDBDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
                     returnType: typeof(string),
                     typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(string))!);
             }
+
+            if (method.Name == nameof(DuckDBDbFunctionsExtensions.Strptime))
+            {
+                return _sqlExpressionFactory.Function(
+                    name: "strptime",
+                    arguments: [arguments[1], arguments[2]],
+                    nullable: true,
+                    argumentsPropagateNullability: [true, true],
+                    returnType: typeof(DateTime),
+                    typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(DateTime))!);
+            }
         }
 
         return null;

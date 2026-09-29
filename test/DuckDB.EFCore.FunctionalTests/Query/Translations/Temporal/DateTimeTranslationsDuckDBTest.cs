@@ -31,6 +31,24 @@ public class DateTimeTranslationsDuckDBTest : DateTimeTranslationsTestBase<Basic
             """);
     }
 
+    [ConditionalFact]
+    public async Task Strptime()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(o => EF.Functions.Strptime(EF.Functions.Strftime(o.DateTime, "%Y-%m-%d"), "%Y-%m-%d") == new DateTime(2020, 1, 1)),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(o => o.DateTime == new DateTime(2020, 1, 1)),
+            assertEmpty: true);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE strptime(strftime(b."DateTime", '%Y-%m-%d'), '%Y-%m-%d') = TIMESTAMP '2020-01-01 00:00:00.000000'
+            """);
+    }
+
     public override async Task DayOfYear()
     {
         await base.DayOfYear();
