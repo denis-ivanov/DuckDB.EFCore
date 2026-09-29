@@ -1,5 +1,4 @@
-﻿using DuckDB.EFCore.Extensions.DbFunctionsExtensions;
-using DuckDB.EFCore.Query.Expressions.Internal;
+﻿using DuckDB.EFCore.Query.Expressions.Internal;
 using DuckDB.EFCore.Query.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
