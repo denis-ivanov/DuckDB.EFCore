@@ -81,4 +81,15 @@ public static class DuckDBDbFunctionsExtensions
     /// <see href="https://duckdb.org/docs/current/sql/functions/dateformat#strftime-examples"/>
     public static string? Strftime(this DbFunctions _, DateTimeOffset? timestamp, string? format)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Strftime)));
+
+    /// <summary>
+    /// Converts strings to timestamps according to the specified pattern.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="text"></param>
+    /// <param name="format"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/dateformat#strptime-examples"/>
+    public static DateTime? Strptime(this DbFunctions _, string? text, string? format)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Strptime)));
 }
