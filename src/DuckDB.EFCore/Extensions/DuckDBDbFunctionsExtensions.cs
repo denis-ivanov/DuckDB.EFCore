@@ -83,7 +83,7 @@ public static class DuckDBDbFunctionsExtensions
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Strftime)));
 
     /// <summary>
-    /// Converts strings to timestamps according to the specified pattern.
+    ///     Converts strings to timestamps according to the specified pattern.
     /// </summary>
     /// <param name="_"></param>
     /// <param name="text"></param>
@@ -92,4 +92,14 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/dateformat#strptime-examples"/>
     public static DateTime? Strptime(this DbFunctions _, string? text, string? format)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Strptime)));
+    
+    /// <summary>
+    /// 	The (English) name of the weekday.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="date"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/date#daynamedate"/>
+    public static string? DayName(this DbFunctions _, DateOnly? date)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(DayName)));
 }

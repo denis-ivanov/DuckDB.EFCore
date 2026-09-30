@@ -44,26 +44,32 @@ public class DuckDBDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
     {
         if (method.DeclaringType == typeof(DuckDBDbFunctionsExtensions))
         {
-            if (method.Name == nameof(DuckDBDbFunctionsExtensions.Strftime))
+            switch (method.Name)
             {
-                return _sqlExpressionFactory.Function(
-                    name: "strftime",
-                    arguments: [arguments[1], arguments[2]],
-                    nullable: true,
-                    argumentsPropagateNullability: [true, true],
-                    returnType: typeof(string),
-                    typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(string))!);
-            }
-
-            if (method.Name == nameof(DuckDBDbFunctionsExtensions.Strptime))
-            {
-                return _sqlExpressionFactory.Function(
-                    name: "strptime",
-                    arguments: [arguments[1], arguments[2]],
-                    nullable: true,
-                    argumentsPropagateNullability: [true, true],
-                    returnType: typeof(DateTime),
-                    typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(DateTime))!);
+                case nameof(DuckDBDbFunctionsExtensions.Strftime):
+                    return _sqlExpressionFactory.Function(
+                        name: "strftime",
+                        arguments: [arguments[1], arguments[2]],
+                        nullable: true,
+                        argumentsPropagateNullability: [true, true],
+                        returnType: typeof(string),
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(string))!);
+                case nameof(DuckDBDbFunctionsExtensions.Strptime):
+                    return _sqlExpressionFactory.Function(
+                        name: "strptime",
+                        arguments: [arguments[1], arguments[2]],
+                        nullable: true,
+                        argumentsPropagateNullability: [true, true],
+                        returnType: typeof(DateTime),
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(DateTime))!);
+                case nameof(DuckDBDbFunctionsExtensions.DayName):
+                    return _sqlExpressionFactory.Function(
+                        name: "dayname",
+                        arguments: [arguments[1]],
+                        nullable: true,
+                        argumentsPropagateNullability: [true],
+                        returnType: typeof(string),
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(string))!);
             }
         }
 
