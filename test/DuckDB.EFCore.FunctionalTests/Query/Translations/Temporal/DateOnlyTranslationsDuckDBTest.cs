@@ -49,6 +49,24 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
+    [ConditionalFact]
+    public async Task DaysInMonth()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => EF.Functions.DaysInMonth(e.DateOnly) == 31),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => DateTime.DaysInMonth(e.DateOnly.Year, e.DateOnly.Month) == 31),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE days_in_month(b."DateOnly") = 31
+            """);
+    }
+
     public override async Task DayNumber_subtraction()
     {
         await base.DayNumber_subtraction();

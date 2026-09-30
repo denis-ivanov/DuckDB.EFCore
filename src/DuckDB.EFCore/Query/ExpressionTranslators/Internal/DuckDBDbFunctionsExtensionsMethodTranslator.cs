@@ -70,6 +70,14 @@ public class DuckDBDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
                         argumentsPropagateNullability: [true],
                         returnType: typeof(string),
                         typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(string))!);
+                case nameof(DuckDBDbFunctionsExtensions.DaysInMonth):
+                    return _sqlExpressionFactory.Function(
+                        name: "days_in_month",
+                        arguments: [arguments[1]],
+                        nullable: true,
+                        argumentsPropagateNullability: [true],
+                        returnType: typeof(int),
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(int))!);
             }
         }
 
