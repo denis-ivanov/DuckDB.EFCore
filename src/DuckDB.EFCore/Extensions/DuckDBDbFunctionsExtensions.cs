@@ -112,4 +112,15 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/date#days_in_monthdate"/>
     public static int? DaysInMonth(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(DaysInMonth)));
+
+    /// <summary>
+    /// The later of two dates.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="date1"></param>
+    /// <param name="date2"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/date#greatestdate-date"/>
+    public static DateOnly? Greatest(this DbFunctions _, DateOnly? date1, DateOnly? date2)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Greatest)));
 }
