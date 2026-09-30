@@ -109,7 +109,7 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="_"></param>
     /// <param name="date"></param>
     /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/date#days_in_monthdate"/>
     public static int? DaysInMonth(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(DaysInMonth)));
 }
