@@ -102,6 +102,23 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
+    [ConditionalFact]
+    public async Task IsInfinite()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => EF.Functions.IsInfinite(e.DateOnly) == false),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>(),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE NOT (isinf(b."DateOnly"))
+            """);
+    }
+
     public override async Task DayNumber_subtraction()
     {
         await base.DayNumber_subtraction();
