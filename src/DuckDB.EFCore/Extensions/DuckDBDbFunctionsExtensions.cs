@@ -143,4 +143,14 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/date#isinfdate"/>
     public static bool? IsInfinite(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(IsInfinite)));
+
+    /// <summary>
+    /// Extract the Julian Day number from a date.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="date"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/date#juliandate"/>
+    public static double? Julian(this DbFunctions _, DateOnly? date)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Julian)));
 }
