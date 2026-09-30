@@ -78,6 +78,14 @@ public class DuckDBDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
                         argumentsPropagateNullability: [true],
                         returnType: typeof(int),
                         typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(int))!);
+                case nameof(DuckDBDbFunctionsExtensions.Greatest):
+                    return _sqlExpressionFactory.Function(
+                        name: "greatest",
+                        arguments: [arguments[1], arguments[2]],
+                        nullable: true,
+                        argumentsPropagateNullability: [true, true],
+                        returnType: typeof(DateOnly),
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(DateOnly))!);
             }
         }
 

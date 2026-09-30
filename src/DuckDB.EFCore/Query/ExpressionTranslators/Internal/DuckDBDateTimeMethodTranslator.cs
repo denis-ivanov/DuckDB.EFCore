@@ -44,6 +44,11 @@ public class DuckDBDateTimeMethodTranslator : IMethodCallTranslator
         IReadOnlyList<SqlExpression> arguments,
         IDiagnosticsLogger<DbLoggerCategory.Query> logger)
     {
+        if (instance is null)
+        {
+            return null;
+        }
+
         if (method == AddYears)
         {
             return _sqlExpressionFactory.AddYears(instance, arguments[0], typeof(DateTime));
