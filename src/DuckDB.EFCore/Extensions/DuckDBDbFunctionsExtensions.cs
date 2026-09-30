@@ -133,4 +133,14 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/date#isfinitedate"/>
     public static bool? IsFinite(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(IsFinite)));
+
+    /// <summary>
+    /// Returns <c>true</c> if the date is infinite, <c>false</c> otherwise.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="date"></param>
+    /// <returns><c>true</c> if the date is infinite, <c>false</c> otherwise.</returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/date#isinfdate"/>
+    public static bool? IsInfinite(this DbFunctions _, DateOnly? date)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(IsInfinite)));
 }
