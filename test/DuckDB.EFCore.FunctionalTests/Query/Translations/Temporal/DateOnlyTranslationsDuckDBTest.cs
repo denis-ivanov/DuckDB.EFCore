@@ -31,6 +31,24 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
+    [ConditionalFact]
+    public async Task DayName()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => EF.Functions.DayName(e.DateOnly) == "Wednesday"),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.DateOnly.DayOfWeek.ToString() == "Wednesday"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE dayname(b."DateOnly") = 'Wednesday'
+            """);
+    }
+
     public override async Task DayNumber_subtraction()
     {
         await base.DayNumber_subtraction();
