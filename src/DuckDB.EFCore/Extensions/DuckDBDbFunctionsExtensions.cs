@@ -92,7 +92,7 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/dateformat#strptime-examples"/>
     public static DateTime? Strptime(this DbFunctions _, string? text, string? format)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Strptime)));
-    
+
     /// <summary>
     /// 	The (English) name of the weekday.
     /// </summary>
@@ -102,4 +102,14 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/date#daynamedate"/>
     public static string? DayName(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(DayName)));
+
+    /// <summary>
+    /// The number of days in the month of the given date.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="date"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static int? DaysInMonth(this DbFunctions _, DateOnly? date)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(DaysInMonth)));
 }
