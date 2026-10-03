@@ -176,6 +176,24 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
+    [ConditionalFact]
+    public async Task Century()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => EF.Functions.Century(e.DateOnly) == 21),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => (e.DateOnly.Year + 99) / 100 == 21),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE century(b."DateOnly") = 21
+            """);
+    }
+
     public override async Task DayNumber_subtraction()
     {
         await base.DayNumber_subtraction();

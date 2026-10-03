@@ -173,4 +173,14 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/date#monthnamedate"/>
     public static string? MonthName(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(MonthName)));
+
+    /// <summary>
+    /// Extract the century from a date.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="date"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/datepart#centurydate"/>
+    public static int? Century(this DbFunctions _, DateOnly? date)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Century)));
 }
