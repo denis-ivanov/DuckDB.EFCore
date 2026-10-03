@@ -136,6 +136,28 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
+    [ConditionalFact]
+    public async Task LastDay()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => EF.Functions.LastDay(e.DateOnly) > new DateOnly(2020, 1, 1)),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e =>
+                    new DateOnly(
+                        e.DateOnly.Year,
+                        e.DateOnly.Month,
+                        DateTime.DaysInMonth(e.DateOnly.Year, e.DateOnly.Month)) > new DateOnly(2020, 1, 1)),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE last_day(b."DateOnly") > '2020-01-01'
+            """);
+    }
+
     public override async Task DayNumber_subtraction()
     {
         await base.DayNumber_subtraction();

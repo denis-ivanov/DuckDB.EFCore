@@ -153,4 +153,14 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/date#juliandate"/>
     public static double? Julian(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Julian)));
+
+    /// <summary>
+    /// The last day of the corresponding month in the date.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="date"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/date#last_daydate"/>
+    public static DateOnly? LastDay(this DbFunctions _, DateOnly? date)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(LastDay)));
 }
