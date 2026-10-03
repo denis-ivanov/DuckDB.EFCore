@@ -163,4 +163,14 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/date#last_daydate"/>
     public static DateOnly? LastDay(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(LastDay)));
+
+    /// <summary>
+    /// The (English) name of the month.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="date"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/date#monthnamedate"/>
+    public static string? MonthName(this DbFunctions _, DateOnly? date)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(MonthName)));
 }
