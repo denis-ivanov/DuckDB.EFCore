@@ -118,6 +118,14 @@ public class DuckDBDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
                         argumentsPropagateNullability: [true],
                         returnType: typeof(DateOnly),
                         typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(DateOnly))!);
+                case nameof(DuckDBDbFunctionsExtensions.MonthName):
+                    return _sqlExpressionFactory.Function(
+                        name: "monthname",
+                        arguments: [arguments[1]],
+                        nullable: true,
+                        argumentsPropagateNullability: [true],
+                        returnType: typeof(string),
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(string))!);
             }
         }
 
