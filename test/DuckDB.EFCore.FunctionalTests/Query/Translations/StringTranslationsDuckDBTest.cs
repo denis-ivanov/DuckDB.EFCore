@@ -122,6 +122,42 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
+    [ConditionalFact]
+    public async Task PadLeft()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String.PadLeft(10, 'a') == "aaaSeattle"),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String.PadLeft(10, 'a') == "aaaSeattle"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE lpad(b."String", 10, 'a') = 'aaaSeattle'
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task PadRight()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String.PadRight(10, 'a') == "Seattleaaa"),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String.PadRight(10, 'a') == "Seattleaaa"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE rpad(b."String", 10, 'a') = 'Seattleaaa'
+            """);
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
