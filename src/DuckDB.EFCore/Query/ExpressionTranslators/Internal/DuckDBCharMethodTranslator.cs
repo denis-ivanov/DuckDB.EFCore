@@ -14,6 +14,19 @@ namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
 /// </summary>
 public class DuckDBCharMethodTranslator : IMethodCallTranslator
 {
+    private static readonly MethodInfo ToChar = typeof(Convert).GetRuntimeMethod(nameof(Convert.ToChar), [typeof(int)])!;
+    
+    private readonly ISqlExpressionFactory _sqlExpressionFactory;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DuckDBCharMethodTranslator"/> class.
+    /// </summary>
+    /// <param name="sqlExpressionFactory"></param>
+    public DuckDBCharMethodTranslator(ISqlExpressionFactory sqlExpressionFactory)
+    {
+        _sqlExpressionFactory = sqlExpressionFactory;
+    }
+
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
     ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
@@ -26,6 +39,16 @@ public class DuckDBCharMethodTranslator : IMethodCallTranslator
         IReadOnlyList<SqlExpression> arguments,
         IDiagnosticsLogger<DbLoggerCategory.Query> logger)
     {
+        if (method == ToChar)
+        {
+            return _sqlExpressionFactory.Function(
+                name: "chr",
+                arguments: arguments,
+                nullable: true,
+                argumentsPropagateNullability: [true],
+                returnType: typeof(char));
+        }
+        
         return null;
     }
 }
