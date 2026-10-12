@@ -49,6 +49,24 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
+    [ConditionalFact]
+    public async Task Jaccard()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle" && EF.Functions.Jaccard(e.String, "Seattle") == 1.0),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE b."String" = 'Seattle' AND jaccard(b."String", 'Seattle') = 1.0
+            """);
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
