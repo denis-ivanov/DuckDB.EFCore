@@ -183,4 +183,14 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/datepart#centurydate"/>
     public static int? Century(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Century)));
+    
+    /// <summary>
+    /// Decade (year / 10).
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="date"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/datepart#decadedate"/>
+    public static int? Decade(this DbFunctions _, DateOnly? date)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Decade)));
 }
