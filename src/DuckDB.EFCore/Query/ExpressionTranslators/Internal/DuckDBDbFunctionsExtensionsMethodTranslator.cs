@@ -230,6 +230,14 @@ public class DuckDBDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
                         argumentsPropagateNullability: [true, true],
                         returnType: typeof(string),
                         typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(string))!);
+                case nameof(DuckDBDbFunctionsExtensions.LengthGrapheme):
+                    return _sqlExpressionFactory.Function(
+                        name: "length_grapheme",
+                        arguments: [arguments[1]],
+                        nullable: true,
+                        argumentsPropagateNullability: [true],
+                        returnType: typeof(int),
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(int))!);
             }
         }
 
