@@ -42,6 +42,8 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
     private static readonly MethodInfo ReplaceChar = typeof(string).GetRuntimeMethod(nameof(string.Replace), [typeof(char), typeof(char)])!;
     private static readonly MethodInfo IsNullOrEmpty = typeof(string).GetRuntimeMethod(nameof(string.IsNullOrEmpty), [typeof(string)])!;
     private static readonly MethodInfo IsNullOrWhiteSpace = typeof(string).GetRuntimeMethod(nameof(string.IsNullOrWhiteSpace), [typeof(string)])!;
+    private static readonly MethodInfo Normalize = typeof(string).GetRuntimeMethod(nameof(string.Normalize), Type.EmptyTypes)!;
+    private static readonly MethodInfo NormalizeWithForm = typeof(string).GetRuntimeMethod(nameof(string.Normalize), [typeof(System.Text.NormalizationForm)])!;
 
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
     private readonly ITypeMappingSource _typeMappingSource;
@@ -384,7 +386,17 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
                 returnType: typeof(char),
                 typeMapping: _charTypeMapping);
         }
-        
+
+        if (method == Normalize || (method == NormalizeWithForm && arguments[0] is SqlConstantExpression { Value: System.Text.NormalizationForm.FormC }))
+        {
+            return _sqlExpressionFactory.Function(
+                name: "nfc_normalize",
+                arguments: [instance!],
+                nullable: true,
+                argumentsPropagateNullability: [true],
+                returnType: typeof(string));
+        }
+
         return null;
     }
 }
