@@ -182,6 +182,22 @@ public class DuckDBDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
                         argumentsPropagateNullability: [true],
                         returnType: typeof(long),
                         typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(long))!);
+                case nameof(DuckDBDbFunctionsExtensions.Md5NumberLower):
+                    return _sqlExpressionFactory.Function(
+                        name: "md5_number_lower",
+                        arguments: [arguments[1]],
+                        nullable: true,
+                        argumentsPropagateNullability: [true],
+                        returnType: typeof(ulong),
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(ulong))!);
+                case nameof(DuckDBDbFunctionsExtensions.Md5NumberUpper):
+                    return _sqlExpressionFactory.Function(
+                        name: "md5_number_upper",
+                        arguments: [arguments[1]],
+                        nullable: true,
+                        argumentsPropagateNullability: [true],
+                        returnType: typeof(ulong),
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(ulong))!);
             }
         }
 

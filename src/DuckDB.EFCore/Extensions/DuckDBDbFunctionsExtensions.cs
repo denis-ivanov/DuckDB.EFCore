@@ -254,4 +254,24 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/text#md5_numberstring"/>
     public static long? Md5Number(this DbFunctions _, string? s)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Md5Number)));
+    
+    /// <summary>
+    /// Returns the lower 64-bit segment of the MD5 hash of the string as a UBIGINT.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="s"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#md5_number_lowerstring"/>
+    public static ulong? Md5NumberLower(this DbFunctions _, string? s)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Md5NumberLower)));
+    
+    /// <summary>
+    /// Returns the upper 64-bit segment of the MD5 hash of the string as a UBIGINT
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="s"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#md5_number_upperstring"/>
+    public static ulong? Md5NumberUpper(this DbFunctions _, string? s)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Md5NumberUpper)));
 }
