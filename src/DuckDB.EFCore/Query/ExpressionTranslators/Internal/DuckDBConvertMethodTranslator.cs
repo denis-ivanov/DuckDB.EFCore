@@ -14,6 +14,11 @@ namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
 /// </summary>
 public class DuckDBConvertMethodTranslator : IMethodCallTranslator
 {
+    private static readonly MethodInfo ToStringByteWithBase = typeof(Convert).GetRuntimeMethod(nameof(Convert.ToString), [typeof(byte), typeof(int)])!;
+    private static readonly MethodInfo ToStringShortWithBase = typeof(Convert).GetRuntimeMethod(nameof(Convert.ToString), [typeof(short), typeof(int)])!;
+    private static readonly MethodInfo ToStringIntWithBase = typeof(Convert).GetRuntimeMethod(nameof(Convert.ToString), [typeof(int), typeof(int)])!;
+    private static readonly MethodInfo ToStringLongWithBase = typeof(Convert).GetRuntimeMethod(nameof(Convert.ToString), [typeof(long), typeof(int)])!;
+
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
 
     /// <summary>
@@ -53,6 +58,16 @@ public class DuckDBConvertMethodTranslator : IMethodCallTranslator
                 nameof(Convert.ToString) => _sqlExpressionFactory.Convert(arguments[0], typeof(string)),
                 _ => null
             };
+        }
+
+        if (method == ToStringByteWithBase || method == ToStringShortWithBase || method == ToStringIntWithBase || method == ToStringLongWithBase)
+        {
+            return _sqlExpressionFactory.Function(
+                name: "to_base",
+                arguments: arguments,
+                nullable: true,
+                argumentsPropagateNullability: [true, true],
+                returnType: typeof(string));
         }
 
         return null;

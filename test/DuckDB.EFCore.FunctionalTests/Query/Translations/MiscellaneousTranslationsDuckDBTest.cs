@@ -49,6 +49,78 @@ public class MiscellaneousTranslationsDuckDBTest : MiscellaneousTranslationsRela
             """);
     }
 
+    [ConditionalFact]
+    public async Task Convert_ToString_Byte_with_base()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.Byte > 0 && Convert.ToString(e.Byte, 2) == "1000"),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.Byte > 0 && Convert.ToString(e.Byte, 2) == "1000"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE b."Byte" > 0 AND to_base(b."Byte", 2) = '1000'
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task Convert_ToString_Short_with_base()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.Short > 0 && Convert.ToString(e.Short, 2) == "1000"),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.Short > 0 && Convert.ToString(e.Short, 2) == "1000"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE b."Short" > 0 AND to_base(b."Short", 2) = '1000'
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task Convert_ToString_Int_with_base()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.Int > 0 && Convert.ToString(e.Int, 2) == "1000"),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.Int > 0 && Convert.ToString(e.Int, 2) == "1000"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE b."Int" > 0 AND to_base(b."Int", 2) = '1000'
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task Convert_ToString_Long_with_base()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.Long > 0 && Convert.ToString(e.Long, 2) == "1000"),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.Long > 0 && Convert.ToString(e.Long, 2) == "1000"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE b."Long" > 0 AND to_base(b."Long", 2) = '1000'
+            """);
+    }
+
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 }
