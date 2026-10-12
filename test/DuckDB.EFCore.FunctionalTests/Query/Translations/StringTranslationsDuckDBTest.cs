@@ -231,6 +231,24 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
     }
 
     [ConditionalFact]
+    public async Task LikeEscape()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle" && EF.Functions.LikeEscape(e.String, "S%e", "!") == true),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE b."String" = 'Seattle' AND like_escape(b."String", 'S%e', '!')
+            """);
+    }
+
+    [ConditionalFact]
     public async Task Normalize()
     {
         await AssertQuery(
