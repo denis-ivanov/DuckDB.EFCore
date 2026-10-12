@@ -238,6 +238,14 @@ public class DuckDBDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
                         argumentsPropagateNullability: [true],
                         returnType: typeof(int),
                         typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(int))!);
+                case nameof(DuckDBDbFunctionsExtensions.LikeEscape):
+                    return _sqlExpressionFactory.Function(
+                        name: "like_escape",
+                        arguments: [arguments[1], arguments[2], arguments[3]],
+                        nullable: true,
+                        argumentsPropagateNullability: [true, true, true],
+                        returnType: typeof(bool),
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(bool))!);
             }
         }
 

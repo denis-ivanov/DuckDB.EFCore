@@ -319,7 +319,7 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="str"></param>
     /// <param name="count"></param>
     /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#left_graphemestring-count"/>
     public static string? LeftGrapheme(this DbFunctions _, string? str, int? count)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(LeftGrapheme)));
 
@@ -332,4 +332,17 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/text#length_graphemestring"/>
     public static int? LengthGrapheme(this DbFunctions _, string? str)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(LengthGrapheme)));
+
+    /// <summary>
+    /// Returns true if the string matches the like_specifier (see Pattern Matching) using case-sensitive matching.
+    /// escape_character is used to search for wildcard characters in the string.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="str"></param>
+    /// <param name="likeSpecifier"></param>
+    /// <param name="escapeCharacter"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#like_escapestring-like_specifier-escape_character"/>
+    public static bool? LikeEscape(this DbFunctions _, string? str, string? likeSpecifier, string? escapeCharacter)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(LikeEscape)));
 }
