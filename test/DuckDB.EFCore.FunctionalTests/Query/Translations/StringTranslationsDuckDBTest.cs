@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.TestModels.BasicTypesModel;
+﻿using System.Text;
+using Microsoft.EntityFrameworkCore.TestModels.BasicTypesModel;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -82,6 +83,42 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
             FROM "BasicTypesEntities" AS b
             WHERE levenshtein(b."String", 'Seattle') = 0
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task Normalize()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String.Normalize() == "Seattle"),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String.Normalize() == "Seattle"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE nfc_normalize(b."String") = 'Seattle'
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task Normalize_FormC()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String.Normalize(NormalizationForm.FormC) == "Seattle"),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String.Normalize(NormalizationForm.FormC) == "Seattle"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE nfc_normalize(b."String") = 'Seattle'
             """);
     }
 
