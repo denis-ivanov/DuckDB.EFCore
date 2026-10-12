@@ -311,4 +311,15 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/text#leftstring-count"/>
     public static string? Left(this DbFunctions _, string? str, int? length)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Left)));
+
+    /// <summary>
+    /// Extracts the left-most count grapheme clusters.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="str"></param>
+    /// <param name="count"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static string? LeftGrapheme(this DbFunctions _, string? str, int? count)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(LeftGrapheme)));
 }
