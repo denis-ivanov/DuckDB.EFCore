@@ -142,6 +142,14 @@ public class DuckDBDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
                         argumentsPropagateNullability: [true],
                         returnType: typeof(int),
                         typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(int))!);
+                case nameof(DuckDBDbFunctionsExtensions.DamerauLevenshtein):
+                    return _sqlExpressionFactory.Function(
+                        name: "damerau_levenshtein",
+                        arguments: [arguments[1], arguments[2]],
+                        nullable: true,
+                        argumentsPropagateNullability: [true, true],
+                        returnType: typeof(int),
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(int))!);
             }
         }
 

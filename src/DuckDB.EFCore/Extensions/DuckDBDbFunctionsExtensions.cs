@@ -193,4 +193,18 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/datepart#decadedate"/>
     public static int? Decade(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Decade)));
+    
+    /// <summary>
+    /// Extension of Levenshtein distance to also include transposition of adjacent characters as an allowed edit
+    /// operation. In other words, the minimum number of edit operations (insertions, deletions, substitutions or
+    /// transpositions) required to change one string to another. Characters of different cases (e.g., a and A) are
+    /// considered different.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#damerau_levenshteins1-s2"/>
+    public static int? DamerauLevenshtein(this DbFunctions _, string? a, string? b)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(DamerauLevenshtein)));
 }
