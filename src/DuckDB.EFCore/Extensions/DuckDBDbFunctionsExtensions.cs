@@ -254,7 +254,7 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/text#md5_numberstring"/>
     public static long? Md5Number(this DbFunctions _, string? s)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Md5Number)));
-    
+
     /// <summary>
     /// Returns the lower 64-bit segment of the MD5 hash of the string as a UBIGINT.
     /// </summary>
@@ -264,7 +264,7 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/text#md5_number_lowerstring"/>
     public static ulong? Md5NumberLower(this DbFunctions _, string? s)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Md5NumberLower)));
-    
+
     /// <summary>
     /// Returns the upper 64-bit segment of the MD5 hash of the string as a UBIGINT
     /// </summary>
@@ -274,4 +274,17 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/text#md5_number_upperstring"/>
     public static ulong? Md5NumberUpper(this DbFunctions _, string? s)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Md5NumberUpper)));
+
+    /// <summary>
+    /// Returns false if the string matches the like_specifier (see Pattern Matching) using case-insensitive matching.
+    /// escape_character is used to search for wildcard characters in the string.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="str"></param>
+    /// <param name="likeSpecifier"></param>
+    /// <param name="escapeCharacter"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#not_ilike_escapestring-like_specifier-escape_character"/>
+    public static bool? NotILikeEscape(this DbFunctions _, string? str, string? likeSpecifier, string? escapeCharacter)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(NotILikeEscape)));
 }

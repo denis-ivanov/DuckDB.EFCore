@@ -141,6 +141,24 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
     }
 
     [ConditionalFact]
+    public async Task NotILikeEscape()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle" && EF.Functions.NotILikeEscape(e.String, "s%e", "!") == false),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE b."String" = 'Seattle' AND NOT (not_ilike_escape(b."String", 's%e', '!'))
+            """);
+    }
+
+    [ConditionalFact]
     public async Task Normalize()
     {
         await AssertQuery(
