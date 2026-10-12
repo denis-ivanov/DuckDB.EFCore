@@ -322,4 +322,14 @@ public static class DuckDBDbFunctionsExtensions
     /// <exception cref="InvalidOperationException"></exception>
     public static string? LeftGrapheme(this DbFunctions _, string? str, int? count)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(LeftGrapheme)));
+
+    /// <summary>
+    /// Number of grapheme clusters in string.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="str"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#length_graphemestring"/>
+    public static int? LengthGrapheme(this DbFunctions _, string? str)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(LengthGrapheme)));
 }
