@@ -166,6 +166,14 @@ public class DuckDBDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
                         argumentsPropagateNullability: [true, true],
                         returnType: typeof(double),
                         typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(double))!);
+                case nameof(DuckDBDbFunctionsExtensions.Levenshtein):
+                    return _sqlExpressionFactory.Function(
+                        name: "levenshtein",
+                        arguments: [arguments[1], arguments[2]],
+                        nullable: true,
+                        argumentsPropagateNullability: [true, true],
+                        returnType: typeof(int),
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(int))!);
             }
         }
 
