@@ -201,10 +201,23 @@ public static class DuckDBDbFunctionsExtensions
     /// considered different.
     /// </summary>
     /// <param name="_"></param>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
+    /// <param name="s1"></param>
+    /// <param name="s2"></param>
     /// <returns></returns>
     /// <see cref="https://duckdb.org/docs/current/sql/functions/text#damerau_levenshteins1-s2"/>
-    public static int? DamerauLevenshtein(this DbFunctions _, string? a, string? b)
+    public static int? DamerauLevenshtein(this DbFunctions _, string? s1, string? s2)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(DamerauLevenshtein)));
+
+    /// <summary>
+    /// The Hamming distance between two strings, i.e., the number of positions with different characters for two
+    /// strings of equal length. Strings must be of equal length. Characters of different cases (e.g., a and A)
+    /// are considered different.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="s1"></param>
+    /// <param name="s2"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#hammings1-s2"/>
+    public static int? Hamming(this DbFunctions _, string? s1, string? s2)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Hamming)));
 }
