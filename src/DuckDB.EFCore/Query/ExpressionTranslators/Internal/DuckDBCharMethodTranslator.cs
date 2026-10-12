@@ -15,7 +15,8 @@ namespace DuckDB.EFCore.Query.ExpressionTranslators.Internal;
 public class DuckDBCharMethodTranslator : IMethodCallTranslator
 {
     private static readonly MethodInfo ToChar = typeof(Convert).GetRuntimeMethod(nameof(Convert.ToChar), [typeof(int)])!;
-    
+    private static readonly MethodInfo ToInt32 = typeof(Convert).GetRuntimeMethod(nameof(Convert.ToInt32), [typeof(char)])!;
+
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
 
     /// <summary>
@@ -48,7 +49,17 @@ public class DuckDBCharMethodTranslator : IMethodCallTranslator
                 argumentsPropagateNullability: [true],
                 returnType: typeof(char));
         }
-        
+
+        if (method == ToInt32)
+        {
+            return _sqlExpressionFactory.Function(
+                name: "unicode",
+                arguments: arguments,
+                nullable: true,
+                argumentsPropagateNullability: [true],
+                returnType: typeof(int));
+        }
+
         return null;
     }
 }
