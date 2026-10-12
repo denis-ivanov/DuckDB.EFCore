@@ -44,6 +44,8 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
     private static readonly MethodInfo IsNullOrWhiteSpace = typeof(string).GetRuntimeMethod(nameof(string.IsNullOrWhiteSpace), [typeof(string)])!;
     private static readonly MethodInfo Normalize = typeof(string).GetRuntimeMethod(nameof(string.Normalize), Type.EmptyTypes)!;
     private static readonly MethodInfo NormalizeWithForm = typeof(string).GetRuntimeMethod(nameof(string.Normalize), [typeof(System.Text.NormalizationForm)])!;
+    private static readonly MethodInfo PadLeft = typeof(string).GetRuntimeMethod(nameof(string.PadLeft), [typeof(int), typeof(char)])!;
+    private static readonly MethodInfo PadRight = typeof(string).GetRuntimeMethod(nameof(string.PadRight), [typeof(int), typeof(char)])!;
 
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
     private readonly ITypeMappingSource _typeMappingSource;
@@ -394,6 +396,26 @@ public class DuckDBStringMethodTranslator : IMethodCallTranslator
                 arguments: [instance!],
                 nullable: true,
                 argumentsPropagateNullability: [true],
+                returnType: typeof(string));
+        }
+
+        if (method == PadLeft)
+        {
+            return _sqlExpressionFactory.Function(
+                name: "lpad",
+                arguments: [instance!, arguments[0], arguments[1]],
+                nullable: true,
+                argumentsPropagateNullability: [true, true, true],
+                returnType: typeof(string));
+        }
+
+        if (method == PadRight)
+        {
+            return _sqlExpressionFactory.Function(
+                name: "rpad",
+                arguments: [instance!, arguments[0], arguments[1]],
+                nullable: true,
+                argumentsPropagateNullability: [true, true, true],
                 returnType: typeof(string));
         }
 
