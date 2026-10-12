@@ -127,6 +127,8 @@ public class DuckDBRelationalConnection : RelationalConnection, IDuckDBRelationa
             ConnectionString = GetValidatedConnectionString()
         };
 
+        connectionStringBuilder.AccessMode = DuckDBAccessMode.ReadOnly;
+        
         var contextOptions = new DbContextOptionsBuilder().UseDuckDB(connectionStringBuilder.ToString()).Options;
 
         return new DuckDBRelationalConnection(Dependencies with { ContextOptions = contextOptions }, _rawSqlCommandBuilder, _logger);
