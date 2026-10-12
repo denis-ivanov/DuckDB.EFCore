@@ -232,4 +232,16 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/text#jaccards1-s2"/>
     public static double? Jaccard(this DbFunctions _, string? s1, string? s2)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Jaccard)));
+
+    /// <summary>
+    /// The minimum number of single-character edits (insertions, deletions or substitutions) required to change
+    /// one string to the other. Characters of different cases (e.g., a and A) are considered different.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="s1"></param>
+    /// <param name="s2"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static int? Levenshtein(this DbFunctions _, string? s1, string? s2)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Levenshtein)));
 }
