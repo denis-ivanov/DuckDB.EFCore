@@ -174,6 +174,14 @@ public class DuckDBDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
                         argumentsPropagateNullability: [true, true],
                         returnType: typeof(int),
                         typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(int))!);
+                case nameof(DuckDBDbFunctionsExtensions.Md5Number):
+                    return _sqlExpressionFactory.Function(
+                        name: "md5_number",
+                        arguments: [arguments[1]],
+                        nullable: true,
+                        argumentsPropagateNullability: [true],
+                        returnType: typeof(long),
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(long))!);
             }
         }
 
