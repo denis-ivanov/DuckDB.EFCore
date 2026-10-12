@@ -220,4 +220,16 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/text#hammings1-s2"/>
     public static int? Hamming(this DbFunctions _, string? s1, string? s2)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Hamming)));
+
+    /// <summary>
+    /// The Jaccard similarity between two strings. Characters of different cases (e.g., a and A) are considered
+    /// different. Returns a number between 0 and 1.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="s1"></param>
+    /// <param name="s2"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#jaccards1-s2"/>
+    public static double? Jaccard(this DbFunctions _, string? s1, string? s2)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Jaccard)));
 }
