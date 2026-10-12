@@ -38,7 +38,8 @@ public class DuckDBMethodCallTranslatorProvider : RelationalMethodCallTranslator
             new DuckDBRowValueTranslator(dependencies.SqlExpressionFactory),
             new DuckDBMapMethodTranslator(dependencies.SqlExpressionFactory, dependencies.RelationalTypeMappingSource),
             new DuckDBDbFunctionsExtensionsMethodTranslator(dependencies.SqlExpressionFactory, dependencies.RelationalTypeMappingSource),
-            new DuckDBUriMethodTranslator(dependencies.SqlExpressionFactory)
+            new DuckDBUriMethodTranslator(dependencies.SqlExpressionFactory),
+            new DuckDBPathMethodTranslator(dependencies.SqlExpressionFactory)
         ]);
     }
 }
