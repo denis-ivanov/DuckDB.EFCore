@@ -244,4 +244,14 @@ public static class DuckDBDbFunctionsExtensions
     /// <exception cref="InvalidOperationException"></exception>
     public static int? Levenshtein(this DbFunctions _, string? s1, string? s2)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Levenshtein)));
+
+    /// <summary>
+    /// Returns the MD5 hash of the string as a HUGEINT
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="s"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#md5_numberstring"/>
+    public static long? Md5Number(this DbFunctions _, string? s)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Md5Number)));
 }
