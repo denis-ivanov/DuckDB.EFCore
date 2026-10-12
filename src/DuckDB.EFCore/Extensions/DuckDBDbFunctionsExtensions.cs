@@ -287,4 +287,17 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/text#not_ilike_escapestring-like_specifier-escape_character"/>
     public static bool? NotILikeEscape(this DbFunctions _, string? str, string? likeSpecifier, string? escapeCharacter)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(NotILikeEscape)));
+    
+    /// <summary>
+    /// Returns false if the string matches the like_specifier (see Pattern Matching) using case-sensitive matching.
+    /// escape_character is used to search for wildcard characters in the string.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="str"></param>
+    /// <param name="likeSpecifier"></param>
+    /// <param name="escapeCharacter"></param>
+    /// <returns></returns>
+    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#not_like_escapestring-like_specifier-escape_character"/>
+    public static bool? NotLikeEscape(this DbFunctions _, string? str, string? likeSpecifier, string? escapeCharacter)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(NotLikeEscape)));
 }
