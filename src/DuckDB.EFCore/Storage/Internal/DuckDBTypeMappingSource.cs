@@ -312,12 +312,20 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
     private RelationalTypeMapping? FindRawMapping(RelationalTypeMappingInfo mappingInfo)
     {
         var clrType = mappingInfo.ClrType;
+        var storeTypeName = mappingInfo.StoreTypeName;
+
+        if (clrType is not null && clrType.IsEnum)
+        {
+            if (storeTypeName is not null)
+            {
+                return new DuckDBEnumTypeMapping(clrType, storeTypeName);
+            }
+        }
+
         if (clrType == typeof(byte[]) && mappingInfo.ElementTypeMapping != null)
         {
             return null;
         }
-
-        var storeTypeName = mappingInfo.StoreTypeName;
 
         if (FindMapMapping(clrType, storeTypeName) is { } mapMapping)
         {
