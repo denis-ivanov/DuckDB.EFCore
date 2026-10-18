@@ -227,6 +227,7 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
             DuckDBRowValueExpression e => VisitRowValueExpression(e, allowOptimizedExpansion, out nullable),
             DuckDBILikeExpression e => VisitILike(e, allowOptimizedExpansion, out nullable),
             DuckDBSimilarToExpression e => VisitSimilarTo(e, allowOptimizedExpansion, out nullable),
+            DuckDBGlobExpression e => VisitGlob(e, allowOptimizedExpansion, out nullable),
             _ => base.VisitCustomSqlExpression(sqlExpression, allowOptimizedExpansion, out nullable)
         };
     }
@@ -452,6 +453,16 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
         nullable = matchNullable || patternNullable;
 
         return similarToExpression.Update(match, pattern);
+    }
+    
+    protected virtual SqlExpression VisitGlob(DuckDBGlobExpression globExpression, bool allowOptimizedExpansion, out bool nullable)
+    {
+        var match = Visit(globExpression.Match, out var matchNullable);
+        var pattern = Visit(globExpression.Pattern, out var patternNullable);
+
+        nullable = matchNullable || patternNullable;
+
+        return globExpression.Update(match, pattern);
     }
     
     private bool IsNull(SqlExpression? expression)

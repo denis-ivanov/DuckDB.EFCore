@@ -96,6 +96,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
             DuckDBRowValueExpression e => VisitRowValue(e),
             DuckDBILikeExpression e => VisitILike(e),
             DuckDBSimilarToExpression e => VisitSimilarTo(e),
+            DuckDBGlobExpression e => VisitGlob(e),
             _ => base.VisitExtension(extensionExpression)
         };
     }
@@ -745,5 +746,16 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         Visit(similarToExpression.Pattern);
 
         return similarToExpression;
+    }
+
+    protected virtual Expression VisitGlob(DuckDBGlobExpression globExpression)
+    {
+        Visit(globExpression.Match);
+
+        Sql.Append(" GLOB ");
+
+        Visit(globExpression.Pattern);
+
+        return globExpression;
     }
 }
