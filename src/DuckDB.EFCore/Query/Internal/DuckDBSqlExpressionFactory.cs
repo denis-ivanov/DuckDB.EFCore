@@ -341,6 +341,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
                 DuckDBArrayIndexExpression e => ApplyTypeMappingOnArrayIndex(e, typeMapping),
                 DuckDBArraySliceExpression e => ApplyTypeMappingOnArraySlice(e, typeMapping),
                 DuckDBRowValueExpression e => ApplyTypeMappingOnRowValue(e, typeMapping),
+                DuckDBILikeExpression e => ApplyTypeMappingOnILike(e),
                 _ => base.ApplyTypeMapping(sqlExpression, typeMapping)
             };
 
@@ -360,6 +361,14 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             returnType: typeof(int));
     }
 
+    public virtual DuckDBILikeExpression ILike(
+        SqlExpression match,
+        SqlExpression pattern,
+        SqlExpression? escapeChar = null)
+    {
+        return (DuckDBILikeExpression)ApplyDefaultTypeMapping(new DuckDBILikeExpression(match, pattern, escapeChar, null));
+    }
+    
     private SqlBinaryExpression ApplyTypeMappingOnSqlBinary(SqlBinaryExpression binary, RelationalTypeMapping? typeMapping)
     {
         if (IsComparison(binary.OperatorType)
@@ -537,5 +546,17 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
         }
 
         return (ApplyTypeMapping(itemExpression, itemMapping), ApplyTypeMapping(arrayExpression, arrayMapping));
+    }
+    
+    private SqlExpression ApplyTypeMappingOnILike(DuckDBILikeExpression ilikeExpression)
+    {
+        var inferredTypeMapping = ExpressionExtensions.InferTypeMapping(ilikeExpression.Match, ilikeExpression.Pattern)
+                                  ?? _typeMappingSource.FindMapping(ilikeExpression.Match.Type, Dependencies.Model);
+
+        return new DuckDBILikeExpression(
+            ApplyTypeMapping(ilikeExpression.Match, inferredTypeMapping),
+            ApplyTypeMapping(ilikeExpression.Pattern, inferredTypeMapping),
+            ilikeExpression.EscapeChar is null ? null : ApplyDefaultTypeMapping(ilikeExpression.EscapeChar),
+            _boolTypeMapping);
     }
 }

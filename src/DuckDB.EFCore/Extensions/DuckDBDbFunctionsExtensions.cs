@@ -345,4 +345,30 @@ public static class DuckDBDbFunctionsExtensions
     /// <see cref="https://duckdb.org/docs/current/sql/functions/text#like_escapestring-like_specifier-escape_character"/>
     public static bool? LikeEscape(this DbFunctions _, string? str, string? likeSpecifier, string? escapeCharacter)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(LikeEscape)));
+
+    /// <summary>
+    ///     An implementation of the DuckDB ILIKE operation, which is a case-insensitive LIKE.
+    /// </summary>
+    /// <param name="_">The <see cref="DbFunctions" /> instance.</param>
+    /// <param name="matchExpression">The string that is to be matched.</param>
+    /// <param name="pattern">The pattern which may involve wildcards %,_,[,],^.</param>
+    /// <returns><see langword="true" /> if there is a match.</returns>
+    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching" />
+    public static bool ILike(this DbFunctions _, string matchExpression, string pattern)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ILike)));
+
+    /// <summary>
+    ///     An implementation of the DuckDB ILIKE operation, which is a case-insensitive LIKE.
+    /// </summary>
+    /// <param name="_">The <see cref="DbFunctions" /> instance.</param>
+    /// <param name="matchExpression">The string that is to be matched.</param>
+    /// <param name="pattern">The pattern which may involve wildcards %,_,[,],^.</param>
+    /// <param name="escapeCharacter">
+    ///     The escape character (as a single character string) to use in front of %,_,[,],^
+    ///     if they are not used as wildcards.
+    /// </param>
+    /// <returns><see langword="true" /> if there is a match.</returns>
+    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching" />
+    public static bool ILike(this DbFunctions _, string matchExpression, string pattern, string escapeCharacter)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ILike)));
 }

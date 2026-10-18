@@ -225,6 +225,7 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
             DuckDBArrayIndexExpression e => VisitArrayIndex(e, allowOptimizedExpansion, out nullable),
             DuckDBArraySliceExpression e => VisitArraySlice(e, allowOptimizedExpansion, out nullable),
             DuckDBRowValueExpression e => VisitRowValueExpression(e, allowOptimizedExpansion, out nullable),
+            DuckDBILikeExpression e => VisitILike(e, allowOptimizedExpansion, out nullable),
             _ => base.VisitCustomSqlExpression(sqlExpression, allowOptimizedExpansion, out nullable)
         };
     }
@@ -387,4 +388,62 @@ public class DuckDBSqlNullabilityProcessor : SqlNullabilityProcessor
 
         return rowValueExpression.Update(newValues ?? rowValueExpression.Values);
     }
+    
+    protected virtual SqlExpression VisitILike(DuckDBILikeExpression iLikeExpression, bool allowOptimizedExpansion, out bool nullable)
+    {
+        var match = Visit(iLikeExpression.Match, out var matchNullable);
+        var pattern = Visit(iLikeExpression.Pattern, out var patternNullable);
+        var escapeChar = Visit(iLikeExpression.EscapeChar, out var escapeCharNullable);
+
+        SqlExpression result = iLikeExpression.Update(match, pattern, escapeChar);
+
+        if (UseRelationalNulls)
+        {
+            nullable = matchNullable || patternNullable || escapeCharNullable;
+
+            return result;
+        }
+
+        nullable = false;
+
+        if (IsNull(match) || IsNull(pattern) || IsNull(escapeChar))
+        {
+            return _sqlExpressionFactory.Constant(false, iLikeExpression.TypeMapping);
+        }
+
+        if (pattern is SqlConstantExpression { Value: "%" })
+        {
+            return matchNullable
+                ? _sqlExpressionFactory.IsNotNull(match)
+                : _sqlExpressionFactory.Constant(true, iLikeExpression.TypeMapping);
+        }
+
+        if (!allowOptimizedExpansion)
+        {
+            if (matchNullable)
+            {
+                result = _sqlExpressionFactory.AndAlso(result, GenerateNotNullCheck(match));
+            }
+
+            if (patternNullable)
+            {
+                result = _sqlExpressionFactory.AndAlso(result, GenerateNotNullCheck(pattern));
+            }
+
+            if (escapeChar is not null && escapeCharNullable)
+            {
+                result = _sqlExpressionFactory.AndAlso(result, GenerateNotNullCheck(escapeChar));
+            }
+
+            SqlExpression GenerateNotNullCheck(SqlExpression operand)
+                => _sqlExpressionFactory.Not(
+                    Visit(_sqlExpressionFactory.IsNull(operand), allowOptimizedExpansion, out _));
+        }
+
+        return result;
+    }
+    
+    private bool IsNull(SqlExpression? expression)
+        => expression is SqlConstantExpression { Value: null }
+           || expression is SqlParameterExpression { Name: string parameterName } && ParametersDecorator.IsNull(parameterName);
 }
