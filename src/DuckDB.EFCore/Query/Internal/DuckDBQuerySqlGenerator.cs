@@ -698,6 +698,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
             sqlUnaryExpression.Operand is DuckDBILikeExpression ilike)
         {
             VisitILike(ilike, true);
+            return sqlUnaryExpression;
         }
 
         return base.VisitSqlUnary(sqlUnaryExpression);
