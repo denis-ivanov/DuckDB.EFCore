@@ -57,6 +57,11 @@ public class DuckDBNetTopologySuiteTypeMappingSourcePlugin : IRelationalTypeMapp
         var storeTypeName = mappingInfo.StoreTypeName;
         Type? defaultClrType = null;
 
+        if (clrType == typeof(Envelope) || string.Equals(storeTypeName, "BOX_2D", StringComparison.OrdinalIgnoreCase))
+        {
+            return new DuckDBEnvelopeTypeMapping(storeTypeName ?? "BOX_2D");
+        }
+
         if ((clrType == null || !TryGetDefaultStoreType(clrType, out _))
             && (storeTypeName == null || !StoreTypeMappings.TryGetValue(storeTypeName, out defaultClrType)))
         {

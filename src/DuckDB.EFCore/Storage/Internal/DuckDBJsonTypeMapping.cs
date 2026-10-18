@@ -109,6 +109,16 @@ public class DuckDBJsonTypeMapping : JsonTypeMapping
     }
 
     /// <inheritdoc />
+    public override Expression CustomizeDataReaderExpression(Expression expression)
+        => ClrType == typeof(JsonDocument)
+            ? Expression.Call(ParseMethod, expression, DefaultJsonDocumentOptions)
+            : ClrType == typeof(JsonElement)
+                ? Expression.Property(
+                    Expression.Call(ParseMethod, expression, DefaultJsonDocumentOptions),
+                    nameof(JsonDocument.RootElement))
+                : expression;
+
+    /// <inheritdoc />
     protected override void ConfigureParameter(DbParameter parameter)
     {
         ((DuckDBParameter)parameter).RemoveDollarSign();
