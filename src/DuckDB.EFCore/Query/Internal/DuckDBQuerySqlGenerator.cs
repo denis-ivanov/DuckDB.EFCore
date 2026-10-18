@@ -94,6 +94,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
             DuckDBArraySliceExpression e => VisitArraySlice(e),
             DuckDBJsonEachExpression e => VisitJsonEach(e),
             DuckDBRowValueExpression e => VisitRowValue(e),
+            DuckDBILikeExpression e => VisitILike(e),
             _ => base.VisitExtension(extensionExpression)
         };
     }
@@ -688,5 +689,41 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         Sql.Append(")");
 
         return valuesExpression;
+    }
+
+    protected override Expression VisitSqlUnary(SqlUnaryExpression sqlUnaryExpression)
+    {
+        if (sqlUnaryExpression.OperatorType == ExpressionType.Not &&
+            sqlUnaryExpression.Type == typeof(bool) &&
+            sqlUnaryExpression.Operand is DuckDBILikeExpression ilike)
+        {
+            VisitILike(ilike, true);
+        }
+
+        return base.VisitSqlUnary(sqlUnaryExpression);
+    }
+
+    protected virtual Expression VisitILike(DuckDBILikeExpression likeExpression, bool negated = false)
+    {
+        Visit(likeExpression.Match);
+
+        if (negated)
+        {
+            Sql.Append(" NOT ILIKE ");
+        }
+        else
+        {
+            Sql.Append(" ILIKE ");
+        }
+
+        Visit(likeExpression.Pattern);
+
+        if (likeExpression.EscapeChar is not null)
+        {
+            Sql.Append(" ESCAPE ");
+            Visit(likeExpression.EscapeChar);
+        }
+
+        return likeExpression;
     }
 }
