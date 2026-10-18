@@ -393,4 +393,40 @@ public static class DuckDBDbFunctionsExtensions
     /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#glob" />
     public static bool Glob(this DbFunctions _, string matchExpression, string pattern)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Glob)));
+
+    /// <summary>
+    ///     Extracts the first substring that matches the regex pattern from string.
+    /// </summary>
+    /// <param name="_">The <see cref="DbFunctions" /> instance.</param>
+    /// <param name="matchExpression">The string to extract from.</param>
+    /// <param name="pattern">The regular expression pattern.</param>
+    /// <returns>The matched substring, or <see langword="null" /> if no match is found.</returns>
+    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extractstring-pattern-group-options" />
+    public static string? RegexExtract(this DbFunctions _, string matchExpression, string pattern)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexExtract)));
+
+    /// <summary>
+    ///     Extracts the specified capturing group from the first substring that matches the regex pattern from string.
+    /// </summary>
+    /// <param name="_">The <see cref="DbFunctions" /> instance.</param>
+    /// <param name="matchExpression">The string to extract from.</param>
+    /// <param name="pattern">The regular expression pattern.</param>
+    /// <param name="group">The capturing group index (0 returns entire match, 1+ returns specific group).</param>
+    /// <returns>The matched substring/group, or <see langword="null" /> if no match is found.</returns>
+    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extractstring-pattern-group-options" />
+    public static string? RegexExtract(this DbFunctions _, string matchExpression, string pattern, int group)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexExtract)));
+
+    /// <summary>
+    ///     Extracts the specified capturing group from the first substring that matches the regex pattern from string using the specified regex options.
+    /// </summary>
+    /// <param name="_">The <see cref="DbFunctions" /> instance.</param>
+    /// <param name="matchExpression">The string to extract from.</param>
+    /// <param name="pattern">The regular expression pattern.</param>
+    /// <param name="group">The capturing group index (0 returns entire match, 1+ returns specific group).</param>
+    /// <param name="options">The regex options (e.g. 'i' for case-insensitive, 'c' for case-sensitive, 's' for dot-all, 'm' for multi-line).</param>
+    /// <returns>The matched substring/group, or <see langword="null" /> if no match is found.</returns>
+    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extractstring-pattern-group-options" />
+    public static string? RegexExtract(this DbFunctions _, string matchExpression, string pattern, int group, string? options)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexExtract)));
 }
