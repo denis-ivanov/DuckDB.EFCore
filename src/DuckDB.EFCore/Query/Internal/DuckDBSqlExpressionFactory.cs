@@ -343,6 +343,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
                 DuckDBRowValueExpression e => ApplyTypeMappingOnRowValue(e, typeMapping),
                 DuckDBILikeExpression e => ApplyTypeMappingOnILike(e),
                 DuckDBSimilarToExpression e => ApplyTypeMappingOnSimilarTo(e),
+                DuckDBGlobExpression e => ApplyTypeMappingOnGlob(e),
                 _ => base.ApplyTypeMapping(sqlExpression, typeMapping)
             };
 
@@ -375,6 +376,13 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
         SqlExpression pattern)
     {
         return (DuckDBSimilarToExpression)ApplyTypeMappingOnSimilarTo(new DuckDBSimilarToExpression(match, pattern, null));
+    }
+
+    public virtual DuckDBGlobExpression Glob(
+        SqlExpression match,
+        SqlExpression pattern)
+    {
+        return (DuckDBGlobExpression)ApplyTypeMappingOnGlob(new DuckDBGlobExpression(match, pattern, null));
     }
 
     private SqlBinaryExpression ApplyTypeMappingOnSqlBinary(SqlBinaryExpression binary, RelationalTypeMapping? typeMapping)
@@ -576,6 +584,17 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
         return new DuckDBSimilarToExpression(
             ApplyTypeMapping(similarToExpression.Match, inferredTypeMapping),
             ApplyTypeMapping(similarToExpression.Pattern, inferredTypeMapping),
+            _boolTypeMapping);
+    }
+
+    private SqlExpression ApplyTypeMappingOnGlob(DuckDBGlobExpression globExpression)
+    {
+        var inferredTypeMapping = ExpressionExtensions.InferTypeMapping(globExpression.Match, globExpression.Pattern)
+                                  ?? _typeMappingSource.FindMapping(globExpression.Match.Type, Dependencies.Model);
+
+        return new DuckDBGlobExpression(
+            ApplyTypeMapping(globExpression.Match, inferredTypeMapping),
+            ApplyTypeMapping(globExpression.Pattern, inferredTypeMapping),
             _boolTypeMapping);
     }
 }

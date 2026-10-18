@@ -78,7 +78,7 @@ public class DuckDBSimilarToExpression : SqlExpression, IEquatable<DuckDBSimilar
     {
         return New(
             _quotingConstructor ??= typeof(DuckDBSimilarToExpression).GetConstructor(
-                new[] { typeof(SqlExpression), typeof(SqlExpression), typeof(SqlExpression), typeof(RelationalTypeMapping) })!,
+                new[] { typeof(SqlExpression), typeof(SqlExpression), typeof(RelationalTypeMapping) })!,
             Match.Quote(),
             Pattern.Quote(),
             RelationalExpressionQuotingUtilities.QuoteTypeMapping(TypeMapping));
