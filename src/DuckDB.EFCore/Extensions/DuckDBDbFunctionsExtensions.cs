@@ -371,4 +371,15 @@ public static class DuckDBDbFunctionsExtensions
     /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching" />
     public static bool ILike(this DbFunctions _, string matchExpression, string pattern, string escapeCharacter)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ILike)));
+
+    /// <summary>
+    ///     An implementation of the DuckDB SIMILAR TO operation, which matches a string against a SQL standard regular expression.
+    /// </summary>
+    /// <param name="_">The <see cref="DbFunctions" /> instance.</param>
+    /// <param name="matchExpression">The string that is to be matched.</param>
+    /// <param name="pattern">The pattern which may involve SQL regular expression syntax.</param>
+    /// <returns><see langword="true" /> if there is a match.</returns>
+    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#similar-to" />
+    public static bool SimilarTo(this DbFunctions _, string matchExpression, string pattern)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(SimilarTo)));
 }

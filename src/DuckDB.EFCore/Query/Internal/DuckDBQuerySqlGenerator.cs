@@ -95,6 +95,7 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
             DuckDBJsonEachExpression e => VisitJsonEach(e),
             DuckDBRowValueExpression e => VisitRowValue(e),
             DuckDBILikeExpression e => VisitILike(e),
+            DuckDBSimilarToExpression e => VisitSimilarTo(e),
             _ => base.VisitExtension(extensionExpression)
         };
     }
@@ -694,11 +695,18 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
     protected override Expression VisitSqlUnary(SqlUnaryExpression sqlUnaryExpression)
     {
         if (sqlUnaryExpression.OperatorType == ExpressionType.Not &&
-            sqlUnaryExpression.Type == typeof(bool) &&
-            sqlUnaryExpression.Operand is DuckDBILikeExpression ilike)
+            sqlUnaryExpression.Type == typeof(bool))
         {
-            VisitILike(ilike, true);
-            return sqlUnaryExpression;
+            switch (sqlUnaryExpression.Operand)
+            {
+                case DuckDBILikeExpression like:
+                    VisitILike(like, true);
+                    return sqlUnaryExpression;
+                
+                case DuckDBSimilarToExpression similarTo:
+                    VisitSimilarTo(similarTo, true);
+                    return sqlUnaryExpression;
+            }
         }
 
         return base.VisitSqlUnary(sqlUnaryExpression);
@@ -726,5 +734,16 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         }
 
         return likeExpression;
+    }
+    
+    protected virtual Expression VisitSimilarTo(DuckDBSimilarToExpression similarToExpression, bool negated = false)
+    {
+        Visit(similarToExpression.Match);
+
+        Sql.Append(negated ? " NOT SIMILAR TO " : " SIMILAR TO ");
+
+        Visit(similarToExpression.Pattern);
+
+        return similarToExpression;
     }
 }

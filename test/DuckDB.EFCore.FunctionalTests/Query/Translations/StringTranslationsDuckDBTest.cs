@@ -303,6 +303,42 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
     }
 
     [ConditionalFact]
+    public async Task SimilarTo()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle" && EF.Functions.SimilarTo(e.String, "(S|P).*")),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE b."String" = 'Seattle' AND b."String" SIMILAR TO '(S|P).*'
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task SimilarTo_negated()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle" && EF.Functions.SimilarTo(e.String, "(B|P).*") == false),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE b."String" = 'Seattle' AND b."String" NOT SIMILAR TO '(B|P).*'
+            """);
+    }
+
+    [ConditionalFact]
     public async Task Normalize()
     {
         await AssertQuery(
