@@ -465,4 +465,27 @@ public static class DuckDBDbFunctionsExtensions
     /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extract_allstring-pattern-group-options" />
     public static string[]? RegexExtractAll(this DbFunctions _, string matchExpression, string pattern, int group, string? options)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexExtractAll)));
+
+    /// <summary>
+    ///     Returns whether the entire string matches the regular expression pattern.
+    /// </summary>
+    /// <param name="_">The <see cref="DbFunctions" /> instance.</param>
+    /// <param name="matchExpression">The string to match.</param>
+    /// <param name="pattern">The regular expression pattern.</param>
+    /// <returns><see langword="true" /> if the entire string matches the regex pattern; otherwise, <see langword="false" />.</returns>
+    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_full_matchstring-regex-options" />
+    public static bool RegexFullMatch(this DbFunctions _, string matchExpression, string pattern)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexFullMatch)));
+
+    /// <summary>
+    ///     Returns whether the entire string matches the regular expression pattern using the specified regex options.
+    /// </summary>
+    /// <param name="_">The <see cref="DbFunctions" /> instance.</param>
+    /// <param name="matchExpression">The string to match.</param>
+    /// <param name="pattern">The regular expression pattern.</param>
+    /// <param name="options">The regex options (e.g. 'i' for case-insensitive, 'c' for case-sensitive, 's' for dot-all, 'm' for multi-line).</param>
+    /// <returns><see langword="true" /> if the entire string matches the regex pattern; otherwise, <see langword="false" />.</returns>
+    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_full_matchstring-regex-options" />
+    public static bool RegexFullMatch(this DbFunctions _, string matchExpression, string pattern, string? options)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexFullMatch)));
 }

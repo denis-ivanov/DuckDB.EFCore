@@ -34,6 +34,12 @@ public class DuckDBRegexMethodTranslator : IMethodCallTranslator
 
     private static readonly MethodInfo RegexExtractAllWithGroupAndOptions =
         typeof(DuckDBDbFunctionsExtensions).GetMethod(nameof(DuckDBDbFunctionsExtensions.RegexExtractAll), [typeof(DbFunctions), typeof(string), typeof(string), typeof(int), typeof(string)])!;
+
+    private static readonly MethodInfo RegexFullMatchMatchAndPattern =
+        typeof(DuckDBDbFunctionsExtensions).GetMethod(nameof(DuckDBDbFunctionsExtensions.RegexFullMatch), [typeof(DbFunctions), typeof(string), typeof(string)])!;
+
+    private static readonly MethodInfo RegexFullMatchWithOptions =
+        typeof(DuckDBDbFunctionsExtensions).GetMethod(nameof(DuckDBDbFunctionsExtensions.RegexFullMatch), [typeof(DbFunctions), typeof(string), typeof(string), typeof(string)])!;
     
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
 
@@ -128,6 +134,26 @@ public class DuckDBRegexMethodTranslator : IMethodCallTranslator
                 nullable: true,
                 argumentsPropagateNullability: [true, true, true, true],
                 returnType: typeof(string[]));
+        }
+
+        if (method == RegexFullMatchMatchAndPattern)
+        {
+            return _sqlExpressionFactory.Function(
+                name: "regexp_full_match",
+                arguments: [arguments[1], arguments[2]],
+                nullable: true,
+                argumentsPropagateNullability: [true, true],
+                returnType: typeof(bool));
+        }
+
+        if (method == RegexFullMatchWithOptions)
+        {
+            return _sqlExpressionFactory.Function(
+                name: "regexp_full_match",
+                arguments: [arguments[1], arguments[2], arguments[3]],
+                nullable: true,
+                argumentsPropagateNullability: [true, true, true],
+                returnType: typeof(bool));
         }
 
         return null;
