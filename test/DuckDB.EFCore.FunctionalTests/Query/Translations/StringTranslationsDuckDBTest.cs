@@ -429,6 +429,60 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
     }
 
     [ConditionalFact]
+    public async Task RegexExtractAll()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle" && EF.Functions.RegexExtractAll(e.String, @"[a-z]") == new[] { "e", "a", "t", "t", "l", "e" }),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE b."String" = 'Seattle' AND regexp_extract_all(b."String", '[a-z]') = ['e', 'a', 't', 't', 'l', 'e']::VARCHAR[]
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task RegexExtractAll_group()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle" && EF.Functions.RegexExtractAll(e.String, @"([a-z])", 1) == new[] { "e", "a", "t", "t", "l", "e" }),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE b."String" = 'Seattle' AND regexp_extract_all(b."String", '([a-z])', 1) = ['e', 'a', 't', 't', 'l', 'e']::VARCHAR[]
+            """);
+    }
+
+    [ConditionalFact]
+    public async Task RegexExtractAll_group_and_options()
+    {
+        await AssertQuery(
+            actualQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle" && EF.Functions.RegexExtractAll(e.String, @"([a-z])", 1, "i") == new[] { "S", "e", "a", "t", "t", "l", "e" }),
+            expectedQuery: ss => ss.Set<BasicTypesEntity>()
+                .Where(e => e.String == "Seattle"),
+            assertEmpty: false);
+
+        AssertSql(
+            """
+            SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
+            FROM "BasicTypesEntities" AS b
+            WHERE b."String" = 'Seattle' AND regexp_extract_all(b."String", '([a-z])', 1, 'i') = ['S', 'e', 'a', 't', 't', 'l', 'e']::VARCHAR[]
+            """);
+    }
+
+    [ConditionalFact]
     public async Task Normalize()
     {
         await AssertQuery(

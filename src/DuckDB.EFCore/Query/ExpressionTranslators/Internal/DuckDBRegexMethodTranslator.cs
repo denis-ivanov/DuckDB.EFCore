@@ -25,6 +25,15 @@ public class DuckDBRegexMethodTranslator : IMethodCallTranslator
 
     private static readonly MethodInfo RegexExtractWithGroupAndOptions =
         typeof(DuckDBDbFunctionsExtensions).GetMethod(nameof(DuckDBDbFunctionsExtensions.RegexExtract), [typeof(DbFunctions), typeof(string), typeof(string), typeof(int), typeof(string)])!;
+
+    private static readonly MethodInfo RegexExtractAllMatchAndPattern =
+        typeof(DuckDBDbFunctionsExtensions).GetMethod(nameof(DuckDBDbFunctionsExtensions.RegexExtractAll), [typeof(DbFunctions), typeof(string), typeof(string)])!;
+
+    private static readonly MethodInfo RegexExtractAllWithGroup =
+        typeof(DuckDBDbFunctionsExtensions).GetMethod(nameof(DuckDBDbFunctionsExtensions.RegexExtractAll), [typeof(DbFunctions), typeof(string), typeof(string), typeof(int)])!;
+
+    private static readonly MethodInfo RegexExtractAllWithGroupAndOptions =
+        typeof(DuckDBDbFunctionsExtensions).GetMethod(nameof(DuckDBDbFunctionsExtensions.RegexExtractAll), [typeof(DbFunctions), typeof(string), typeof(string), typeof(int), typeof(string)])!;
     
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
 
@@ -89,6 +98,36 @@ public class DuckDBRegexMethodTranslator : IMethodCallTranslator
                 nullable: true,
                 argumentsPropagateNullability: [true, true, true, true],
                 returnType: typeof(string));
+        }
+
+        if (method == RegexExtractAllMatchAndPattern)
+        {
+            return _sqlExpressionFactory.Function(
+                name: "regexp_extract_all",
+                arguments: [arguments[1], arguments[2]],
+                nullable: true,
+                argumentsPropagateNullability: [true, true],
+                returnType: typeof(string[]));
+        }
+
+        if (method == RegexExtractAllWithGroup)
+        {
+            return _sqlExpressionFactory.Function(
+                name: "regexp_extract_all",
+                arguments: [arguments[1], arguments[2], arguments[3]],
+                nullable: true,
+                argumentsPropagateNullability: [true, true, true],
+                returnType: typeof(string[]));
+        }
+
+        if (method == RegexExtractAllWithGroupAndOptions)
+        {
+            return _sqlExpressionFactory.Function(
+                name: "regexp_extract_all",
+                arguments: [arguments[1], arguments[2], arguments[3], arguments[4]],
+                nullable: true,
+                argumentsPropagateNullability: [true, true, true, true],
+                returnType: typeof(string[]));
         }
 
         return null;
