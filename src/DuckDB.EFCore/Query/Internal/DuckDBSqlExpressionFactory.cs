@@ -342,6 +342,7 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
                 DuckDBArraySliceExpression e => ApplyTypeMappingOnArraySlice(e, typeMapping),
                 DuckDBRowValueExpression e => ApplyTypeMappingOnRowValue(e, typeMapping),
                 DuckDBILikeExpression e => ApplyTypeMappingOnILike(e),
+                DuckDBSimilarToExpression e => ApplyTypeMappingOnSimilarTo(e),
                 _ => base.ApplyTypeMapping(sqlExpression, typeMapping)
             };
 
@@ -366,9 +367,16 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
         SqlExpression pattern,
         SqlExpression? escapeChar = null)
     {
-        return (DuckDBILikeExpression)ApplyDefaultTypeMapping(new DuckDBILikeExpression(match, pattern, escapeChar, null));
+        return (DuckDBILikeExpression)ApplyTypeMappingOnILike(new DuckDBILikeExpression(match, pattern, escapeChar, null));
     }
     
+    public virtual DuckDBSimilarToExpression SimilarTo(
+        SqlExpression match,
+        SqlExpression pattern)
+    {
+        return (DuckDBSimilarToExpression)ApplyTypeMappingOnSimilarTo(new DuckDBSimilarToExpression(match, pattern, null));
+    }
+
     private SqlBinaryExpression ApplyTypeMappingOnSqlBinary(SqlBinaryExpression binary, RelationalTypeMapping? typeMapping)
     {
         if (IsComparison(binary.OperatorType)
@@ -557,6 +565,17 @@ public class DuckDBSqlExpressionFactory : SqlExpressionFactory
             ApplyTypeMapping(ilikeExpression.Match, inferredTypeMapping),
             ApplyTypeMapping(ilikeExpression.Pattern, inferredTypeMapping),
             ilikeExpression.EscapeChar is null ? null : ApplyDefaultTypeMapping(ilikeExpression.EscapeChar),
+            _boolTypeMapping);
+    }
+    
+    private SqlExpression ApplyTypeMappingOnSimilarTo(DuckDBSimilarToExpression similarToExpression)
+    {
+        var inferredTypeMapping = ExpressionExtensions.InferTypeMapping(similarToExpression.Match, similarToExpression.Pattern)
+                                  ?? _typeMappingSource.FindMapping(similarToExpression.Match.Type, Dependencies.Model);
+
+        return new DuckDBSimilarToExpression(
+            ApplyTypeMapping(similarToExpression.Match, inferredTypeMapping),
+            ApplyTypeMapping(similarToExpression.Pattern, inferredTypeMapping),
             _boolTypeMapping);
     }
 }
