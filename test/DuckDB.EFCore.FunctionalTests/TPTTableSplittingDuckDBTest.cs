@@ -28,12 +28,6 @@ public class TPTTableSplittingDuckDBTest : TPTTableSplittingTestBase
         await base.Warn_when_save_optional_dependent_with_null_values();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Warn_when_save_optional_dependent_with_null_values_sensitive()
-    {
-        await base.Warn_when_save_optional_dependent_with_null_values_sensitive();
-    }
-
     protected override ITestStoreFactory TestStoreFactory
         => DuckDBTestStoreFactory.Instance;
 }
