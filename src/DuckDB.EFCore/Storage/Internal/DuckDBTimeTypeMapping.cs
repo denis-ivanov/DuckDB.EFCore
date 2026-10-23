@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Data;
 using System.Data.Common;
-using System.Reflection;
 
 namespace DuckDB.EFCore.Storage.Internal;
 
@@ -19,14 +18,6 @@ namespace DuckDB.EFCore.Storage.Internal;
 /// </summary>
 public class DuckDBTimeTypeMapping : RelationalTypeMapping
 {
-    private static readonly MethodInfo GetTimeOnly = typeof(DuckDBDataReader)
-        .GetMethod(nameof(DuckDBDataReader.GetFieldValue), 1, [typeof(int)])!
-        .MakeGenericMethod(typeof(TimeOnly));
-
-    private static readonly MethodInfo GetTimeSpan = typeof(DuckDBDataReader)
-        .GetMethod(nameof(DuckDBDataReader.GetFieldValue), 1, [typeof(int)])!
-        .MakeGenericMethod(typeof(TimeSpan));
-
     // TODO Use DuckDBType as a key. But it does not contain TIME_NS.
     private static readonly IReadOnlyDictionary<string, string> Formats = new Dictionary<string, string>
     {

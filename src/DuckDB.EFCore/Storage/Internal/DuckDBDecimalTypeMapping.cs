@@ -23,7 +23,7 @@ public class DuckDBDecimalTypeMapping : DecimalTypeMapping
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public static readonly DuckDBDecimalTypeMapping Default = new(DefaultPrecision, DefaultScale);
+    public static new DuckDBDecimalTypeMapping Default { get; } = new(DefaultPrecision, DefaultScale);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to

@@ -163,12 +163,6 @@ public class ByteArrayTypeTest : RelationalTypeTestBase<byte[], ByteArrayTypeTes
         return base.SaveChanges_within_json();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Equality_in_query()
-    {
-        return base.Equality_in_query();
-    }
-
     public class ByteArrayTypeFixture : RelationalTypeFixtureBase<byte[]>
     {
         public override byte[] Value { get; } = [1, 2, 3];

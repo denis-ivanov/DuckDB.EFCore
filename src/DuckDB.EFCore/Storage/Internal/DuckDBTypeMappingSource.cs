@@ -21,24 +21,6 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
     internal const string BitTypeName = "BIT";
     internal const string MapTypeNamePrefix = "MAP(";
 
-    private static readonly DuckDBBooleanTypeMapping BooleanTypeMapping = new();
-    private static readonly DuckDBByteTypeMapping ByteTypeMapping = new();
-    private static readonly DuckDBDateOnlyTypeMapping DateTypeMapping = new();
-
-    private static readonly DuckDBCharTypeMapping CharTypeMapping = new();
-    // TODO Decimal
-    private static readonly DuckDBDoubleTypeMapping DoubleTypeMapping = new();
-    private static readonly DuckDBFloatTypeMapping FloatTypeMapping = new();
-    private static readonly DuckDBGuidTypeMapping GuidTypeMapping = new();
-    private static readonly DuckDBInt16TypeMapping Int16TypeMapping = new();
-    private static readonly DuckDBInt32TypeMapping Int32TypeMapping = new();
-    private static readonly DuckDBInt64TypeMapping Int64TypeMapping = new();
-    private static readonly DuckDBSByteTypeMapping SByteTypeMapping = new();
-    private static readonly DuckDBStringTypeMapping StringTypeMapping = DuckDBStringTypeMapping.Default;
-    private static readonly DuckDBUInt16TypeMapping UInt16TypeMapping = new();
-    private static readonly DuckDBUInt32TypeMapping UInt32TypeMapping = new();
-    private static readonly DuckDBUInt64TypeMapping UInt64TypeMapping = new();
-
     // JSON
     private static readonly DuckDBJsonTypeMapping JsonString = new(typeof(string));
     private static readonly DuckDBJsonTypeMapping JsonDocument = new(typeof(JsonDocument));
@@ -47,27 +29,27 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
 
     private static readonly Dictionary<Type, RelationalTypeMapping> ClrTypeMappings = new()
     {
-        { typeof(string), StringTypeMapping },
+        { typeof(string), DuckDBStringTypeMapping.Default },
         { typeof(byte[]), DuckDBBlobTypeMapping.Default },
-        { typeof(bool), BooleanTypeMapping },
-        { typeof(byte), ByteTypeMapping },
-        { typeof(char), CharTypeMapping },
-        { typeof(int), Int32TypeMapping },
-        { typeof(long), Int64TypeMapping },
-        { typeof(sbyte), SByteTypeMapping },
-        { typeof(short), Int16TypeMapping },
-        { typeof(uint), UInt32TypeMapping },
-        { typeof(ulong), UInt64TypeMapping },
-        { typeof(ushort), UInt16TypeMapping },
+        { typeof(bool), DuckDBBooleanTypeMapping.Default },
+        { typeof(byte), DuckDBByteTypeMapping.Default },
+        { typeof(char), DuckDBCharTypeMapping.Default },
+        { typeof(int), DuckDBInt32TypeMapping.Default },
+        { typeof(long), DuckDBInt64TypeMapping.Default },
+        { typeof(sbyte), DuckDBSByteTypeMapping.Default },
+        { typeof(short), DuckDBInt16TypeMapping.Default },
+        { typeof(uint), DuckDBUInt32TypeMapping.Default },
+        { typeof(ulong), DuckDBUInt64TypeMapping.Default },
+        { typeof(ushort), DuckDBUInt16TypeMapping.Default },
         { typeof(DateTime), DuckDBTimestampTypeMapping.Timestamp },
         { typeof(DateTimeOffset), DuckDBTimestampTypeMapping.TimestampTz },
-        { typeof(DateOnly), DateTypeMapping },
+        { typeof(DateOnly), DuckDBDateOnlyTypeMapping.Default },
         { typeof(TimeSpan), DuckDBTimeTypeMapping.TimeSpan },
         { typeof(TimeOnly), DuckDBTimeTypeMapping.Time },
         { typeof(decimal), DuckDBDecimalTypeMapping.Default },
-        { typeof(double), DoubleTypeMapping },
-        { typeof(float), FloatTypeMapping },
-        { typeof(Guid), GuidTypeMapping },
+        { typeof(double), DuckDBDoubleTypeMapping.Default },
+        { typeof(float), DuckDBFloatTypeMapping.Default },
+        { typeof(Guid), DuckDBGuidTypeMapping.Default },
         { typeof(JsonDocument), JsonDocument },
         { typeof(JsonElement), JsonElement },
         { typeof(JsonTypePlaceholder), JsonOwned }
@@ -75,21 +57,50 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
 
     private static readonly Dictionary<string, RelationalTypeMapping> StoreTypeMappings = new(StringComparer.OrdinalIgnoreCase)
     {
-        { "INT8", UInt64TypeMapping },
-        { "LONG", UInt64TypeMapping },
+        // Blob types
+        { "BLOB", DuckDBBlobTypeMapping.Default },
         { "BYTEA", DuckDBBlobTypeMapping.Default },
         { "BINARY", DuckDBBlobTypeMapping.Default },
         { "VARBINARY", DuckDBBlobTypeMapping.Default },
-        { "BOOL", BooleanTypeMapping },
-        { "LOGICAL", BooleanTypeMapping },
-        { "FLOAT8", DoubleTypeMapping },
-        { "FLOAT4", FloatTypeMapping },
-        { "REAL", FloatTypeMapping },
-        { "INT4", Int32TypeMapping },
-        { "INT", Int32TypeMapping },
-        { "SIGNED", Int32TypeMapping },
-        { "INT2", Int16TypeMapping },
-        { "SHORT", Int16TypeMapping },
+
+        // Fixed-Width Integer Types
+        { "TINYINT", DuckDBSByteTypeMapping.Default },
+        { "INT1", DuckDBSByteTypeMapping.Default },
+
+        { "SMALLINT", DuckDBInt16TypeMapping.Default },
+        { "INT2", DuckDBInt16TypeMapping.Default },
+        { "INT16", DuckDBInt16TypeMapping.Default },
+        { "SHORT", DuckDBInt16TypeMapping.Default },
+        
+        { "INTEGER", DuckDBInt32TypeMapping.Default },
+        { "INT4", DuckDBInt32TypeMapping.Default },
+        { "INT32", DuckDBInt32TypeMapping.Default },
+        { "INT", DuckDBInt32TypeMapping.Default },
+        { "SIGNED", DuckDBInt32TypeMapping.Default },
+
+        { "BIGINT", DuckDBInt64TypeMapping.Default },
+        { "INT8", DuckDBInt64TypeMapping.Default },
+        { "INT64", DuckDBInt64TypeMapping.Default },
+        { "LONG", DuckDBInt64TypeMapping.Default },
+
+        { "UTINYINT", DuckDBByteTypeMapping.Default },
+        { "UINT8", DuckDBByteTypeMapping.Default },
+
+        { "USMALLINT", DuckDBUInt16TypeMapping.Default },
+        { "UINT16", DuckDBUInt16TypeMapping.Default },
+
+        { "UINTEGER", DuckDBUInt32TypeMapping.Default },
+        { "UINT32", DuckDBUInt32TypeMapping.Default },
+
+        { "UBIGINT", DuckDBUInt64TypeMapping.Default },
+        { "UINT64", DuckDBUInt64TypeMapping.Default },
+
+        { "FLOAT", DuckDBFloatTypeMapping.Default },
+        { "FLOAT4", DuckDBFloatTypeMapping.Default },
+        { "REAL", DuckDBFloatTypeMapping.Default },
+        
+        { "DOUBLE", DuckDBDoubleTypeMapping.Default },
+        { "FLOAT8", DuckDBDoubleTypeMapping.Default },
 
         // Timestamp Types
         { "TIMESTAMP_NS", DuckDBTimestampTypeMapping.TimestampNs },
@@ -108,11 +119,10 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         { "TIME WITH TIME ZONE", DuckDBTimeTypeMapping.TimeTz },
         { "TIME_NS", DuckDBTimeTypeMapping.TimeNs },
 
-        { "INT1", SByteTypeMapping },
-        { "CHAR", StringTypeMapping },
-        { "BPCHAR", StringTypeMapping },
-        { "TEXT", StringTypeMapping },
-        { "STRING", StringTypeMapping },
+        { "CHAR", DuckDBStringTypeMapping.Default },
+        { "BPCHAR", DuckDBStringTypeMapping.Default },
+        { "TEXT", DuckDBStringTypeMapping.Default },
+        { "STRING", DuckDBStringTypeMapping.Default },
         { "JSON", JsonString }
     };
 
@@ -328,16 +338,16 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         {
             return clrType switch
             {
-                null => DuckDBBitStringTypeMapping.Default,
-                _ when clrType == typeof(string) => DuckDBBitStringTypeMapping.Default,
-                _ when clrType == typeof(BitArray) => DuckDBBitStringTypeMapping.BitArray,
+                null => DuckDBBitStringTypeMapping.String,
+                _ when clrType == typeof(string) => DuckDBBitStringTypeMapping.String,
+                _ when clrType == typeof(BitArray) => DuckDBBitStringTypeMapping.Default,
                 _ => null
             };
         }
 
         if (clrType == typeof(BitArray) && storeTypeName == null)
         {
-            return DuckDBBitStringTypeMapping.BitArray;
+            return DuckDBBitStringTypeMapping.Default;
         }
 
         if (clrType != null && ClrTypeMappings.TryGetValue(clrType, out var mapping))
@@ -396,20 +406,20 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
     private readonly Func<string, RelationalTypeMapping?>[] _typeRules =
     [
         name => Contains(name, "INT")
-            ? Int32TypeMapping
+            ? DuckDBInt32TypeMapping.Default
             : null,
         name => Contains(name, "CHAR")
                 || Contains(name, "BPCHAR")
                 || Contains(name, "TEXT")
                 || Contains(name, "STRING")
-            ? StringTypeMapping
+            ? DuckDBStringTypeMapping.Default
             : null,
         name => Contains(name, "BLOB")
             ? DuckDBBlobTypeMapping.Default
             : null,
         name => Contains(name, "REAL")
                 || Contains(name, "FLOAT")
-            ? FloatTypeMapping
+            ? DuckDBFloatTypeMapping.Default
             : null
     ];
 
