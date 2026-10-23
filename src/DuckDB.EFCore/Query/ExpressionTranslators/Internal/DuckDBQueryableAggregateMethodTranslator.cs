@@ -387,14 +387,14 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
                     nullable: true,
                     argumentsPropagateNullability: [false, false, false],
                     typeof(string),
-                    DuckDBBitStringTypeMapping.Default)
+                    DuckDBBitStringTypeMapping.String)
                 : _sqlExpressionFactory.Function(
                     "BITSTRING_AGG",
                     [bitStringSelector],
                     nullable: true,
                     argumentsPropagateNullability: [false],
                     typeof(string),
-                    DuckDBBitStringTypeMapping.Default);
+                    DuckDBBitStringTypeMapping.String);
         }
 
         // Support CORR(y, x), COVAR_POP(y, x), COVAR_SAMP(y, x), REGR_AVGX(y, x), REGR_AVGY(y, x), REGR_COUNT(y, x), REGR_INTERCEPT(y, x), REGR_R2(y, x), REGR_SLOPE(y, x), REGR_SXX(y, x), REGR_SXY(y, x) and REGR_SYY(y, x) aggregate functions

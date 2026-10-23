@@ -13,6 +13,8 @@ namespace DuckDB.EFCore.Storage.Internal;
 /// </summary>
 public class DuckDBBooleanTypeMapping : BoolTypeMapping
 {
+    public static new DuckDBBooleanTypeMapping Default { get; } = new DuckDBBooleanTypeMapping();
+
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
     ///     the same compatibility standards as public APIs. It may be changed or removed without notice in

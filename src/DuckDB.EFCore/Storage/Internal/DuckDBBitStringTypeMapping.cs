@@ -33,7 +33,7 @@ public class DuckDBBitStringTypeMapping : RelationalTypeMapping
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public static DuckDBBitStringTypeMapping Default { get; } = new(typeof(string));
+    public static DuckDBBitStringTypeMapping String { get; } = new(typeof(string));
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -41,7 +41,7 @@ public class DuckDBBitStringTypeMapping : RelationalTypeMapping
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public static DuckDBBitStringTypeMapping BitArray { get; } = new(typeof(BitArray));
+    public static DuckDBBitStringTypeMapping Default { get; } = new(typeof(BitArray));
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
