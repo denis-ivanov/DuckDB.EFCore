@@ -1,5 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Design;
+﻿using DuckDB.EFCore.Extensions;
+using DuckDB.EFCore.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Scaffolding;
+using System.Reflection;
 
 namespace DuckDB.EFCore.Scaffolding.Internal;
 
@@ -11,6 +15,11 @@ namespace DuckDB.EFCore.Scaffolding.Internal;
 /// </summary>
 public class DuckDBCodeGenerator : ProviderCodeGenerator
 {
+    private static readonly MethodInfo UseDuckDBMethodInfo
+        = typeof(DuckDBDbContextOptionsBuilderExtensions).GetRuntimeMethod(
+            nameof(DuckDBDbContextOptionsBuilderExtensions.UseDuckDB), 
+            [typeof(DbContextOptionsBuilder), typeof(string), typeof(Action<DuckDBDbContextOptionsBuilder>)])!;
+    
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
     ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
@@ -24,6 +33,10 @@ public class DuckDBCodeGenerator : ProviderCodeGenerator
     /// <inheritdoc />
     public override MethodCallCodeFragment GenerateUseProvider(string connectionString, MethodCallCodeFragment? providerOptions)
     {
-        throw new NotImplementedException();
+        return new(
+            UseDuckDBMethodInfo,
+            providerOptions == null
+                ? [connectionString]
+                : [connectionString, new NestedClosureCodeFragment("x", providerOptions)]);
     }
 }

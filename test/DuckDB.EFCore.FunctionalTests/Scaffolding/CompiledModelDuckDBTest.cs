@@ -75,10 +75,12 @@ public class CompiledModelDuckDBTest : CompiledModelRelationalTestBase
         return base.No_NativeAOT();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task SimpleModel()
+    protected override BuildSource AddReferences(BuildSource build, string filePath = "")
     {
-        return base.SimpleModel();
+        base.AddReferences(build, filePath);
+        build.References.Add(BuildReference.ByName("DuckDB.EFCore"));
+        build.References.Add(BuildReference.ByName("DuckDB.EFCore.NTS"));
+        return build;
     }
 
     protected override TestHelpers TestHelpers
