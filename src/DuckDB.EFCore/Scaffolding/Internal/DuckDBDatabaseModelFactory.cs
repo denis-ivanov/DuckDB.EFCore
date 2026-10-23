@@ -1,5 +1,6 @@
 ﻿using DuckDB.EFCore.Metadata;
 using DuckDB.EFCore.Metadata.Internal;
+using DuckDB.EFCore.Storage.Internal;
 using DuckDB.NET.Data;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -8,7 +9,6 @@ using Microsoft.EntityFrameworkCore.Scaffolding;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
 
 namespace DuckDB.EFCore.Scaffolding.Internal;
 
@@ -36,8 +36,6 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
             DefaultSchema = "main"
         };
 
-        // TODO
-
         var connectionStartedOpen = connection.State == ConnectionState.Open;
 
         if (!connectionStartedOpen)
@@ -48,27 +46,11 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
         try
         {
             FillTables((DuckDBConnection)connection, databaseModel, options.Tables);
+            FillViews((DuckDBConnection)connection, databaseModel, options.Tables);
             FillColumns((DuckDBConnection)connection, databaseModel);
-            FillPrimaryKeys((DuckDBConnection)connection, databaseModel);
+            FillConstraints((DuckDBConnection)connection, databaseModel);
             FillIndexes((DuckDBConnection)connection, databaseModel);
             FillSequences((DuckDBConnection)connection, databaseModel);
-
-            foreach (var table in databaseModel.Tables)
-            {
-                GetForeignKeys(connection, table, databaseModel.Tables);
-            }
-
-            var nullableKeyColumns = databaseModel.Tables
-                .SelectMany(t => t.PrimaryKey?.Columns ?? [])
-                .Concat(databaseModel.Tables.SelectMany(t => t.ForeignKeys).SelectMany(fk => fk.PrincipalColumns))
-                .Where(c => c.IsNullable)
-                .Distinct();
-
-            foreach (var column in nullableKeyColumns)
-            {
-                // TODO: Consider warning
-                column.IsNullable = false;
-            }
         }
         finally
         {
@@ -86,7 +68,7 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
         using var command = connection.CreateCommand();
         command.CommandText = """
                               SELECT *
-                                FROM information_schema.tables
+                                FROM duckdb_tables()
                                WHERE table_name != $default_table_name
                                  AND (array_length(CAST($tables AS VARCHAR[])) = 0 OR table_name = ANY(CAST($tables AS VARCHAR[])));
                               """;
@@ -108,13 +90,53 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
         while (reader.Read())
         {
             var name = reader.GetString("table_name");
-            var schema = reader.GetString("table_schema");
-            var tableComment = reader.IsDBNull("TABLE_COMMENT") ? null : reader.GetString("TABLE_COMMENT");
+            var schema = reader.GetString("schema_name");
+            var comment = reader.IsDBNull("comment") ? null : reader.GetString("comment");
 
-            var type = reader.GetString("table_type");
-            var table = type == "BASE TABLE"
-                ? new DatabaseTable { Database = databaseModel, Name = name, Schema = schema, Comment = tableComment }
-                : new DatabaseView { Database = databaseModel, Name = name, Schema = schema, Comment = tableComment };
+            var table = new DatabaseTable
+            {
+                Database = databaseModel,
+                Name = name,
+                Schema = schema,
+                Comment = comment
+            };
+
+            databaseModel.Tables.Add(table);
+        }
+    }
+
+    private void FillViews(DuckDBConnection connection, DatabaseModel databaseModel, IEnumerable<string> tables)
+    {
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+                              SELECT *
+                                FROM duckdb_views()
+                               WHERE internal = false 
+                                 AND view_name != $default_table_name
+                                 AND (array_length(CAST($tables AS VARCHAR[])) = 0 OR view_name = ANY(CAST($tables AS VARCHAR[])));
+                              """;
+
+        var defaultTableNameParameter = (DuckDBParameter)command.CreateParameter();
+        defaultTableNameParameter.ParameterName = "default_table_name";
+        defaultTableNameParameter.Value = HistoryRepository.DefaultTableName;
+        defaultTableNameParameter.DbType = DbType.String;
+
+        var tablesParameter = (DuckDBParameter)command.CreateParameter();
+        tablesParameter.ParameterName = "tables";
+        tablesParameter.Value = tables.ToList();
+        tablesParameter.DbType = DbType.Object;
+
+        command.Parameters.Add(defaultTableNameParameter);
+        command.Parameters.Add(tablesParameter);
+
+        using var reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            var name = reader.GetString("view_name");
+            var schema = reader.GetString("schema_name");
+            var comment = reader.IsDBNull("comment") ? null : reader.GetString("comment");
+
+            var table = new DatabaseView { Database = databaseModel, Name = name, Schema = schema, Comment = comment };
 
             databaseModel.Tables.Add(table);
         }
@@ -125,23 +147,7 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
         foreach (var table in database.Tables)
         {
             using var command = connection.CreateCommand();
-            if (table is DatabaseTable)
-            {
-                var tableName = string.IsNullOrEmpty(table.Schema)
-                    ? table.Name.Replace("'", "''")
-                    : $"{table.Schema.Replace("'", "''")}.{table.Name.Replace("'", "''")}";
-
-                command.CommandText = $"""
-                                      SELECT c.*, s.compression
-                                        FROM duckdb_columns c
-                                        LEFT
-                                        JOIN (SELECT column_name, FIRST(compression) AS compression FROM pragma_storage_info('{tableName}') GROUP BY column_name) s
-                                          ON c.column_name = s.column_name
-                                       WHERE c.table_name = $table_name
-                                         AND c.schema_name = $table_schema
-                                      """;
-            }
-            else
+            if (table is DatabaseView)
             {
                 command.CommandText = """
                                       SELECT c.*, NULL AS compression
@@ -149,6 +155,23 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
                                        WHERE c.table_name = $table_name
                                          AND c.schema_name = $table_schema
                                       """;
+            }
+            else
+            {
+                
+                var tableName = string.IsNullOrEmpty(table.Schema)
+                    ? table.Name.Replace("'", "''")
+                    : $"{table.Schema.Replace("'", "''")}.{table.Name.Replace("'", "''")}";
+
+                command.CommandText = $"""
+                                       SELECT c.*, s.compression
+                                         FROM duckdb_columns c
+                                         LEFT
+                                         JOIN (SELECT column_name, FIRST(compression) AS compression FROM pragma_storage_info('{tableName}') GROUP BY column_name) s
+                                           ON c.column_name = s.column_name
+                                        WHERE c.table_name = $table_name
+                                          AND c.schema_name = $table_schema
+                                       """;
             }
 
             command.Parameters.Add(new DuckDBParameter("table_name", table.Name));
@@ -180,8 +203,7 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
                         ? ValueGenerated.OnAdd
                         : null,
                     Comment = columnComment,
-                    DefaultValue = columnDefault // TODO Computed or Default.
-                    // TODO IsStored
+                    DefaultValue = columnDefault
                 };
 
                 if (characterMaximumLength.HasValue)
@@ -209,221 +231,152 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
         }
     }
 
-    private void FillPrimaryKeys(DuckDBConnection connection, DatabaseModel database)
+    private void FillConstraints(DuckDBConnection connection, DatabaseModel database)
     {
-        foreach (DatabaseTable table in database.Tables)
-        {
-            using var command = connection.CreateCommand();
-            command.CommandText = """
-                                  SELECT constraint_name
-                                    FROM information_schema.table_constraints
-                                   WHERE table_name = $table_name AND constraint_type = 'PRIMARY KEY';
-                                  """;
-
-            command.Parameters.Add(new DuckDBParameter("table_name", table.Name));
-
-            var name = (string?)command.ExecuteScalar();
-
-            if (name == null)
-            {
-                return;
-            }
-
-            var primaryKey = new DatabasePrimaryKey
-            {
-                Table = table,
-                Name = name
-            };
-
-            command.CommandText =
-                """
-                SELECT k.column_name
-                  FROM information_schema.table_constraints t
-                  JOIN information_schema.key_column_usage k
-                    ON t.constraint_name = k.constraint_name
-                   AND t.table_name = k.table_name
-                   AND t.table_schema = k.table_schema
-                 WHERE t.constraint_type = 'PRIMARY KEY'
-                   AND t.table_name = $table_name
-                   AND t.table_schema = $schema
-                 ORDER BY k.ordinal_position;
-                """;
-
-            command.Parameters.Clear();
-            command.Parameters.Add(new DuckDBParameter("table_name", table.Name));
-            command.Parameters.Add(new DuckDBParameter("schema", table.Schema));
-
-            using var reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                var columnName = reader.GetString(0);
-                var column = table.Columns.FirstOrDefault(c => c.Name == columnName)
-                             ?? table.Columns.FirstOrDefault(c => c.Name.Equals(columnName, StringComparison.OrdinalIgnoreCase));
-                Debug.Assert(column != null, "column is null.");
-
-                primaryKey.Columns.Add(column);
-            }
-
-            table.PrimaryKey = primaryKey;
-        }
-    }
-
-    private void GetForeignKeys(DbConnection connection, DatabaseTable table, IList<DatabaseTable> tables)
-    {
-        using var command1 = connection.CreateCommand();
-        command1.CommandText = """
-                               SELECT tc.constraint_name as foreign_key_name,
-                                     rc.delete_rule,
-                                     pc.table_name AS referenced_table_name,
-                                     pc.table_schema AS referenced_table_schema,
-                                FROM information_schema.table_constraints AS tc
+        var command = connection.CreateCommand();
+        command.CommandText = """
+                              SELECT cnts.*, rc.delete_rule
+                                FROM duckdb_constraints() AS cnts
+                                LEFT
                                 JOIN information_schema.referential_constraints AS rc
-                                  ON tc.constraint_name = rc.constraint_name
-                                 AND tc.table_schema = rc.constraint_schema
-                                JOIN information_schema.table_constraints pc
-                                  ON pc.constraint_name = rc.unique_constraint_name
-                                 AND pc.table_schema = rc.unique_constraint_schema
-                               WHERE tc.constraint_type = 'FOREIGN KEY'
-                                 AND tc.table_name = ?
-                                 AND tc.table_schema = ?;
-                               """;
+                                  ON cnts.constraint_name = rc.constraint_name
+                                 AND cnts.schema_name = rc.constraint_schema
+                                 AND cnts.constraint_type = 'FOREIGN KEY'
+                              """;
 
-        command1.Parameters.Add(new DuckDBParameter(table.Name));
-        command1.Parameters.Add(new DuckDBParameter(table.Schema));
+        using var reader = command.ExecuteReader();
 
-        using var reader1 = command1.ExecuteReader();
-        while (reader1.Read())
+        while (reader.Read())
         {
-            var constraintName = reader1.GetString("foreign_key_name");
-            var principalTableName = reader1.GetString("referenced_table_name");
-            var principalTableSchema = reader1.GetString("referenced_table_schema");
-            var onDelete = reader1.GetString("delete_rule");
-            var principalTable =
-                tables.FirstOrDefault(t => t.Name == principalTableName && t.Schema == principalTableSchema)
-                ?? tables.FirstOrDefault(t => t.Name.Equals(principalTableName, StringComparison.OrdinalIgnoreCase) &&
-                                              StringComparer.OrdinalIgnoreCase.Equals(t.Schema, principalTableSchema));
+            string? schemaName = reader.IsDBNull("schema_name") ? null : reader.GetString("schema_name");
+            string? tableName = reader.IsDBNull("table_name") ? null : reader.GetString("table_name");
 
-            // TODO _logger.ForeignKeyFound(table.Name, id, principalTableName, onDelete);
+            var table = database.Tables.SingleOrDefault(e => e.Schema == schemaName && e.Name == tableName);
 
-            if (principalTable == null)
+            if (table is null)
             {
-                // TODO _logger.ForeignKeyReferencesMissingTableWarning(id.ToString(), table.Name, principalTableName);
                 continue;
             }
 
-            var foreignKey = new DatabaseForeignKey
+            string? constraintType = reader.IsDBNull("constraint_type") ? null : reader.GetString("constraint_type");
+            List<string>? constraintColumnNames = reader.IsDBNull("constraint_column_names") ? null : (List<string>)reader.GetValue("constraint_column_names");
+            string? constraintName = reader.IsDBNull("constraint_name") ? null : reader.GetString("constraint_name");
+            string? referencedTable = reader.IsDBNull("referenced_table") ? null : reader.GetString("referenced_table");
+            List<string>? referencedColumnNames = reader.IsDBNull("referenced_column_names") ? null : (List<string>)reader.GetValue("referenced_column_names");
+            string? deleteRule = reader.IsDBNull("delete_rule") ? null : reader.GetString("delete_rule");
+
+            switch (constraintType)
             {
-                Table = table,
-                Name = constraintName,
-                PrincipalTable = principalTable,
-                OnDelete = ConvertToReferentialAction(onDelete)
-            };
+                case "CHECK":
+                    // Could be usefull
+                    break;
 
-            using var command2 = connection.CreateCommand();
-            command2.CommandText =
-                """
-SELECT child.column_name  AS child_column,
-       parent.column_name  AS parent_column,
-       child.ordinal_position
-  FROM information_schema.referential_constraints AS rc
-  JOIN information_schema.key_column_usage AS child
-    ON rc.constraint_name = child.constraint_name
-   AND rc.constraint_schema = child.table_schema
-  JOIN information_schema.key_column_usage AS parent
-    ON rc.unique_constraint_name = parent.constraint_name
-   AND rc.unique_constraint_schema = parent.table_schema
-   AND child.ordinal_position = parent.ordinal_position
- WHERE rc.constraint_name = ?
-   AND rc.constraint_schema = ?
- ORDER BY child.ordinal_position;
-""";
-
-            command2.Parameters.Add(new DuckDBParameter(foreignKey.Name));
-            command2.Parameters.Add(new DuckDBParameter(foreignKey.PrincipalTable.Schema));
-
-            var invalid = false;
-
-            using (var reader2 = command2.ExecuteReader())
-            {
-                while (reader2.Read())
-                {
-                    var columnName = reader2.GetString("child_column");
-                    var column = table.Columns.FirstOrDefault(c => c.Name == columnName)
-                        ?? table.Columns.FirstOrDefault(
-                            c => c.Name.Equals(columnName, StringComparison.OrdinalIgnoreCase));
-                    Debug.Assert(column != null, "column is null.");
-
-                    var principalColumnName = reader2.GetString("parent_column");
-                    DatabaseColumn? principalColumn = null;
-                    if (principalColumnName != null)
+                case "FOREIGN KEY":
                     {
-                        principalColumn =
-                            foreignKey.PrincipalTable.Columns.FirstOrDefault(c => c.Name == principalColumnName)
-                            ?? foreignKey.PrincipalTable.Columns.FirstOrDefault(
-                                c => c.Name.Equals(principalColumnName, StringComparison.OrdinalIgnoreCase));
-                    }
-                    else if (principalTable?.PrimaryKey != null)
-                    {
-                        var seq = reader2.GetInt32(0);
-                        principalColumn = principalTable.PrimaryKey.Columns[seq];
-                    }
+                        var principalTable = database.Tables.Single(e => e.Name == referencedTable);
+                        var foreignKey = new DatabaseForeignKey
+                        {
+                            Table = table,
+                            Name = constraintName ?? $"FK_{table.Name}_{string.Join("_", constraintColumnNames!)}_{referencedTable}",
+                            PrincipalTable = principalTable,
+                            OnDelete = ConvertToReferentialAction(deleteRule)
+                        };
 
-                    if (principalColumn == null)
-                    {
-                        invalid = true;
-                        // TODO _logger.ForeignKeyPrincipalColumnMissingWarning(id.ToString(), table.Name, principalColumnName, principalTableName);
+                        foreach (string constraintColumnName in constraintColumnNames!)
+                        {
+                            foreignKey.Columns.Add(table.Columns.Single(e => e.Name == constraintColumnName));
+                        }
+
+                        foreach(string referencedColumnName in referencedColumnNames!)
+                        {
+                            foreignKey.PrincipalColumns.Add(principalTable.Columns.Single(e => e.Name == referencedColumnName));
+                        }
+
+                        table.ForeignKeys.Add(foreignKey);
                         break;
                     }
 
-                    foreignKey.Columns.Add(column);
-                    foreignKey.PrincipalColumns.Add(principalColumn);
-                }
-            }
+                case "PRIMARY KEY":
+                    {
+                        var primaryKey = new DatabasePrimaryKey
+                        {
+                            Table = table, Name = constraintName ?? $"PK_{table.Name}",
+                        };
 
-            if (!invalid)
-            {
-                table.ForeignKeys.Add(foreignKey);
+                        foreach (var constraintColumnName in constraintColumnNames!)
+                        {
+                            primaryKey.Columns.Add(table.Columns.Single(e => e.Name == constraintColumnName));
+                        }
+
+                        table.PrimaryKey = primaryKey;
+                        break;
+                    }
+
+                case "NOT NULL":
+                    break;
+
+                case "UNIQUE":
+                    {
+                        var uniqueConstraint = new DatabaseUniqueConstraint
+                        {
+                            Table = table,
+                            Name = constraintName ?? $"UQ_{table.Name}_{string.Join("_", constraintColumnNames!)}"
+                        };
+
+                        foreach (var constraintColumnName in constraintColumnNames!)
+                        {
+                            uniqueConstraint.Columns.Add(table.Columns.Single(e => e.Name == constraintColumnName));
+                        }
+
+                        break;
+                    }
             }
         }
     }
 
     private void FillIndexes(DuckDBConnection connection, DatabaseModel database)
     {
-        foreach (var table in database.Tables)
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+                              SELECT *
+                                FROM duckdb_indexes
+                              """;
+
+        command.Parameters.Add(new DuckDBParameter("database_name", DbType.String, database.DatabaseName));
+
+        using var reader = command.ExecuteReader();
+
+        while (reader.Read())
         {
-            using var command = connection.CreateCommand();
-            command.CommandText = """
-                                  SELECT *
-                                    FROM duckdb_indexes
-                                    WHERE table_name = $table_name
-                                  """;
+            var schemaName = reader.IsDBNull("schema_name") ? null : reader.GetString("schema_name");
+            var tableName = reader.IsDBNull("table_name") ? null : reader.GetString("table_name");
 
-            command.Parameters.Add(new DuckDBParameter("table_name", table.Name));
+            var table = database.Tables.SingleOrDefault(e => e.Schema == schemaName && e.Name == tableName);
 
-            using var reader = command.ExecuteReader();
-
-            while (reader.Read())
+            if (table is null)
             {
-                var index = new DatabaseIndex
-                {
-                    Name = reader.GetString("index_name"),
-                    Table = table,
-                    IsUnique = reader.GetBoolean("is_unique")
-                };
-
-                var expressions = reader.GetFieldValue<string>("expressions");
-                var columns = Array.ConvertAll(expressions.TrimStart('[').TrimEnd(']').Split(','), e => e.Trim().Trim(['\'', '\"']));
-
-                foreach (var column in columns)
-                {
-                    var tableColumn = table.Columns.Single(c => c.Name == column);
-
-                    index.Columns.Add(tableColumn);
-                    index.IsDescending.Add(false);
-                }
-
-                table.Indexes.Add(index);
+                continue;
             }
+
+            var index = new DatabaseIndex
+            {
+                Name = reader.GetString("index_name"),
+                Table = table,
+                IsUnique = reader.GetBoolean("is_unique")
+            };
+
+            var expressions = reader.GetFieldValue<string>("expressions");
+            var columns = Array.ConvertAll(expressions.TrimStart('[').TrimEnd(']').Split(','), e => e.Trim().Trim(['\'', '\"']));
+
+            foreach (var column in columns)
+            {
+                var tableColumn = table.Columns.Single(c => c.Name == column);
+
+                index.Columns.Add(tableColumn);
+                index.IsDescending.Add(false);
+            }
+
+            table.Indexes.Add(index);
         }
     }
 
@@ -445,14 +398,14 @@ SELECT child.column_name  AS child_column,
                 MinValue = reader.GetInt64("min_value"),
                 MaxValue = reader.GetInt64("max_value"),
                 IsCyclic = reader.GetBoolean("cycle"),
-                StoreType = "BIGINT"
+                StoreType = DuckDBInt64TypeMapping.Default.StoreType
             };
 
             database.Sequences.Add(sequence);
         }
     }
 
-    private static ReferentialAction? ConvertToReferentialAction(string value)
+    private static ReferentialAction? ConvertToReferentialAction(string? value)
         => value switch
         {
             "RESTRICT" => ReferentialAction.Restrict,

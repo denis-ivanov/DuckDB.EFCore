@@ -45,19 +45,13 @@ public class CompiledModelDuckDBTest : CompiledModelRelationalTestBase
         return base.DbFunctions();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Dynamic_schema()
-    {
-        return base.Dynamic_schema();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [ConditionalFact(Skip = "Stored procedures are not supported in DuckDB")]
     public override Task Tpc_Sprocs()
     {
         return base.Tpc_Sprocs();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [ConditionalFact(Skip = "duckdb_triggers function available only in v2")]
     public override Task Triggers()
     {
         return base.Triggers();
