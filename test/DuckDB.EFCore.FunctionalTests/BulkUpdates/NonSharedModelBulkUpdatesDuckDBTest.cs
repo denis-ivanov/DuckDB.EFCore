@@ -34,12 +34,6 @@ public class NonSharedModelBulkUpdatesDuckDBTest : NonSharedModelBulkUpdatesRela
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Delete_predicate_based_on_optional_navigation(bool async)
-    {
-        return base.Delete_predicate_based_on_optional_navigation(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Replace_ColumnExpression_in_column_setter(bool async)
     {
         return base.Replace_ColumnExpression_in_column_setter(async);
