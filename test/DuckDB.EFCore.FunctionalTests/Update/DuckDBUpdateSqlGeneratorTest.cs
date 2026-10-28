@@ -22,12 +22,6 @@ public class DuckDBUpdateSqlGeneratorTest : UpdateSqlGeneratorTestBase
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override void AppendInsertOperation_for_only_single_identity_columns()
-    {
-        base.AppendInsertOperation_for_only_single_identity_columns();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override void AppendInsertOperation_for_store_generated_columns_but_no_identity()
     {
         base.AppendInsertOperation_for_store_generated_columns_but_no_identity();
@@ -126,7 +120,13 @@ public class DuckDBUpdateSqlGeneratorTest : UpdateSqlGeneratorTestBase
 
     protected override void AppendInsertOperation_for_only_single_identity_columns_verification(StringBuilder stringBuilder)
     {
-        throw new NotImplementedException();
+        AssertBaseline(
+            """
+            INSERT INTO main."Ducks"
+            DEFAULT VALUES
+            RETURNING "Id";
+            """,
+            stringBuilder.ToString());
     }
 
     protected override void AppendUpdateOperation_if_store_generated_columns_exist_verification(StringBuilder stringBuilder)
