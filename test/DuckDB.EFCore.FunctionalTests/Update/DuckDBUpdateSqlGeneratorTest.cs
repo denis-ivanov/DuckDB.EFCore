@@ -56,10 +56,16 @@ public class DuckDBUpdateSqlGeneratorTest : UpdateSqlGeneratorTestBase
             statement);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [ConditionalFact]
     public override void GenerateNextSequenceValueOperation_returns_statement_with_sanitized_sequence()
     {
-        base.GenerateNextSequenceValueOperation_returns_statement_with_sanitized_sequence();
+        var statement = CreateSqlGenerator().GenerateNextSequenceValueOperation("sequence" + CloseDelimiter + "; --", null);
+
+        Assert.Equal(
+            """
+            nextval("sequence""; --")
+            """,
+            statement);
     }
 
     protected override void AppendDeleteOperation_creates_full_delete_command_text_verification(StringBuilder stringBuilder)

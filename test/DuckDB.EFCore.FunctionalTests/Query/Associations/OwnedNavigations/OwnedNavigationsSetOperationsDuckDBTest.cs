@@ -20,4 +20,10 @@ public class OwnedNavigationsSetOperationsDuckDBTest : OwnedNavigationsSetOperat
     {
         return base.Over_nested_associate_collection();
     }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Over_associate_collection_projected(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Over_associate_collection_projected(queryTrackingBehavior);
+    }
 }

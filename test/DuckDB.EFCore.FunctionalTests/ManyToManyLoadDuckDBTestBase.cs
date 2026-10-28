@@ -36,7 +36,7 @@ public abstract class ManyToManyLoadDuckDBTestBase<TFixture>(TFixture fixture) :
             modelBuilder
                 .Entity<UnidirectionalJoinOneSelfPayload>()
                 .Property(e => e.Payload)
-                .HasDefaultValueSql("GETUTCDATE()");
+                .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
 
             modelBuilder
                 .SharedTypeEntity<Dictionary<string, object>>("UnidirectionalJoinOneToThreePayloadFullShared")

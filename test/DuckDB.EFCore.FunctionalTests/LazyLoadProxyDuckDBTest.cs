@@ -49,12 +49,6 @@ public class LazyLoadProxyDuckDBTest : LazyLoadProxyRelationalTestBase<LazyLoadP
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override void Non_virtual_reference_to_dependent_is_not_lazy_loaded()
-    {
-        base.Non_virtual_reference_to_dependent_is_not_lazy_loaded();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override void Can_serialize_proxies_to_JSON()
     {
         base.Can_serialize_proxies_to_JSON();

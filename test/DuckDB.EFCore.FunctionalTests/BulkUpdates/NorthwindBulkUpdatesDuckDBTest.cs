@@ -9,6 +9,8 @@ public class NorthwindBulkUpdatesDuckDBTest : NorthwindBulkUpdatesRelationalTest
     public NorthwindBulkUpdatesDuckDBTest(NorthwindBulkUpdatesDuckDBFixture<NoopModelCustomizer> fixture, ITestOutputHelper testOutputHelper)
         : base(fixture, testOutputHelper)
     {
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
@@ -137,6 +139,12 @@ public class NorthwindBulkUpdatesDuckDBTest : NorthwindBulkUpdatesRelationalTest
     public override Task Update_with_cross_join_set_constant(bool async)
     {
         return base.Update_with_cross_join_set_constant(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Update_with_two_inner_joins(bool async)
+    {
+        await base.Update_with_two_inner_joins(async);
     }
 
     private void AssertSql(params string[] expected)

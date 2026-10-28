@@ -7,6 +7,8 @@ public class TPTFiltersInheritanceBulkUpdatesDuckDBTest : TPTFiltersInheritanceB
 {
     public TPTFiltersInheritanceBulkUpdatesDuckDBTest(TPTFiltersInheritanceBulkUpdatesDuckDBFixture fixture, ITestOutputHelper testOutputHelper) : base(fixture, testOutputHelper)
     {
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     protected override void ClearLog()
@@ -14,13 +16,13 @@ public class TPTFiltersInheritanceBulkUpdatesDuckDBTest : TPTFiltersInheritanceB
         Fixture.TestSqlLoggerFactory.Clear();
     }
 
-    [ConditionalTheory(Skip = "TBD")]
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Update_base_property_on_derived_type(bool async)
     {
         return base.Update_base_property_on_derived_type(async);
     }
 
-    [ConditionalTheory(Skip = "TBD")]
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Update_base_type_with_OfType(bool async)
     {
         return base.Update_base_type_with_OfType(async);

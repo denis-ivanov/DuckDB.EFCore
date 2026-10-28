@@ -18,18 +18,6 @@ public class TPCInheritanceQueryDuckDBTest: TPCInheritanceQueryTestBase<TPCInher
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Can_query_all_animals(bool async)
-    {
-        return base.Can_query_all_animals(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task GetType_in_hierarchy_in_leaf_type_with_sibling(bool async)
-    {
-        return base.GetType_in_hierarchy_in_leaf_type_with_sibling(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Setting_foreign_key_to_a_different_type_throws()
     {
         return base.Setting_foreign_key_to_a_different_type_throws();
