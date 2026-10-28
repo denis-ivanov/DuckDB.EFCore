@@ -46,10 +46,14 @@ public class DuckDBUpdateSqlGeneratorTest : UpdateSqlGeneratorTestBase
             stringBuilder.ToString());
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [ConditionalFact]
     public override void GenerateNextSequenceValueOperation_correctly_handles_schemas()
     {
-        base.GenerateNextSequenceValueOperation_correctly_handles_schemas();
+        var statement = CreateSqlGenerator().GenerateNextSequenceValueOperation("mysequence", "main");
+
+        Assert.Equal(
+            "nextval(" + SchemaPrefix + "mysequence" + ")",
+            statement);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
