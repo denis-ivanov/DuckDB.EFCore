@@ -9,10 +9,41 @@ namespace Microsoft.EntityFrameworkCore.Update;
 
 public class DuckDBUpdateSqlGeneratorTest : UpdateSqlGeneratorTestBase
 {
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [ConditionalFact]
     public override void AppendInsertOperation_appends_insert_and_select_rowcount_if_no_store_generated_columns_exist_or_conditions_exist()
     {
-        base.AppendInsertOperation_appends_insert_and_select_rowcount_if_no_store_generated_columns_exist_or_conditions_exist();
+        var stringBuilder = new StringBuilder();
+        var command = CreateInsertCommand(false, false);
+
+        CreateSqlGenerator().AppendInsertOperation(stringBuilder, command, 0);
+
+        Assert.Equal(
+            "INSERT INTO "
+            + SchemaPrefix
+            + OpenDelimiter
+            + "Ducks"
+            + CloseDelimiter
+            + " ("
+            + OpenDelimiter
+            + "Id"
+            + CloseDelimiter
+            + ", "
+            + OpenDelimiter
+            + "Name"
+            + CloseDelimiter
+            + ", "
+            + OpenDelimiter
+            + "Quacks"
+            + CloseDelimiter
+            + ", "
+            + OpenDelimiter
+            + "ConcurrencyToken"
+            + CloseDelimiter
+            + ")"
+            + Environment.NewLine
+            + "VALUES ($p0, $p1, $p2, $p3);"
+            + Environment.NewLine,
+            stringBuilder.ToString());
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
