@@ -47,12 +47,6 @@ public class DuckDBUpdateSqlGeneratorTest : UpdateSqlGeneratorTestBase
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override void AppendUpdateOperation_if_store_generated_columns_dont_exist()
-    {
-        base.AppendUpdateOperation_if_store_generated_columns_dont_exist();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override void AppendUpdateOperation_if_store_generated_columns_exist()
     {
         base.AppendUpdateOperation_if_store_generated_columns_exist();
@@ -155,7 +149,13 @@ public class DuckDBUpdateSqlGeneratorTest : UpdateSqlGeneratorTestBase
 
     protected override void AppendUpdateOperation_if_store_generated_columns_dont_exist_verification(StringBuilder stringBuilder)
     {
-        throw new NotImplementedException();
+        AssertBaseline(
+            """
+            UPDATE main."Ducks" SET "Name" = $p0, "Quacks" = $p1, "ConcurrencyToken" = $p2
+            WHERE "Id" = $p3
+            RETURNING 1;
+            """,
+            stringBuilder.ToString());
     }
 
     protected override void AppendUpdateOperation_appends_where_for_concurrency_token_verification(StringBuilder stringBuilder)
