@@ -18,22 +18,4 @@ public class NorthwindEFPropertyIncludeQueryDuckDBTest : NorthwindEFPropertyIncl
     {
         return base.Include_collection_with_last_no_orderby(async);
     }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Include_collection_with_multiple_conditional_order_by(bool async)
-    {
-        return base.Include_collection_with_multiple_conditional_order_by(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Include_collection_with_outer_apply_with_filter(bool async)
-    {
-        return base.Include_collection_with_outer_apply_with_filter(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Repro9735(bool async)
-    {
-        return base.Repro9735(async);
-    }
 }

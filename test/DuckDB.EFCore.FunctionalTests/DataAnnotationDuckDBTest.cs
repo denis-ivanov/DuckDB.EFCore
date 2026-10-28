@@ -21,12 +21,6 @@ public class DataAnnotationDuckDBTest : DataAnnotationRelationalTestBase<DataAnn
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override void ForeignKey_to_ForeignKey()
-    {
-        base.ForeignKey_to_ForeignKey();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override void ForeignKey_to_ForeignKey_same_name()
     {
         base.ForeignKey_to_ForeignKey_same_name();
