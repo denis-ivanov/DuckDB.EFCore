@@ -47,12 +47,6 @@ public class DuckDBUpdateSqlGeneratorTest : UpdateSqlGeneratorTestBase
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override void AppendInsertOperation_for_all_store_generated_columns()
-    {
-        base.AppendInsertOperation_for_all_store_generated_columns();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override void AppendUpdateOperation_if_store_generated_columns_dont_exist()
     {
         base.AppendUpdateOperation_if_store_generated_columns_dont_exist();
@@ -134,7 +128,13 @@ public class DuckDBUpdateSqlGeneratorTest : UpdateSqlGeneratorTestBase
 
     protected override void AppendInsertOperation_for_all_store_generated_columns_verification(StringBuilder stringBuilder)
     {
-        throw new NotImplementedException();
+        AssertBaseline(
+            """
+            INSERT INTO main."Ducks"
+            DEFAULT VALUES
+            RETURNING "Id", "Computed";
+            """,
+            stringBuilder.ToString());
     }
 
     protected override void AppendInsertOperation_for_only_single_identity_columns_verification(StringBuilder stringBuilder)
