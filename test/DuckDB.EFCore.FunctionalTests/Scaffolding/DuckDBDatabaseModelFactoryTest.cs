@@ -1,6 +1,5 @@
 ﻿using DuckDB.EFCore.Metadata;
 using DuckDB.EFCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using System.Data;
 using Xunit;

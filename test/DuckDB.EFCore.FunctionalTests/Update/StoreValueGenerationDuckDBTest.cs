@@ -49,12 +49,6 @@ public class StoreValueGenerationDuckDBTest : StoreValueGenerationTestBase<Store
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Delete(bool async)
-    {
-        return base.Delete(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Delete_Add_with_same_entity_types(bool async)
     {
         return base.Delete_Add_with_same_entity_types(async);
@@ -94,11 +88,5 @@ public class StoreValueGenerationDuckDBTest : StoreValueGenerationTestBase<Store
     public override Task Modify_Modify_with_same_entity_type_and_no_generated_values(bool async)
     {
         return base.Modify_Modify_with_same_entity_type_and_no_generated_values(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Modify_with_generated_values(bool async)
-    {
-        return base.Modify_with_generated_values(async);
     }
 }

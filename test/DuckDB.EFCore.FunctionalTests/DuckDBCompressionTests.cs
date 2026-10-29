@@ -1,8 +1,6 @@
 using DuckDB.EFCore.Extensions;
 using DuckDB.EFCore.Metadata;
 using DuckDB.EFCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
@@ -151,4 +149,3 @@ public class DuckDBCompressionTests : IClassFixture<DuckDBCompressionTests.Compr
             => (DuckDBTestStore)base.TestStore;
     }
 }
-

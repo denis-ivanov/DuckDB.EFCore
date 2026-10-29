@@ -201,11 +201,6 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """);
     }
 
-    public override Task Column_collection_Join_parameter_collection()
-    {
-        return base.Column_collection_Join_parameter_collection();
-    }
-
     public override async Task Column_collection_of_bools_Contains()
     {
         await base.Column_collection_of_bools_Contains();

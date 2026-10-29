@@ -429,7 +429,7 @@ public static class DuckDBDbFunctionsExtensions
     /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extractstring-pattern-group-options" />
     public static string? RegexExtract(this DbFunctions _, string matchExpression, string pattern, int group, string? options)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexExtract)));
-    
+
     /// <summary>
     ///     Extracts all substrings that match the regex pattern from string.
     /// </summary>
@@ -488,7 +488,7 @@ public static class DuckDBDbFunctionsExtensions
     /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_full_matchstring-regex-options" />
     public static bool RegexFullMatch(this DbFunctions _, string matchExpression, string pattern, string? options)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexFullMatch)));
-    
+
     /// <summary>
     ///     Returns whether the string matches the regular expression pattern.
     /// </summary>
