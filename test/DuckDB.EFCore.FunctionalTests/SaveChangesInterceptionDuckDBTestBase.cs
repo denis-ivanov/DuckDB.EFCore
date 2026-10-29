@@ -46,36 +46,6 @@ public abstract class SaveChangesInterceptionDuckDBTestBase : SaveChangesInterce
         {
         }
 
-        [ConditionalTheory]
-        public override async Task Intercept_SaveChanges_failed(bool async, bool inject, bool noAcceptChanges, bool concurrencyError)
-        {
-            await base.Intercept_SaveChanges_failed(async, inject, noAcceptChanges, concurrencyError);
-        }
-
-        [ConditionalTheory]
-        public override async Task Intercept_SaveChanges_passively(bool async, bool inject, bool noAcceptChanges)
-        {
-            await base.Intercept_SaveChanges_passively(async, inject, noAcceptChanges);
-        }
-
-        [ConditionalTheory]
-        public override async Task Intercept_SaveChanges_with_multiple_interceptors(bool async, bool inject, bool noAcceptChanges)
-        {
-            await base.Intercept_SaveChanges_with_multiple_interceptors(async, inject, noAcceptChanges);
-        }
-
-        [ConditionalTheory]
-        public override async Task Intercept_to_suppress_concurrency_exception(bool async, bool inject, bool noAcceptChanges)
-        {
-            await base.Intercept_to_suppress_concurrency_exception(async, inject, noAcceptChanges);
-        }
-
-        [ConditionalTheory]
-        public override async Task Intercept_SaveChanges_to_change_result(bool async, bool inject, bool noAcceptChanges)
-        {
-            await base.Intercept_SaveChanges_to_change_result(async, inject, noAcceptChanges);
-        }
-
         public class InterceptionDuckDBFixture : InterceptionDuckDBFixtureBase
         {
             protected override bool ShouldSubscribeToDiagnosticListener
