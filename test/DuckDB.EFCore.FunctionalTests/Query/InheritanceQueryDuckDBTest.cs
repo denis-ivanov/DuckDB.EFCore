@@ -11,12 +11,6 @@ public class InheritanceQueryDuckDBTest : TPHInheritanceQueryTestBase<TPHInherit
     {
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Byte_enum_value_constant_used_in_projection(bool async)
-    {
-        return base.Byte_enum_value_constant_used_in_projection(async);
-    }
-
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Setting_foreign_key_to_a_different_type_throws()
     {
