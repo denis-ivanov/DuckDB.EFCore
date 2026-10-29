@@ -1,16 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.TestUtilities;
-using Xunit;
 
 namespace Microsoft.EntityFrameworkCore;
 
 public abstract class FindDuckDBTest(FindDuckDBTest.FindDuckDBFixture fixture) : FindTestBase<FindDuckDBTest.FindDuckDBFixture>(fixture)
 {
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Find_int_key_from_store_async(CancellationType cancellationType)
-    {
-        return base.Find_int_key_from_store_async(cancellationType);
-    }
-
     public class FindDuckDBTestSet(FindDuckDBFixture fixture) : FindDuckDBTest(fixture)
     {
         protected override TestFinder Finder { get; } = new FindViaSetFinder();

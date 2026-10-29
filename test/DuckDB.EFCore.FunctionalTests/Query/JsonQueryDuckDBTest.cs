@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.TestUtilities;
-using Xunit;
+﻿using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query;
@@ -10,12 +9,6 @@ public class JsonQueryDuckDBTest : JsonQueryRelationalTestBase<JsonQueryDuckDBFi
     {
         Fixture.TestSqlLoggerFactory.Clear();
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task FromSql_on_entity_with_json_basic(bool async)
-    {
-        return base.FromSql_on_entity_with_json_basic(async);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
