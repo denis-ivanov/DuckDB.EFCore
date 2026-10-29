@@ -6,10 +6,13 @@ using Xunit;
 
 namespace Microsoft.EntityFrameworkCore;
 
-public abstract class SaveChangesInterceptionDuckDBTestBase(SaveChangesInterceptionDuckDBTestBase.InterceptionDuckDBFixtureBase fixture)
-    : SaveChangesInterceptionTestBase(fixture)
+public abstract class SaveChangesInterceptionDuckDBTestBase : SaveChangesInterceptionTestBase
 {
-    public abstract class InterceptionDuckDBFixtureBase : InterceptionTestBase.InterceptionFixtureBase
+    protected SaveChangesInterceptionDuckDBTestBase(InterceptionDuckDBFixtureBase fixture) : base(fixture)
+    {
+    }
+
+    public abstract class InterceptionDuckDBFixtureBase : InterceptionFixtureBase
     {
         protected override string StoreName
             => "SaveChangesInterception";
@@ -23,37 +26,10 @@ public abstract class SaveChangesInterceptionDuckDBTestBase(SaveChangesIntercept
             => base.InjectInterceptors(serviceCollection.AddEntityFrameworkDuckDB(), injectedInterceptors);
     }
 
-    public class SaveChangesInterceptionDuckDBTest(SaveChangesInterceptionDuckDBTest.InterceptionDuckDBFixture fixture)
-        : SaveChangesInterceptionDuckDBTestBase(fixture), IClassFixture<SaveChangesInterceptionDuckDBTest.InterceptionDuckDBFixture>
+    public class SaveChangesInterceptionDuckDBTest : SaveChangesInterceptionDuckDBTestBase, IClassFixture<SaveChangesInterceptionDuckDBTest.InterceptionDuckDBFixture>
     {
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-        public override async Task Intercept_SaveChanges_failed(bool async, bool inject, bool noAcceptChanges, bool concurrencyError)
+        public SaveChangesInterceptionDuckDBTest(InterceptionDuckDBFixture fixture) : base(fixture)
         {
-            await base.Intercept_SaveChanges_failed(async, inject, noAcceptChanges, concurrencyError);
-        }
-
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-        public override async Task Intercept_SaveChanges_passively(bool async, bool inject, bool noAcceptChanges)
-        {
-            await base.Intercept_SaveChanges_passively(async, inject, noAcceptChanges);
-        }
-
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-        public override async Task Intercept_SaveChanges_with_multiple_interceptors(bool async, bool inject, bool noAcceptChanges)
-        {
-            await base.Intercept_SaveChanges_with_multiple_interceptors(async, inject, noAcceptChanges);
-        }
-
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-        public override async Task Intercept_to_suppress_concurrency_exception(bool async, bool inject, bool noAcceptChanges)
-        {
-            await base.Intercept_to_suppress_concurrency_exception(async, inject, noAcceptChanges);
-        }
-
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-        public override async Task Intercept_SaveChanges_to_change_result(bool async, bool inject, bool noAcceptChanges)
-        {
-            await base.Intercept_SaveChanges_to_change_result(async, inject, noAcceptChanges);
         }
 
         public class InterceptionDuckDBFixture : InterceptionDuckDBFixtureBase
@@ -63,36 +39,38 @@ public abstract class SaveChangesInterceptionDuckDBTestBase(SaveChangesIntercept
         }
     }
 
-    public class SaveChangesInterceptionWithDiagnosticsDuckDBTest(
-        SaveChangesInterceptionWithDiagnosticsDuckDBTest.InterceptionDuckDBFixture fixture)
-        : SaveChangesInterceptionDuckDBTestBase(fixture),
+    public class SaveChangesInterceptionWithDiagnosticsDuckDBTest : SaveChangesInterceptionDuckDBTestBase,
             IClassFixture<SaveChangesInterceptionWithDiagnosticsDuckDBTest.InterceptionDuckDBFixture>
     {
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        public SaveChangesInterceptionWithDiagnosticsDuckDBTest(InterceptionDuckDBFixture fixture) : base(fixture)
+        {
+        }
+
+        [ConditionalTheory]
         public override async Task Intercept_SaveChanges_failed(bool async, bool inject, bool noAcceptChanges, bool concurrencyError)
         {
             await base.Intercept_SaveChanges_failed(async, inject, noAcceptChanges, concurrencyError);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [ConditionalTheory]
         public override async Task Intercept_SaveChanges_passively(bool async, bool inject, bool noAcceptChanges)
         {
             await base.Intercept_SaveChanges_passively(async, inject, noAcceptChanges);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [ConditionalTheory]
         public override async Task Intercept_SaveChanges_with_multiple_interceptors(bool async, bool inject, bool noAcceptChanges)
         {
             await base.Intercept_SaveChanges_with_multiple_interceptors(async, inject, noAcceptChanges);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [ConditionalTheory]
         public override async Task Intercept_to_suppress_concurrency_exception(bool async, bool inject, bool noAcceptChanges)
         {
             await base.Intercept_to_suppress_concurrency_exception(async, inject, noAcceptChanges);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [ConditionalTheory]
         public override async Task Intercept_SaveChanges_to_change_result(bool async, bool inject, bool noAcceptChanges)
         {
             await base.Intercept_SaveChanges_to_change_result(async, inject, noAcceptChanges);
