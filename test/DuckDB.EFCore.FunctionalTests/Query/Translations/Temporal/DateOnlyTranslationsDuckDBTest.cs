@@ -227,12 +227,6 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task FromDateTime_compared_to_property()
-    {
-        return base.FromDateTime_compared_to_property();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ToDateTime_constant_DateTime_with_property_TimeOnly()
     {
         return base.ToDateTime_constant_DateTime_with_property_TimeOnly();
