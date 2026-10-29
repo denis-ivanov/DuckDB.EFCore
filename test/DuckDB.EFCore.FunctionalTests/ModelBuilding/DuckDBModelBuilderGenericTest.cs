@@ -1124,12 +1124,6 @@ public class DuckDBModelBuilderGenericTest : DuckDBModelBuilderTestBase
         }
 
         [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-        public override void Can_configure_one_to_one_owned_type_with_fields()
-        {
-            base.Can_configure_one_to_one_owned_type_with_fields();
-        }
-
-        [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
         public override void Can_configure_owned_type_collection()
         {
             base.Can_configure_owned_type_collection();
