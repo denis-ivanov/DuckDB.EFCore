@@ -1124,12 +1124,6 @@ public class DuckDBModelBuilderGenericTest : DuckDBModelBuilderTestBase
         }
 
         [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-        public override void Can_chain_owned_type_collection_configurations()
-        {
-            base.Can_chain_owned_type_collection_configurations();
-        }
-
-        [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
         public override void Can_configure_on_derived_type_first()
         {
             base.Can_configure_on_derived_type_first();
