@@ -152,7 +152,7 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
 
             case DuckDBJsonTypeMapping:
                 {
-                    var keyColumnTypeMapping = _typeMappingSource.FindMapping(typeof(int))!;
+                    var keyColumnTypeMapping = _typeMappingSource.FindMapping(typeof(string))!;
                     var jsonEachExpression = new DuckDBJsonEachExpression(tableAlias, sqlExpression);
                     selectExpression = new SelectExpression(
                         [jsonEachExpression],
@@ -164,7 +164,7 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
                             isElementNullable),
                         identifier:
                         [
-                            (new ColumnExpression(JsonEachKeyColumnName, tableAlias, typeof(int), keyColumnTypeMapping, nullable: false),
+                            (new ColumnExpression(JsonEachKeyColumnName, tableAlias, typeof(string), keyColumnTypeMapping, nullable: false),
                                 keyColumnTypeMapping.Comparer)
                         ],
                         _sqlAliasManager);
@@ -206,8 +206,8 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
             jsonQueryExpression,
             jsonEachExpression,
             JsonEachKeyColumnName,
-            typeof(int),
-            _typeMappingSource.FindMapping(typeof(int))!);
+            typeof(string),
+            _typeMappingSource.FindMapping(typeof(string))!);
 #pragma warning restore EF1001 // Internal EF Core API usage.
 
         selectExpression.AppendOrdering(
@@ -215,8 +215,8 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
                 selectExpression.CreateColumnExpression(
                     jsonEachExpression,
                     JsonEachKeyColumnName,
-                    typeof(int),
-                    typeMapping: _typeMappingSource.FindMapping(typeof(int)),
+                    typeof(string),
+                    typeMapping: _typeMappingSource.FindMapping(typeof(string)),
                     columnNullable: false),
                 ascending: true));
 
@@ -286,8 +286,8 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
             jsonQueryExpression,
             subquery,
             JsonEachKeyColumnName,
-            typeof(int),
-            _typeMappingSource.FindMapping(typeof(int))!);
+            typeof(string),
+            _typeMappingSource.FindMapping(typeof(string))!);
 #pragma warning restore EF1001 // Internal EF Core API usage.
 
         newOuterSelectExpression.AppendOrdering(
@@ -295,8 +295,8 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
                 selectExpression.CreateColumnExpression(
                     subquery,
                     JsonEachKeyColumnName,
-                    typeof(int),
-                    typeMapping: _typeMappingSource.FindMapping(typeof(int)),
+                    typeof(string),
+                    typeMapping: _typeMappingSource.FindMapping(typeof(string)),
                     columnNullable: false),
                 ascending: true));
 
