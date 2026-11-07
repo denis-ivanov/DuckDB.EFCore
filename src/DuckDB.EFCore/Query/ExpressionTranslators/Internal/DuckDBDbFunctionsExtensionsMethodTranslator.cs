@@ -246,6 +246,62 @@ public class DuckDBDbFunctionsExtensionsMethodTranslator : IMethodCallTranslator
                         argumentsPropagateNullability: [true, true, true],
                         returnType: typeof(bool),
                         typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(typeof(bool))!);
+                case nameof(DuckDBDbFunctionsExtensions.ArrayCosineDistance):
+                    return _sqlExpressionFactory.Function(
+                        name: "array_cosine_distance",
+                        arguments: [arguments[1], arguments[2]],
+                        nullable: false,
+                        argumentsPropagateNullability: [false, false],
+                        returnType: method.ReturnType,
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(method.ReturnType)!);
+                case nameof(DuckDBDbFunctionsExtensions.ArrayCosineSimilarity):
+                    return _sqlExpressionFactory.Function(
+                        name: "array_cosine_similarity",
+                        arguments: [arguments[1], arguments[2]],
+                        nullable: false,
+                        argumentsPropagateNullability: [false, false],
+                        returnType: method.ReturnType,
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(method.ReturnType)!);
+                case nameof(DuckDBDbFunctionsExtensions.ArrayCrossProduct):
+                    return _sqlExpressionFactory.Function(
+                        name: "array_cross_product",
+                        arguments: [arguments[1], arguments[2]],
+                        nullable: false,
+                        argumentsPropagateNullability: [false, false],
+                        returnType: method.ReturnType,
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(method.ReturnType)!);
+                case nameof(DuckDBDbFunctionsExtensions.ArrayDistance):
+                    return _sqlExpressionFactory.Function(
+                        name: "array_distance",
+                        arguments: [arguments[1], arguments[2]],
+                        nullable: false,
+                        argumentsPropagateNullability: [false, false],
+                        returnType: method.ReturnType,
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(method.ReturnType)!);
+                case nameof(DuckDBDbFunctionsExtensions.ArrayInnerProduct):
+                    return _sqlExpressionFactory.Function(
+                        name: "array_inner_product",
+                        arguments: [arguments[1], arguments[2]],
+                        nullable: false,
+                        argumentsPropagateNullability: [false, false],
+                        returnType: method.ReturnType,
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(method.ReturnType)!);
+                case nameof(DuckDBDbFunctionsExtensions.ArrayNegativeInnerProduct):
+                    return _sqlExpressionFactory.Function(
+                        name: "array_negative_inner_product",
+                        arguments: [arguments[1], arguments[2]],
+                        nullable: false,
+                        argumentsPropagateNullability: [false, false],
+                        returnType: method.ReturnType,
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(method.ReturnType)!);
+                case nameof(DuckDBDbFunctionsExtensions.ArrayValue):
+                    return _sqlExpressionFactory.Function(
+                        name: "array_value",
+                        arguments: arguments.Skip(1).ToList(),
+                        nullable: false,
+                        argumentsPropagateNullability: arguments.Skip(1).Select(a => false),
+                        returnType: method.ReturnType,
+                        typeMapping: (RelationalTypeMapping)_typeMappingSource.FindMapping(method.ReturnType)!);
             }
         }
 

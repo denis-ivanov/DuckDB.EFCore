@@ -511,4 +511,144 @@ public static class DuckDBDbFunctionsExtensions
     /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_matchesstring-pattern-options" />
     public static bool RegexMatches(this DbFunctions _, string matchExpression, string pattern, string? options)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexMatches)));
+
+    /// <summary>
+    /// Computes the cosine distance between two arrays of the same size. The array elements cannot be NULL.
+    /// The arrays can have any size as long as the size is the same for both arguments.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="array1"></param>
+    /// <param name="array2"></param>
+    /// <returns></returns>
+    public static float ArrayCosineDistance(this DbFunctions _, IEnumerable<float> array1, IEnumerable<float> array2)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArrayCosineDistance)));
+
+    /// <summary>
+    /// Computes the cosine distance between two arrays of the same size. The array elements cannot be NULL.
+    /// The arrays can have any size as long as the size is the same for both arguments.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static double ArrayCosineDistance(this DbFunctions _, IEnumerable<double> a, IEnumerable<double> b)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArrayCosineDistance)));
+
+    /// <summary>
+    /// Computes the cosine similarity between two arrays of the same size. The array elements cannot be NULL.
+    /// The arrays can have any size as long as the size is the same for both arguments.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static float ArrayCosineSimilarity(this DbFunctions _, IEnumerable<float> a, IEnumerable<float> b)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArrayCosineSimilarity)));
+
+    /// <summary>
+    /// Computes the cosine similarity between two arrays of the same size. The array elements cannot be NULL.
+    /// The arrays can have any size as long as the size is the same for both arguments.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static double ArrayCosineSimilarity(this DbFunctions _, IEnumerable<double> a, IEnumerable<double> b)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArrayCosineSimilarity)));
+
+    /// <summary>
+    /// Computes the cross product of two arrays of size 3. The array elements cannot be NULL.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static float[] ArrayCrossProduct(this DbFunctions _, IEnumerable<float> a, IEnumerable<float> b)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArrayCrossProduct)));
+
+    /// <summary>
+    /// Computes the cross product of two arrays of size 3. The array elements cannot be NULL.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static double[] ArrayCrossProduct(this DbFunctions _, IEnumerable<double> a, IEnumerable<double> b)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArrayCrossProduct)));
+
+    /// <summary>
+    /// Computes the distance between two arrays of the same size. The array elements cannot be NULL.
+    /// The arrays can have any size as long as the size is the same for both arguments.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static float ArrayDistance(this DbFunctions _, IEnumerable<float> a, IEnumerable<float> b)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArrayDistance)));
+
+    /// <summary>
+    /// Computes the distance between two arrays of the same size. The array elements cannot be NULL.
+    /// The arrays can have any size as long as the size is the same for both arguments.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static double ArrayDistance(this DbFunctions _, IEnumerable<double> a, IEnumerable<double> b)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArrayDistance)));
+
+    /// <summary>
+    /// Computes the inner product between two arrays of the same size. The array elements cannot be NULL.
+    /// The arrays can have any size as long as the size is the same for both arguments.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static float ArrayInnerProduct(this DbFunctions _, IEnumerable<float> a, IEnumerable<float> b)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArrayInnerProduct)));
+
+    /// <summary>
+    /// Computes the inner product between two arrays of the same size. The array elements cannot be NULL.
+    /// The arrays can have any size as long as the size is the same for both arguments.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static double ArrayInnerProduct(this DbFunctions _, IEnumerable<double> a, IEnumerable<double> b)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArrayInnerProduct)));
+
+    /// <summary>
+    /// Computes the negative inner product between two arrays of the same size. The array elements cannot be NULL.
+    /// The arrays can have any size as long as the size is the same for both arguments.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static float ArrayNegativeInnerProduct(this DbFunctions _, IEnumerable<float> a, IEnumerable<float> b)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArrayNegativeInnerProduct)));
+
+    /// <summary>
+    /// Computes the negative inner product between two arrays of the same size. The array elements cannot be NULL.
+    /// The arrays can have any size as long as the size is the same for both arguments.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static double ArrayNegativeInnerProduct(this DbFunctions _, IEnumerable<double> a, IEnumerable<double> b)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArrayNegativeInnerProduct)));
+
+    /// <summary>
+    /// Creates an ARRAY containing the argument values.
+    /// </summary>
+    /// <param name="_"></param>
+    /// <param name="args"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T[] ArrayValue<T>(this DbFunctions _, params T[] args)
+        => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ArrayValue)));
 }

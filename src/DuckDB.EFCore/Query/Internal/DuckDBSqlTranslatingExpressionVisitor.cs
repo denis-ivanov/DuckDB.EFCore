@@ -1,5 +1,6 @@
 ﻿using DuckDB.EFCore.Query.Expressions.Internal;
 using DuckDB.EFCore.Storage.Internal;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Diagnostics;
@@ -162,6 +163,31 @@ public class DuckDBSqlTranslatingExpressionVisitor : RelationalSqlTranslatingExp
                 nullable: true,
                 argumentsPropagateNullability: [true],
                 typeof(string));
+        }
+
+        if (method.DeclaringType == typeof(DuckDBDbFunctionsExtensions)
+            && method.Name == nameof(DuckDBDbFunctionsExtensions.ArrayValue)
+            && methodCallExpression.Arguments[1] is NewArrayExpression arrayValueNewArrayExpression)
+        {
+            var elements = arrayValueNewArrayExpression.Expressions;
+            var sqlElements = new SqlExpression[elements.Count];
+            for (var i = 0; i < elements.Count; i++)
+            {
+                var element = elements[i];
+                if (TranslationFailed(element, Visit(element), out var sqlElement))
+                {
+                    return QueryCompilationContext.NotTranslatedExpression;
+                }
+                sqlElements[i] = sqlElement!;
+            }
+
+            return Dependencies.SqlExpressionFactory.Function(
+                "array_value",
+                sqlElements,
+                nullable: false,
+                argumentsPropagateNullability: sqlElements.Select(_ => false),
+                method.ReturnType,
+                Dependencies.TypeMappingSource.FindMapping(method.ReturnType));
         }
 
         return base.VisitMethodCall(methodCallExpression);
