@@ -90,6 +90,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="format"></param>
     /// <returns></returns>
     /// <see cref="https://duckdb.org/docs/current/sql/functions/dateformat#strptime-examples"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/dateformat">strftime(timestamp, format)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static DateTime? Strptime(this DbFunctions _, string? text, string? format)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Strptime)));
 
@@ -99,7 +103,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="_"></param>
     /// <param name="date"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/date#daynamedate"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/date#daynamedate">dayname(date)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static string? DayName(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(DayName)));
 
@@ -109,7 +116,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="_"></param>
     /// <param name="date"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/date#days_in_monthdate"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/date#days_in_monthdate">days_in_month(date)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static int? DaysInMonth(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(DaysInMonth)));
 
@@ -120,7 +130,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="date1"></param>
     /// <param name="date2"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/date#greatestdate-date"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/date#greatestdate-date">greatest(date, date)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static DateOnly? Greatest(this DbFunctions _, DateOnly? date1, DateOnly? date2)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Greatest)));
 
@@ -130,7 +143,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="_"></param>
     /// <param name="date"></param>
     /// <returns><c>true</c> if the date is finite, <c>false</c> otherwise.</returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/date#isfinitedate"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/date#isfinitedate">isfinite(date)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static bool? IsFinite(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(IsFinite)));
 
@@ -140,7 +156,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="_"></param>
     /// <param name="date"></param>
     /// <returns><c>true</c> if the date is infinite, <c>false</c> otherwise.</returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/date#isinfdate"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/date#isinfdate">isinf(date)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static bool? IsInfinite(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(IsInfinite)));
 
@@ -150,7 +169,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="_"></param>
     /// <param name="date"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/date#juliandate"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/date#juliandate">julian(date)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static double? Julian(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Julian)));
 
@@ -160,7 +182,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="_"></param>
     /// <param name="date"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/date#last_daydate"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/date#last_daydate">last_day(date)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static DateOnly? LastDay(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(LastDay)));
 
@@ -170,7 +195,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="_"></param>
     /// <param name="date"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/date#monthnamedate"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/date#monthnamedate">monthname(date)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static string? MonthName(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(MonthName)));
 
@@ -180,7 +208,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="_"></param>
     /// <param name="date"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/datepart#centurydate"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/datepart#centurydate">century(date)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static int? Century(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Century)));
     
@@ -190,7 +221,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="_"></param>
     /// <param name="date"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/datepart#decadedate"/>
+    /// <remarks>
+    /// See <see cref="https://duckdb.org/docs/current/sql/functions/datepart#decadedate">decade(date)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static int? Decade(this DbFunctions _, DateOnly? date)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Decade)));
     
@@ -204,7 +238,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="s1"></param>
     /// <param name="s2"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#damerau_levenshteins1-s2"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/text#damerau_levenshteins1-s2">damerau_levenshtein(s1, s2)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static int? DamerauLevenshtein(this DbFunctions _, string? s1, string? s2)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(DamerauLevenshtein)));
 
@@ -217,7 +254,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="s1"></param>
     /// <param name="s2"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#hammings1-s2"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/text#hammings1-s2">hamming(s1, s2)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static int? Hamming(this DbFunctions _, string? s1, string? s2)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Hamming)));
 
@@ -229,7 +269,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="s1"></param>
     /// <param name="s2"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#jaccards1-s2"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/text#jaccards1-s2">jaccard(s1, s2)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static double? Jaccard(this DbFunctions _, string? s1, string? s2)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Jaccard)));
 
@@ -241,7 +284,6 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="s1"></param>
     /// <param name="s2"></param>
     /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
     public static int? Levenshtein(this DbFunctions _, string? s1, string? s2)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Levenshtein)));
 
@@ -251,7 +293,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="_"></param>
     /// <param name="s"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#md5_numberstring"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/text#md5_numberstring">md5_number(string)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static long? Md5Number(this DbFunctions _, string? s)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Md5Number)));
 
@@ -261,7 +306,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="_"></param>
     /// <param name="s"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#md5_number_lowerstring"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/text#md5_number_lowerstring">md5_number_lower(string)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static ulong? Md5NumberLower(this DbFunctions _, string? s)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Md5NumberLower)));
 
@@ -271,7 +319,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="_"></param>
     /// <param name="s"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#md5_number_upperstring"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/text#md5_number_upperstring">md5_number_upper(string)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static ulong? Md5NumberUpper(this DbFunctions _, string? s)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Md5NumberUpper)));
 
@@ -284,7 +335,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="likeSpecifier"></param>
     /// <param name="escapeCharacter"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#not_ilike_escapestring-like_specifier-escape_character"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/text#not_ilike_escapestring-like_specifier-escape_character">not_ilike_escape(string, like_specifier, escape_character)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static bool? NotILikeEscape(this DbFunctions _, string? str, string? likeSpecifier, string? escapeCharacter)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(NotILikeEscape)));
 
