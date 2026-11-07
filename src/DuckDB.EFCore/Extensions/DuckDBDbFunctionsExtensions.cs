@@ -89,7 +89,6 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="text"></param>
     /// <param name="format"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/dateformat#strptime-examples"/>
     /// <remarks>
     /// See <see href="https://duckdb.org/docs/1.5/sql/functions/dateformat">strftime(timestamp, format)</see>
     /// for more information and examples.
@@ -222,7 +221,7 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="date"></param>
     /// <returns></returns>
     /// <remarks>
-    /// See <see cref="https://duckdb.org/docs/current/sql/functions/datepart#decadedate">decade(date)</see>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/datepart#decadedate">decade(date)</see>
     /// for more information and examples.
     /// </remarks>
     public static int? Decade(this DbFunctions _, DateOnly? date)
@@ -351,7 +350,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="likeSpecifier"></param>
     /// <param name="escapeCharacter"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#not_like_escapestring-like_specifier-escape_character"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/text#not_like_escapestring-like_specifier-escape_character">not_like_escape(string, like_specifier, escape_character)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static bool? NotLikeEscape(this DbFunctions _, string? str, string? likeSpecifier, string? escapeCharacter)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(NotLikeEscape)));
 
@@ -362,7 +364,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="str"></param>
     /// <param name="length"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#leftstring-count"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/text#leftstring-count">left(string, count)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static string? Left(this DbFunctions _, string? str, int? length)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Left)));
 
@@ -373,7 +378,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="str"></param>
     /// <param name="count"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#left_graphemestring-count"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/text#left_graphemestring-count">left_grapheme(string, count)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static string? LeftGrapheme(this DbFunctions _, string? str, int? count)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(LeftGrapheme)));
 
@@ -383,7 +391,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="_"></param>
     /// <param name="str"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#length_graphemestring"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/text#length_graphemestring">length_grapheme(string)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static int? LengthGrapheme(this DbFunctions _, string? str)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(LengthGrapheme)));
 
@@ -396,7 +407,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="likeSpecifier"></param>
     /// <param name="escapeCharacter"></param>
     /// <returns></returns>
-    /// <see cref="https://duckdb.org/docs/current/sql/functions/text#like_escapestring-like_specifier-escape_character"/>
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/1.5/sql/functions/text#like_escapestring-like_specifier-escape_character">like_escape(string, like_specifier, escape_character)</see>
+    /// for more information and examples.
+    /// </remarks>
     public static bool? LikeEscape(this DbFunctions _, string? str, string? likeSpecifier, string? escapeCharacter)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(LikeEscape)));
 
@@ -407,7 +421,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="matchExpression">The string that is to be matched.</param>
     /// <param name="pattern">The pattern which may involve wildcards %,_,[,],^.</param>
     /// <returns><see langword="true" /> if there is a match.</returns>
-    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching" />
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching" />
+    /// for more information and examples.
+    /// </remarks>
     public static bool ILike(this DbFunctions _, string matchExpression, string pattern)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ILike)));
 
@@ -422,7 +439,10 @@ public static class DuckDBDbFunctionsExtensions
     ///     if they are not used as wildcards.
     /// </param>
     /// <returns><see langword="true" /> if there is a match.</returns>
-    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching" />
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching" />
+    /// for more information and examples.
+    /// </remarks>
     public static bool ILike(this DbFunctions _, string matchExpression, string pattern, string escapeCharacter)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(ILike)));
 
@@ -433,7 +453,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="matchExpression">The string that is to be matched.</param>
     /// <param name="pattern">The pattern which may involve SQL regular expression syntax.</param>
     /// <returns><see langword="true" /> if there is a match.</returns>
-    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#similar-to" />
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#similar-to" />
+    /// for more information and examples.
+    /// </remarks>
     public static bool SimilarTo(this DbFunctions _, string matchExpression, string pattern)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(SimilarTo)));
 
@@ -444,7 +467,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="matchExpression">The string that is to be matched.</param>
     /// <param name="pattern">The pattern which may involve wildcards *, ?, [].</param>
     /// <returns><see langword="true" /> if there is a match.</returns>
-    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#glob" />
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#glob" />
+    /// for more information and examples.
+    /// </remarks>
     public static bool Glob(this DbFunctions _, string matchExpression, string pattern)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(Glob)));
 
@@ -455,7 +481,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="matchExpression">The string to extract from.</param>
     /// <param name="pattern">The regular expression pattern.</param>
     /// <returns>The matched substring, or <see langword="null" /> if no match is found.</returns>
-    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extractstring-pattern-group-options" />
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extractstring-pattern-group-options" />
+    /// for more information and examples.
+    /// </remarks>
     public static string? RegexExtract(this DbFunctions _, string matchExpression, string pattern)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexExtract)));
 
@@ -467,7 +496,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="pattern">The regular expression pattern.</param>
     /// <param name="group">The capturing group index (0 returns entire match, 1+ returns specific group).</param>
     /// <returns>The matched substring/group, or <see langword="null" /> if no match is found.</returns>
-    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extractstring-pattern-group-options" />
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extractstring-pattern-group-options" />
+    /// for more information and examples.
+    /// </remarks>
     public static string? RegexExtract(this DbFunctions _, string matchExpression, string pattern, int group)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexExtract)));
 
@@ -480,7 +512,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="group">The capturing group index (0 returns entire match, 1+ returns specific group).</param>
     /// <param name="options">The regex options (e.g. 'i' for case-insensitive, 'c' for case-sensitive, 's' for dot-all, 'm' for multi-line).</param>
     /// <returns>The matched substring/group, or <see langword="null" /> if no match is found.</returns>
-    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extractstring-pattern-group-options" />
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extractstring-pattern-group-options" />
+    /// for more information and examples.
+    /// </remarks>
     public static string? RegexExtract(this DbFunctions _, string matchExpression, string pattern, int group, string? options)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexExtract)));
 
@@ -491,7 +526,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="matchExpression">The string to extract from.</param>
     /// <param name="pattern">The regular expression pattern.</param>
     /// <returns>An array of matched substrings, or <see langword="null" /> if the input is null.</returns>
-    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extract_allstring-pattern-group-options" />
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extract_allstring-pattern-group-options" />
+    /// for more information and examples.
+    /// </remarks>
     public static string[]? RegexExtractAll(this DbFunctions _, string matchExpression, string pattern)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexExtractAll)));
 
@@ -503,7 +541,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="pattern">The regular expression pattern.</param>
     /// <param name="group">The capturing group index (0 returns entire match, 1+ returns specific group).</param>
     /// <returns>An array of matched substrings/groups, or <see langword="null" /> if the input is null.</returns>
-    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extract_allstring-pattern-group-options" />
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extract_allstring-pattern-group-options" />
+    /// for more information and examples.
+    /// </remarks>
     public static string[]? RegexExtractAll(this DbFunctions _, string matchExpression, string pattern, int group)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexExtractAll)));
 
@@ -516,7 +557,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="group">The capturing group index (0 returns entire match, 1+ returns specific group).</param>
     /// <param name="options">The regex options (e.g. 'i' for case-insensitive, 'c' for case-sensitive, 's' for dot-all, 'm' for multi-line).</param>
     /// <returns>An array of matched substrings/groups, or <see langword="null" /> if the input is null.</returns>
-    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extract_allstring-pattern-group-options" />
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_extract_allstring-pattern-group-options" />
+    /// for more information and examples.
+    /// </remarks>
     public static string[]? RegexExtractAll(this DbFunctions _, string matchExpression, string pattern, int group, string? options)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexExtractAll)));
 
@@ -527,7 +571,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="matchExpression">The string to match.</param>
     /// <param name="pattern">The regular expression pattern.</param>
     /// <returns><see langword="true" /> if the entire string matches the regex pattern; otherwise, <see langword="false" />.</returns>
-    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_full_matchstring-regex-options" />
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_full_matchstring-regex-options" />
+    /// for more information and examples.
+    /// </remarks>
     public static bool RegexFullMatch(this DbFunctions _, string matchExpression, string pattern)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexFullMatch)));
 
@@ -539,7 +586,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="pattern">The regular expression pattern.</param>
     /// <param name="options">The regex options (e.g. 'i' for case-insensitive, 'c' for case-sensitive, 's' for dot-all, 'm' for multi-line).</param>
     /// <returns><see langword="true" /> if the entire string matches the regex pattern; otherwise, <see langword="false" />.</returns>
-    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_full_matchstring-regex-options" />
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_full_matchstring-regex-options" />
+    /// for more information and examples.
+    /// </remarks>
     public static bool RegexFullMatch(this DbFunctions _, string matchExpression, string pattern, string? options)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexFullMatch)));
 
@@ -550,7 +600,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="matchExpression">The string to match.</param>
     /// <param name="pattern">The regular expression pattern.</param>
     /// <returns><see langword="true" /> if the string matches the regex pattern; otherwise, <see langword="false" />.</returns>
-    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_matchesstring-pattern-options" />
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_matchesstring-pattern-options" />
+    /// for more information and examples.
+    /// </remarks>
     public static bool RegexMatches(this DbFunctions _, string matchExpression, string pattern)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexMatches)));
 
@@ -562,7 +615,10 @@ public static class DuckDBDbFunctionsExtensions
     /// <param name="pattern">The regular expression pattern.</param>
     /// <param name="options">The regex options (e.g. 'i' for case-insensitive, 'c' for case-sensitive, 's' for dot-all, 'm' for multi-line).</param>
     /// <returns><see langword="true" /> if the string matches the regex pattern; otherwise, <see langword="false" />.</returns>
-    /// <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_matchesstring-pattern-options" />
+    /// <remarks>
+    /// See <see href="https://duckdb.org/docs/current/sql/functions/pattern_matching#regexp_matchesstring-pattern-options" />
+    /// for more information and examples.
+    /// </remarks>
     public static bool RegexMatches(this DbFunctions _, string matchExpression, string pattern, string? options)
         => throw new InvalidOperationException(CoreStrings.FunctionOnClient(nameof(RegexMatches)));
 
