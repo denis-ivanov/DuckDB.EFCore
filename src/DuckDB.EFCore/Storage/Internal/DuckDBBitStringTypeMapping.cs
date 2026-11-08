@@ -1,6 +1,7 @@
+using DuckDB.EFCore.ChangeTracking.Internal;
 using DuckDB.EFCore.Extensions.Internal;
+using DuckDB.EFCore.Storage.Json.Internal;
 using DuckDB.NET.Data;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -20,12 +21,6 @@ public class DuckDBBitStringTypeMapping : RelationalTypeMapping
 {
     private static readonly ValueConverter<BitArray, string> BitArrayConverter
         = new(v => ToBitString(v), v => ToBitArray(v));
-
-    private static readonly ValueComparer<BitArray> BitArrayComparer
-        = new(
-            (l, r) => l == null ? r == null : r != null && ToBitString(l) == ToBitString(r),
-            v => v == null ? 0 : ToBitString(v).GetHashCode(),
-            v => v == null ? null! : new BitArray(v));
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -53,7 +48,11 @@ public class DuckDBBitStringTypeMapping : RelationalTypeMapping
         : this(
             new RelationalTypeMappingParameters(
                 clrType == typeof(BitArray)
-                    ? new CoreTypeMappingParameters(clrType, BitArrayConverter, BitArrayComparer)
+                    ? new CoreTypeMappingParameters(
+                        clrType,
+                        BitArrayConverter,
+                        DuckDBBitArrayValueComparer.Instance,
+                        jsonValueReaderWriter: DuckDBBitArrayReaderWriter.Instance)
                     : new CoreTypeMappingParameters(clrType, jsonValueReaderWriter: JsonStringReaderWriter.Instance),
                 storeType,
                 StoreTypePostfix.None,
