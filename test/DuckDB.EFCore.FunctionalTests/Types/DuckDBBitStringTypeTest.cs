@@ -1,5 +1,3 @@
-using DuckDB.EFCore.Extensions;
-using DuckDB.NET.Data;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using System.Collections;
 using Xunit;
@@ -7,21 +5,43 @@ using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Types;
 
-public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.BitStringFixture>
+public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBitStringTypeTest.BitStringFixture>
 {
     public DuckDBBitStringTypeTest(BitStringFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
     {
-        Fixture = fixture;
         Fixture.TestSqlLoggerFactory.Clear();
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    private BitStringFixture Fixture { get; }
+    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task ExecuteUpdate_within_json_to_another_json_property()
+    {
+        return base.ExecuteUpdate_within_json_to_another_json_property();
+    }
+
+    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task ExecuteUpdate_within_json_to_constant()
+    {
+        return base.ExecuteUpdate_within_json_to_constant();
+    }
+
+    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task ExecuteUpdate_within_json_to_nonjson_column()
+    {
+        return base.ExecuteUpdate_within_json_to_nonjson_column();
+    }
+
+    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    public override Task ExecuteUpdate_within_json_to_parameter()
+    {
+        return base.ExecuteUpdate_within_json_to_parameter();
+    }
 
     [ConditionalFact]
     public void Bit_columns_are_created_with_BIT_store_type()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         var entityType = context.Model.FindEntityType(typeof(BitStringEntity))!;
 
@@ -33,7 +53,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_round_trip_bit_string_as_string()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 1, BitString = "10101", Bits = new BitArray([true, false, true]) });
         context.SaveChanges();
@@ -47,7 +67,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_round_trip_bit_string_as_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         var bits = new BitArray([true, false, false, true, true, false]);
 
@@ -64,7 +84,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_round_trip_null_bit_string()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 3, BitString = "0", Bits = new BitArray(1), NullableBits = null });
         context.SaveChanges();
@@ -78,7 +98,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Preserves_leading_zeros()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 4, BitString = "000000101011", Bits = new BitArray(1) });
         context.SaveChanges();
@@ -92,7 +112,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_filter_by_bit_string_parameter()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 5, BitString = "110000000001", Bits = new BitArray(1) });
         context.SaveChanges();
@@ -107,7 +127,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_filter_by_bit_string_constant()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 6, BitString = "111000", Bits = new BitArray(1) });
         context.SaveChanges();
@@ -123,7 +143,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_update_bit_string()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 7, BitString = "0000", Bits = new BitArray(1) });
         context.SaveChanges();
@@ -143,10 +163,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Explicit_store_type_is_not_overridden_for_BitArray()
     {
-        var options = new DbContextOptionsBuilder<IncompatibleStoreTypeContext>()
-            .UseInternalServiceProvider(Fixture.ServiceProvider)
-            .UseDuckDB(Fixture.Connection)
-            .Options;
+        var options = new DbContextOptionsBuilder(Fixture.CreateOptions()).Options;
 
         using var context = new IncompatibleStoreTypeContext(options);
 
@@ -156,7 +173,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_translate_bit_length_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 10, BitString = "101", Bits = new BitArray([true, false, true, false, true, true, false, false, true]) });
         context.SaveChanges();
@@ -179,7 +196,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_translate_bit_length_for_string_mapped_to_bit()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 11, BitString = "1010111", Bits = new BitArray(1) });
         context.SaveChanges();
@@ -202,7 +219,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_project_bit_length()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 12, BitString = "11001", Bits = new BitArray([true, false, false, true]) });
         context.SaveChanges();
@@ -233,7 +250,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_translate_And_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 20, BitString = "10101", Bits = new BitArray([true, false, true, false, true]) });
         context.SaveChanges();
@@ -247,8 +264,8 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         Assert.Equal(20, entity.Id);
         AssertSql(
             """
-            otherBits='?'
-            expected='?'
+            otherBits='11001'
+            expected='10001'
 
             SELECT e."Id", e."BitString", e."Bits", e."NullableBits"
             FROM "Entities" AS e
@@ -261,7 +278,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_project_And_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 21, BitString = "1100", Bits = new BitArray([true, true, false, false]) });
         context.SaveChanges();
@@ -280,7 +297,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         Assert.Equal(new BitArray([true, false, false, false]).Cast<bool>(), result.Result.Cast<bool>());
         AssertSql(
             """
-            otherBits='?'
+            otherBits='1010'
 
             SELECT e."Bits" & $otherBits AS "Result"
             FROM "Entities" AS e
@@ -293,7 +310,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_translate_And_between_columns_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity
         {
@@ -328,7 +345,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_translate_Or_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 30, BitString = "10100", Bits = new BitArray([true, false, true, false, false]) });
         context.SaveChanges();
@@ -342,8 +359,8 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         Assert.Equal(30, entity.Id);
         AssertSql(
             """
-            otherBits='?'
-            expected='?'
+            otherBits='11001'
+            expected='11101'
 
             SELECT e."Id", e."BitString", e."Bits", e."NullableBits"
             FROM "Entities" AS e
@@ -356,7 +373,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_project_Or_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 31, BitString = "1100", Bits = new BitArray([true, true, false, false]) });
         context.SaveChanges();
@@ -375,7 +392,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         Assert.Equal(new BitArray([true, true, true, false]).Cast<bool>(), result.Result.Cast<bool>());
         AssertSql(
             """
-            otherBits='?'
+            otherBits='0110'
 
             SELECT e."Bits" | $otherBits AS "Result"
             FROM "Entities" AS e
@@ -388,7 +405,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_translate_Or_between_columns_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity
         {
@@ -423,7 +440,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_translate_Xor_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 40, BitString = "10100", Bits = new BitArray([true, false, true, false, false]) });
         context.SaveChanges();
@@ -437,8 +454,8 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         Assert.Equal(40, entity.Id);
         AssertSql(
             """
-            otherBits='?'
-            expected='?'
+            otherBits='11001'
+            expected='01101'
 
             SELECT e."Id", e."BitString", e."Bits", e."NullableBits"
             FROM "Entities" AS e
@@ -451,7 +468,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_project_Xor_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 41, BitString = "1100", Bits = new BitArray([true, true, false, false]) });
         context.SaveChanges();
@@ -470,7 +487,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         Assert.Equal(new BitArray([true, false, true, false]).Cast<bool>(), result.Result.Cast<bool>());
         AssertSql(
             """
-            otherBits='?'
+            otherBits='0110'
 
             SELECT xor(e."Bits", $otherBits) AS "Result"
             FROM "Entities" AS e
@@ -483,7 +500,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_translate_Xor_between_columns_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity
         {
@@ -518,7 +535,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_translate_Not_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 50, BitString = "10100", Bits = new BitArray([true, false, true, false, false]) });
         context.SaveChanges();
@@ -531,7 +548,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         Assert.Equal(50, entity.Id);
         AssertSql(
             """
-            expected='?'
+            expected='01011'
 
             SELECT e."Id", e."BitString", e."Bits", e."NullableBits"
             FROM "Entities" AS e
@@ -544,7 +561,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_project_Not_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 51, BitString = "101", Bits = new BitArray([true, false, true]) });
         context.SaveChanges();
@@ -573,7 +590,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_translate_LeftShift_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 60, BitString = "10010", Bits = new BitArray([true, false, false, true, false, true, true]) });
         context.SaveChanges();
@@ -586,7 +603,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         Assert.Equal(60, entity.Id);
         AssertSql(
             """
-            expected='?'
+            expected='1011000'
 
             SELECT e."Id", e."BitString", e."Bits", e."NullableBits"
             FROM "Entities" AS e
@@ -599,7 +616,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_project_LeftShift_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 61, BitString = "10010", Bits = new BitArray([true, false, false, true, false, true, true]) });
         context.SaveChanges();
@@ -628,7 +645,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_translate_RightShift_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 62, BitString = "10010", Bits = new BitArray([true, false, false, true, false, true, true]) });
         context.SaveChanges();
@@ -641,7 +658,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         Assert.Equal(62, entity.Id);
         AssertSql(
             """
-            expected='?'
+            expected='0001001'
 
             SELECT e."Id", e."BitString", e."Bits", e."NullableBits"
             FROM "Entities" AS e
@@ -654,7 +671,7 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
     [ConditionalFact]
     public void Can_project_RightShift_for_BitArray()
     {
-        using var context = CreateContext();
+        using var context = CreateBitStringContext();
 
         context.Entities.Add(new BitStringEntity { Id = 63, BitString = "10010", Bits = new BitArray([true, false, false, true, false, true, true]) });
         context.SaveChanges();
@@ -680,23 +697,14 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         );
     }
 
-    private void AssertSql(params string[] expected)
-        => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
-
-    private BitStringContext CreateContext()
+    private BitStringContext CreateBitStringContext()
     {
-        var options = new DbContextOptionsBuilder<BitStringContext>()
-            .UseInternalServiceProvider(Fixture.ServiceProvider)
-            .UseDuckDB(Fixture.Connection)
-            .Options;
+        var options = new DbContextOptionsBuilder(Fixture.CreateOptions()).Options;
 
-        var context = new BitStringContext(options);
-        context.Database.EnsureCreated();
-
-        return context;
+        return new BitStringContext(options);
     }
 
-    private sealed class BitStringContext(DbContextOptions<BitStringContext> options) : DbContext(options)
+    private sealed class BitStringContext(DbContextOptions options) : DbContext(options)
     {
         public DbSet<BitStringEntity> Entities => Set<BitStringEntity>();
 
@@ -704,13 +712,14 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         {
             modelBuilder.Entity<BitStringEntity>(b =>
             {
+                b.ToTable("Entities");
                 b.Property(e => e.Id).ValueGeneratedNever();
                 b.Property(e => e.BitString).HasColumnType("BIT");
             });
         }
     }
 
-    private sealed class IncompatibleStoreTypeContext(DbContextOptions<IncompatibleStoreTypeContext> options) : DbContext(options)
+    private sealed class IncompatibleStoreTypeContext(DbContextOptions options) : DbContext(options)
     {
         public DbSet<BitStringEntity> Entities => Set<BitStringEntity>();
 
@@ -718,34 +727,43 @@ public class DuckDBBitStringTypeTest : IClassFixture<DuckDBBitStringTypeTest.Bit
         {
             modelBuilder.Entity<BitStringEntity>(b =>
             {
+                b.ToTable("Entities");
                 b.Property(e => e.Id).ValueGeneratedNever();
                 b.Property(e => e.Bits).HasColumnType("TIMESTAMP");
             });
         }
     }
 
-    private sealed class BitStringEntity    {
+    private sealed class BitStringEntity
+    {
         public int Id { get; set; }
+    
         public string BitString { get; set; } = null!;
+
         public BitArray Bits { get; set; } = null!;
+
         public BitArray? NullableBits { get; set; }
     }
 
-    public sealed class BitStringFixture : ServiceProviderFixtureBase, ITestSqlLoggerFactory, IDisposable
+    public class BitStringFixture : RelationalTypeFixtureBase<BitArray>
     {
-        public BitStringFixture()
-        {
-            Connection = new DuckDBConnection("DataSource=:memory:");
-            Connection.Open();
-        }
+        public override BitArray Value { get; } = new([true, false, true]);
+        public override BitArray OtherValue { get; } = new([false, true, false, true]);
 
-        public DuckDBConnection Connection { get; }
+        public override Func<BitArray, BitArray, bool> Comparer { get; } = (a, b) => a.Length == b.Length && a.Cast<bool>().SequenceEqual(b.Cast<bool>());
 
         protected override ITestStoreFactory TestStoreFactory => DuckDBTestStoreFactory.Instance;
 
-        public TestSqlLoggerFactory TestSqlLoggerFactory => (TestSqlLoggerFactory)ListLoggerFactory;
+        protected override void OnModelCreating(ModelBuilder modelBuilder, DbContext context)
+        {
+            base.OnModelCreating(modelBuilder, context);
 
-        public void Dispose()
-            => Connection.Dispose();
+            modelBuilder.Entity<BitStringEntity>(b =>
+            {
+                b.ToTable("Entities");
+                b.Property(e => e.Id).ValueGeneratedNever();
+                b.Property(e => e.BitString).HasColumnType("BIT");
+            });
+        }
     }
 }
