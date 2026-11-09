@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -658,6 +659,68 @@ public class DuckDBQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         }
 
         return base.VisitMethodCall(methodCallExpression);
+    }
+
+    protected override bool TrySerializeScalarToJson(
+        JsonScalarExpression target,
+        SqlExpression value,
+        [NotNullWhen(true)] out SqlExpression? jsonValue)
+    {
+        var providerClrType = (value.TypeMapping!.Converter?.ProviderClrType ?? value.Type).UnwrapNullableType();
+
+        if (providerClrType == typeof(Int128) || providerClrType == typeof(UInt128))
+        {
+            jsonValue = value;
+            return true;
+        }
+
+#pragma warning disable EF9002 // TrySerializeScalarToJson is experimental
+        return base.TrySerializeScalarToJson(target, value, out jsonValue);
+#pragma warning restore EF9002
+    }
+
+    protected override SqlExpression? GenerateJsonPartialUpdateSetter(
+        Expression target,
+        SqlExpression value,
+        ref SqlExpression? existingSetterValue)
+    {
+        var (jsonColumn, path, isJsonScalar) = target switch
+        {
+            JsonScalarExpression { TypeMapping.ElementTypeMapping: null } j => ((ColumnExpression)j.Json, j.Path, true),
+            JsonScalarExpression { TypeMapping.ElementTypeMapping: not null } j => ((ColumnExpression)j.Json, j.Path, false),
+            JsonQueryExpression j => (j.JsonColumn, j.Path, false),
+
+            _ => throw new UnreachableException(),
+        };
+
+        var jsonTypeMapping = _typeMappingSource.FindMapping("JSON")!;
+
+        var jsonSet = _sqlExpressionFactory.Function(
+            "json_set",
+            arguments:
+            [
+                existingSetterValue ?? jsonColumn,
+                _sqlExpressionFactory.Constant(path, RelationalTypeMapping.NullMapping),
+                _sqlExpressionFactory.Function(
+                    "to_json",
+                    [value],
+                    nullable: true,
+                    argumentsPropagateNullability: [true],
+                    typeof(string),
+                    jsonTypeMapping)
+            ],
+            nullable: true,
+            argumentsPropagateNullability: [true, true, true],
+            typeof(string),
+            jsonColumn.TypeMapping);
+
+        if (existingSetterValue is null)
+        {
+            return jsonSet;
+        }
+
+        existingSetterValue = jsonSet;
+        return null;
     }
 
     protected virtual ShapedQueryExpression? TranslateAppend(ShapedQueryExpression source, Expression item)

@@ -1,36 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore.TestUtilities;
-using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Types;
 
 public class DuckDBUInt128TypeTest : RelationalTypeTestBase<UInt128, DuckDBUInt128TypeTest.UInt128TypeFixture>
 {
-    public DuckDBUInt128TypeTest(UInt128TypeFixture fixture) : base(fixture)
+    public DuckDBUInt128TypeTest(UInt128TypeFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
     {
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_another_json_property()
-    {
-        return base.ExecuteUpdate_within_json_to_another_json_property();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_constant()
-    {
-        return base.ExecuteUpdate_within_json_to_constant();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_nonjson_column()
-    {
-        return base.ExecuteUpdate_within_json_to_nonjson_column();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_parameter()
-    {
-        return base.ExecuteUpdate_within_json_to_parameter();
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     public class UInt128TypeFixture : RelationalTypeFixtureBase<UInt128>
