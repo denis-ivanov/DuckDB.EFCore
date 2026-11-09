@@ -36,10 +36,12 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         { typeof(char), DuckDBCharTypeMapping.Default },
         { typeof(int), DuckDBInt32TypeMapping.Default },
         { typeof(long), DuckDBInt64TypeMapping.Default },
+        { typeof(Int128), DuckDBInt128TypeMapping.Default },
         { typeof(sbyte), DuckDBSByteTypeMapping.Default },
         { typeof(short), DuckDBInt16TypeMapping.Default },
         { typeof(uint), DuckDBUInt32TypeMapping.Default },
         { typeof(ulong), DuckDBUInt64TypeMapping.Default },
+        { typeof(UInt128), DuckDBUInt128TypeMapping.Default },
         { typeof(ushort), DuckDBUInt16TypeMapping.Default },
         { typeof(DateTime), DuckDBTimestampTypeMapping.Timestamp },
         { typeof(DateTimeOffset), DuckDBTimestampTypeMapping.TimestampTz },
@@ -101,6 +103,9 @@ public class DuckDBTypeMappingSource : RelationalTypeMappingSource
         
         { "DOUBLE", DuckDBDoubleTypeMapping.Default },
         { "FLOAT8", DuckDBDoubleTypeMapping.Default },
+
+        { "HUGEINT", DuckDBInt128TypeMapping.Default },
+        { "UHUGEINT", DuckDBUInt128TypeMapping.Default },
 
         // Timestamp Types
         { "TIMESTAMP_NS", DuckDBTimestampTypeMapping.TimestampNs },
