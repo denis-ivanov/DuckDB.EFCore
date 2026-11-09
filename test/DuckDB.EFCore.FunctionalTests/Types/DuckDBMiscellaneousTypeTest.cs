@@ -1,37 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Types.Miscellaneous;
 
 public class BoolTypeTest : RelationalTypeTestBase<bool, BoolTypeTest.BoolTypeFixture>
 {
-    public BoolTypeTest(BoolTypeFixture fixture) : base(fixture)
+    public BoolTypeTest(BoolTypeFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
     {
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_another_json_property()
-    {
-        return base.ExecuteUpdate_within_json_to_another_json_property();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_constant()
-    {
-        return base.ExecuteUpdate_within_json_to_constant();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_nonjson_column()
-    {
-        return base.ExecuteUpdate_within_json_to_nonjson_column();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_parameter()
-    {
-        return base.ExecuteUpdate_within_json_to_parameter();
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     public class BoolTypeFixture : RelationalTypeFixtureBase<bool>
@@ -45,32 +25,11 @@ public class BoolTypeTest : RelationalTypeTestBase<bool, BoolTypeTest.BoolTypeFi
 
 public class StringTypeTest : RelationalTypeTestBase<string, StringTypeTest.StringTypeFixture>
 {
-    public StringTypeTest(StringTypeFixture fixture) : base(fixture)
+    public StringTypeTest(StringTypeFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
     {
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_another_json_property()
-    {
-        return base.ExecuteUpdate_within_json_to_another_json_property();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_constant()
-    {
-        return base.ExecuteUpdate_within_json_to_constant();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_parameter()
-    {
-        return base.ExecuteUpdate_within_json_to_parameter();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_nonjson_column()
-    {
-        return base.ExecuteUpdate_within_json_to_nonjson_column();
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     public class StringTypeFixture : RelationalTypeFixtureBase<string>
@@ -84,32 +43,17 @@ public class StringTypeTest : RelationalTypeTestBase<string, StringTypeTest.Stri
 
 public class GuidTypeTest : RelationalTypeTestBase<Guid, GuidTypeTest.GuidTypeFixture>
 {
-    public GuidTypeTest(GuidTypeFixture fixture) : base(fixture)
+    public GuidTypeTest(GuidTypeFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
     {
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     public override async Task ExecuteUpdate_within_json_to_nonjson_column()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => base.ExecuteUpdate_within_json_to_nonjson_column());
         Assert.Equal(RelationalStrings.ExecuteUpdateCannotSetJsonPropertyToNonJsonColumn, exception.Message);
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_another_json_property()
-    {
-        return base.ExecuteUpdate_within_json_to_another_json_property();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_constant()
-    {
-        return base.ExecuteUpdate_within_json_to_constant();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_parameter()
-    {
-        return base.ExecuteUpdate_within_json_to_parameter();
     }
 
     public class GuidTypeFixture : RelationalTypeFixtureBase<Guid>
@@ -123,8 +67,11 @@ public class GuidTypeTest : RelationalTypeTestBase<Guid, GuidTypeTest.GuidTypeFi
 
 public class ByteArrayTypeTest : RelationalTypeTestBase<byte[], ByteArrayTypeTest.ByteArrayTypeFixture>
 {
-    public ByteArrayTypeTest(ByteArrayTypeFixture fixture) : base(fixture)
+    public ByteArrayTypeTest(ByteArrayTypeFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
     {
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -137,30 +84,6 @@ public class ByteArrayTypeTest : RelationalTypeTestBase<byte[], ByteArrayTypeTes
     public override Task Query_property_within_json()
     {
         return base.Query_property_within_json();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_another_json_property()
-    {
-        return base.ExecuteUpdate_within_json_to_another_json_property();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_constant()
-    {
-        return base.ExecuteUpdate_within_json_to_constant();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_parameter()
-    {
-        return base.ExecuteUpdate_within_json_to_parameter();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task SaveChanges_within_json()
-    {
-        return base.SaveChanges_within_json();
     }
 
     public class ByteArrayTypeFixture : RelationalTypeFixtureBase<byte[]>

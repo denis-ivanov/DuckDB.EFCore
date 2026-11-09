@@ -474,6 +474,17 @@ public class DuckDBQuerySqlGenerator : QuerySqlGenerator
         Sql.Append("'");
     }
 
+    protected override Expression VisitSqlConstant(SqlConstantExpression sqlConstantExpression)
+    {
+        if (sqlConstantExpression is { Value: IReadOnlyList<PathSegment> path })
+        {
+            GenerateJsonPath(path);
+            return sqlConstantExpression;
+        }
+
+        return base.VisitSqlConstant(sqlConstantExpression);
+    }
+
     protected override Expression VisitJsonScalar(JsonScalarExpression jsonScalarExpression)
     {
         var path = jsonScalarExpression.Path;

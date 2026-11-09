@@ -1,37 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Types.Temporal;
 
 public class DateTimeTypeTest : RelationalTypeTestBase<DateTime, DateTimeTypeTest.DateTimeTypeFixture>
 {
-    public DateTimeTypeTest(DateTimeTypeFixture fixture) : base(fixture)
+    public DateTimeTypeTest(DateTimeTypeFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
     {
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     public override async Task ExecuteUpdate_within_json_to_nonjson_column()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => base.ExecuteUpdate_within_json_to_nonjson_column());
         Assert.Equal(RelationalStrings.ExecuteUpdateCannotSetJsonPropertyToNonJsonColumn, exception.Message);
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_another_json_property()
-    {
-        return base.ExecuteUpdate_within_json_to_another_json_property();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_constant()
-    {
-        return base.ExecuteUpdate_within_json_to_constant();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_parameter()
-    {
-        return base.ExecuteUpdate_within_json_to_parameter();
     }
 
     public class DateTimeTypeFixture : RelationalTypeFixtureBase<DateTime>
@@ -45,32 +31,17 @@ public class DateTimeTypeTest : RelationalTypeTestBase<DateTime, DateTimeTypeTes
 
 public class DateTimeOffsetTypeTest : RelationalTypeTestBase<DateTimeOffset, DateTimeOffsetTypeTest.DateTimeOffsetTypeFixture>
 {
-    public DateTimeOffsetTypeTest(DateTimeOffsetTypeFixture fixture) : base(fixture)
+    public DateTimeOffsetTypeTest(DateTimeOffsetTypeFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
     {
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     public override async Task ExecuteUpdate_within_json_to_nonjson_column()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => base.ExecuteUpdate_within_json_to_nonjson_column());
         Assert.Equal(RelationalStrings.ExecuteUpdateCannotSetJsonPropertyToNonJsonColumn, exception.Message);
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_another_json_property()
-    {
-        return base.ExecuteUpdate_within_json_to_another_json_property();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_constant()
-    {
-        return base.ExecuteUpdate_within_json_to_constant();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_parameter()
-    {
-        return base.ExecuteUpdate_within_json_to_parameter();
     }
 
     public class DateTimeOffsetTypeFixture : RelationalTypeFixtureBase<DateTimeOffset>
@@ -84,26 +55,11 @@ public class DateTimeOffsetTypeTest : RelationalTypeTestBase<DateTimeOffset, Dat
 
 public class DateOnlyTypeTest : RelationalTypeTestBase<DateOnly, DateOnlyTypeTest.DateTypeFixture>
 {
-    public DateOnlyTypeTest(DateTypeFixture fixture) : base(fixture)
+    public DateOnlyTypeTest(DateTypeFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
     {
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_another_json_property()
-    {
-        return base.ExecuteUpdate_within_json_to_another_json_property();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_constant()
-    {
-        return base.ExecuteUpdate_within_json_to_constant();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_parameter()
-    {
-        return base.ExecuteUpdate_within_json_to_parameter();
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -123,38 +79,17 @@ public class DateOnlyTypeTest : RelationalTypeTestBase<DateOnly, DateOnlyTypeTes
 
 public class TimeOnlyTypeTest : RelationalTypeTestBase<TimeOnly, TimeOnlyTypeTest.TimeTypeFixture>
 {
-    public TimeOnlyTypeTest(TimeTypeFixture fixture) : base(fixture)
+    public TimeOnlyTypeTest(TimeTypeFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture)
     {
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Query_property_within_json()
-    {
-        return base.Query_property_within_json();
+        Fixture.TestSqlLoggerFactory.Clear();
+        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
     public override async Task ExecuteUpdate_within_json_to_nonjson_column()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => base.ExecuteUpdate_within_json_to_nonjson_column());
         Assert.Equal(RelationalStrings.ExecuteUpdateCannotSetJsonPropertyToNonJsonColumn, exception.Message);
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_another_json_property()
-    {
-        return base.ExecuteUpdate_within_json_to_another_json_property();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_constant()
-    {
-        return base.ExecuteUpdate_within_json_to_constant();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_parameter()
-    {
-        return base.ExecuteUpdate_within_json_to_parameter();
     }
 
     public class TimeTypeFixture : RelationalTypeFixtureBase<TimeOnly>
@@ -176,24 +111,6 @@ public class TimeSpanTypeTest : RelationalTypeTestBase<TimeSpan, TimeSpanTypeTes
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => base.ExecuteUpdate_within_json_to_nonjson_column());
         Assert.Equal(RelationalStrings.ExecuteUpdateCannotSetJsonPropertyToNonJsonColumn, exception.Message);
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_another_json_property()
-    {
-        return base.ExecuteUpdate_within_json_to_another_json_property();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_constant()
-    {
-        return base.ExecuteUpdate_within_json_to_constant();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_parameter()
-    {
-        return base.ExecuteUpdate_within_json_to_parameter();
     }
 
     public class TimeSpanTypeFixture : RelationalTypeFixtureBase<TimeSpan>
