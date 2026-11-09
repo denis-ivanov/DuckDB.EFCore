@@ -48,7 +48,10 @@ public class DuckDBRelationalConnection : RelationalConnection, IDuckDBRelationa
     /// <inheritdoc />
     protected override DbConnection CreateDbConnection()
     {
-        var connection = new DuckDBConnection(GetValidatedConnectionString());
+        var connectionStringBuilder = new DuckDBConnectionStringBuilder { ConnectionString = GetValidatedConnectionString() };
+        connectionStringBuilder["geometry_always_xy"] = "true";
+        
+        var connection = new DuckDBConnection(connectionStringBuilder.ConnectionString);
 
         return connection;
     }
@@ -122,7 +125,7 @@ public class DuckDBRelationalConnection : RelationalConnection, IDuckDBRelationa
     /// </summary>
     public virtual IDuckDBRelationalConnection CreateReadOnlyConnection()
     {
-        var connectionStringBuilder = new DuckDBConnectionStringBuilder()
+        var connectionStringBuilder = new DuckDBConnectionStringBuilder
         {
             ConnectionString = GetValidatedConnectionString()
         };

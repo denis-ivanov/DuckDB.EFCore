@@ -18,7 +18,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task Affine(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, Affine = EF.Functions.Affine(e.Point, 1, 0, 0, 1, 2, 3) });
@@ -41,7 +41,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task Affine_3d(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, Affine = EF.Functions.Affine(e.PointZ, 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 3, 4) });
@@ -64,7 +64,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task AreaSpheroid_geometry(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PolygonEntity>()
             .Select(e => new { e.Id, Area = EF.Functions.AreaSpheroid((Geometry?)e.Polygon) });
@@ -87,7 +87,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task AreaSpheroid_polygon(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PolygonEntity>()
             .Select(e => new { e.Id, Area = EF.Functions.AreaSpheroid(e.Polygon) });
@@ -110,7 +110,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task BuildArea(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PolygonEntity>()
             .Select(e => new { e.Id, BuildArea = EF.Functions.BuildArea(e.Polygon) });
@@ -133,7 +133,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task BuildArea_lineString(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<LineStringEntity>()
             .Select(e => new { e.Id, BuildArea = EF.Functions.BuildArea(e.LineString) });
@@ -155,7 +155,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task BuildArea_geometry(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PolygonEntity>()
             .Select(e => new { e.Id, BuildArea = EF.Functions.BuildArea((Geometry?)e.Polygon) });
@@ -178,7 +178,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task ConcaveHull(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PolygonEntity>()
             .Select(e => new { e.Id, ConcaveHull = EF.Functions.ConcaveHull(e.Polygon, 0.5, true) });
@@ -201,7 +201,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task ConcaveHull_geometry(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PolygonEntity>()
             .Select(e => new { e.Id, ConcaveHull = EF.Functions.ConcaveHull((Geometry?)e.Polygon, 0.5, true) });
@@ -224,7 +224,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task ContainsProperly(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PolygonEntity>()
             .Select(e => new { e.Id, ContainsProperly = EF.Functions.ContainsProperly(e.Polygon, e.Polygon) });
@@ -246,7 +246,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task ContainsProperly_geometry(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PolygonEntity>()
             .Select(e => new { e.Id, ContainsProperly = EF.Functions.ContainsProperly((Geometry?)e.Polygon, (Geometry?)e.Polygon) });
@@ -268,7 +268,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task DistanceGeos(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, Distance = EF.Functions.DistanceGeos(e.Point, e.Point) });
@@ -290,7 +290,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task DistanceGeos_geometry(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, Distance = EF.Functions.DistanceGeos((Geometry?)e.Point, (Geometry?)e.Point) });
@@ -312,7 +312,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task DistanceSphere(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, Distance = EF.Functions.DistanceSphere(e.Point, e.Point) });
@@ -334,7 +334,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task DistanceSphere_geometry(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, Distance = EF.Functions.DistanceSphere((Geometry?)e.Point, (Geometry?)e.Point) });
@@ -356,7 +356,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task DistanceSpheroid(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, Distance = EF.Functions.DistanceSpheroid(e.Point, e.Point) });
@@ -378,7 +378,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task Extent(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, Extent = EF.Functions.Extent(e.Point) });
@@ -400,7 +400,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task Extent_geometry(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, Extent = EF.Functions.Extent((Geometry?)e.Point) });
@@ -422,7 +422,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task AsGeoJson(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, GeoJson = EF.Functions.AsGeoJson(e.Point) });
@@ -448,7 +448,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task AsHexWkb(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, HexWkb = EF.Functions.AsHexWkb(e.Point) });
@@ -471,7 +471,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task AsSvg(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, Svg = EF.Functions.AsSvg(e.Point, true, 3) });
@@ -494,7 +494,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task Azimuth_geometry(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, Azimuth = EF.Functions.Azimuth((Geometry?)e.Point, (Geometry?)e.PointZ) });
@@ -516,7 +516,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task Azimuth_point(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, Azimuth = EF.Functions.Azimuth((Geometry?)e.Point, e.Point) });
@@ -538,7 +538,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task DWithinSpheroid(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, DWithin = EF.Functions.DWithinSpheroid(e.Point, e.Point, 1000.0) });
@@ -560,7 +560,7 @@ public class SpatialQueryDuckDBTest : SpatialQueryRelationalTestBase<SpatialQuer
     [MemberData(nameof(IsAsyncData))]
     public async Task AsMvtGeom(bool async)
     {
-        using var context = Fixture.CreateContext();
+        await using var context = Fixture.CreateContext();
 
         var query = context.Set<PointEntity>()
             .Select(e => new { e.Id, MvtGeom = EF.Functions.AsMvtGeom(e.Point, null, 4096, 256, true) });

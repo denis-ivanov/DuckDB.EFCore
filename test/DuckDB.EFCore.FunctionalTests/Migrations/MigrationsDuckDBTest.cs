@@ -31,49 +31,38 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     public override async Task Add_check_constraint_with_name()
     {
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_check_constraint_with_name());
-        Assert.Equal("Not implemented Error: No support for that ALTER TABLE option yet!", exception.Message);
+        Assert.Equal("Not implemented Error: No support for adding CHECK constraints with ALTER TABLE", exception.Message);
     }
 
     public override async Task Add_column_computed_with_collation(bool stored)
     {
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_column_computed_with_collation(stored));
-        Assert.Equal("Parser Error: Adding generated columns after table creation is not supported yet", exception.Message);
+
+        Assert.Equal(
+            stored
+                ? "Invalid Input Error: Can not create a STORED generated column!"
+                : "Parser Error: Adding generated columns after table creation is not supported yet",
+            exception.Message);
     }
 
     public override async Task Add_column_with_check_constraint()
     {
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_column_with_check_constraint());
-        Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
+        Assert.Equal("Not implemented Error: No support for adding CHECK constraints with ALTER TABLE", exception.Message);
     }
 
     public override async Task Add_column_with_computedSql(bool? stored)
     {
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_column_with_computedSql(stored));
-        Assert.Equal("Parser Error: Adding generated columns after table creation is not supported yet", exception.Message);
-    }
 
-    public override async Task Add_column_with_defaultValue_datetime()
-    {
-        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_column_with_defaultValue_datetime());
-        Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
-    }
-
-    public override async Task Add_column_with_defaultValue_string()
-    {
-        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_column_with_defaultValue_string());
-        Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
-    }
-
-    public override async Task Add_column_with_defaultValueSql()
-    {
-        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_column_with_defaultValueSql());
-        Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
-    }
-
-    public override async Task Add_column_with_required()
-    {
-        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_column_with_required());
-        Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
+        if (stored == true)
+        {
+            Assert.Equal("Invalid Input Error: Can not create a STORED generated column!", exception.Message);
+        }
+        else
+        {
+            Assert.Equal("Parser Error: Adding generated columns after table creation is not supported yet", exception.Message);
+        }
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -86,12 +75,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     public override Task Add_foreign_key_with_name()
     {
         return base.Add_foreign_key_with_name();
-    }
-
-    public override async Task Add_json_columns_to_existing_table()
-    {
-        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_json_columns_to_existing_table());
-        Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -160,39 +143,9 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
             });
     }
 
-    public override async Task Add_required_primitive_collection_to_existing_table()
-    {
-        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_required_primitive_collection_to_existing_table());
-        Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
-    }
-
-    public override async Task Add_required_primitive_collection_with_custom_converter_and_custom_default_value_to_existing_table()
-    {
-         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_required_primitive_collection_with_custom_converter_and_custom_default_value_to_existing_table());
-         Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
-    }
-
-    public override async Task Add_required_primitive_collection_with_custom_default_value_to_existing_table()
-    {
-         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_required_primitive_collection_with_custom_default_value_to_existing_table());
-         Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
-    }
-
     public override async Task Add_required_primitive_collection_with_custom_converter_to_existing_table()
     {
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_required_primitive_collection_with_custom_converter_to_existing_table());
-        Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
-    }
-    
-    public override async Task Add_required_primitve_collection_to_existing_table()
-    {
-        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_required_primitve_collection_to_existing_table());
-        Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
-    }
-
-    public override async Task Add_required_primitve_collection_with_custom_converter_and_custom_default_value_to_existing_table()
-    {
-        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_required_primitve_collection_with_custom_converter_and_custom_default_value_to_existing_table());
         Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
     }
 
@@ -200,24 +153,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     {
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_required_primitive_collection_with_custom_default_value_sql_to_existing_table_core(defaultValueSql));
         Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
-    }
-
-    public override async Task Add_required_primitve_collection_with_custom_default_value_to_existing_table()
-    {
-        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_required_primitve_collection_with_custom_default_value_to_existing_table());
-        Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
-    }
-
-    public override async Task Add_unique_constraint()
-    {
-        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_unique_constraint());
-        Assert.Equal("Not implemented Error: No support for that ALTER TABLE option yet!", exception.Message);
-    }
-
-    public override async Task Add_unique_constraint_composite_with_name()
-    {
-        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Add_unique_constraint_composite_with_name());
-        Assert.Equal("Not implemented Error: No support for that ALTER TABLE option yet!", exception.Message);
     }
 
     public override async Task Alter_check_constraint()
@@ -247,7 +182,15 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     public override async Task Alter_column_make_computed(bool? stored)
     {
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Alter_column_make_computed(stored));
-        Assert.Equal("Parser Error: Adding generated columns after table creation is not supported yet", exception.Message);
+
+        if (stored == true)
+        {
+            Assert.Equal("Invalid Input Error: Can not create a STORED generated column!", exception.Message);
+        }
+        else
+        {
+            Assert.Equal("Parser Error: Adding generated columns after table creation is not supported yet", exception.Message);
+        }
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -266,12 +209,6 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     public override Task Alter_column_make_required_with_null_data()
     {
         return base.Alter_column_make_required_with_null_data();
-    }
-
-    public override async Task Alter_column_make_non_computed()
-    {
-        var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Alter_column_make_non_computed());
-        Assert.Equal("Parser Error: Adding columns with constraints not yet supported", exception.Message);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -440,13 +377,19 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     public override async Task Move_sequence()
     {
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Move_sequence());
-        Assert.Equal("Not implemented Error: T_AlterObjectSchemaStmt", exception.Message);  
+        Assert.Equal("Parser Error: syntax error at or near \"SET\"" + "\n\n" +
+                     "LINE 2:  SET SCHEMA \"TestSequenceSchema\";" + "\n" +
+                     "         ^^^",
+                     exception.Message);
     }
 
     public override async Task Move_table()
     {
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Move_table());
-        Assert.Equal("Not implemented Error: T_AlterObjectSchemaStmt", exception.Message);
+        Assert.Equal("Parser Error: syntax error at or near \"SCHEMA\"" + "\n\n" +
+                     "LINE 2:  SET SCHEMA \"TestTableSchema\";" + "\n" +
+                     "             ^^^^^^",
+            exception.Message);
     }
 
     [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
@@ -470,7 +413,7 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     public override async Task Rename_sequence()
     {
         var exception = await Assert.ThrowsAsync<DuckDBException>(async () => await base.Rename_sequence());
-        Assert.Equal("Not implemented Error: Schema element not supported yet!", exception.Message);
+        Assert.Equal("Not implemented Error: Renaming sequences is not yet supported", exception.Message);
     }
 
     public override async Task Rename_table()
@@ -498,6 +441,8 @@ public class MigrationsDuckDBTest : MigrationsTestBase<MigrationsDuckDBTest.Migr
     }
 
     protected override string NonDefaultCollation { get; }
+
+    protected override bool AssertConstraintNames => false;
 
     public class MigrationsDuckDBFixture : MigrationsFixtureBase
     {

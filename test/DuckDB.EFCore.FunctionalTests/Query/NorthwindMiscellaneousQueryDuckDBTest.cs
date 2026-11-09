@@ -86,6 +86,18 @@ public class NorthwindMiscellaneousQueryDuckDBTest: NorthwindMiscellaneousQueryR
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task First_on_collection_in_projection(bool async)
+    {
+        await base.First_on_collection_in_projection(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task FirstOrDefault_with_predicate_nested(bool async)
+    {
+        await base.FirstOrDefault_with_predicate_nested(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Max_on_empty_sequence_throws(bool async)
     {
         return base.Max_on_empty_sequence_throws(async);

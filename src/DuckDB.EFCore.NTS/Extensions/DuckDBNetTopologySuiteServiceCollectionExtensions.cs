@@ -9,8 +9,16 @@ using NetTopologySuite;
 
 namespace DuckDB.EFCore.NTS.Extensions;
 
+/// <summary>
+///     DuckDB.EFCore.NTS extension methods for <see cref="IServiceCollection" />.
+/// </summary>
 public static class DuckDBNetTopologySuiteServiceCollectionExtensions
 {
+    /// <summary>
+    ///     Adds the services required for NetTopologySuite support in the DuckDB provider for Entity Framework Core.
+    /// </summary>
+    /// <param name="serviceCollection">The <see cref="IServiceCollection" /> to add services to.</param>
+    /// <returns>The same service collection so that multiple calls can be chained.</returns>
     public static IServiceCollection AddEntityFrameworkDuckDBNetTopologySuite(
         this IServiceCollection serviceCollection)
     {
