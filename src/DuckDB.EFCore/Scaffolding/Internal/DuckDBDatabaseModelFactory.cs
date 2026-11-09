@@ -328,6 +328,8 @@ public class DuckDBDatabaseModelFactory : DatabaseModelFactory
                             uniqueConstraint.Columns.Add(table.Columns.Single(e => e.Name == constraintColumnName));
                         }
 
+                        table.UniqueConstraints.Add(uniqueConstraint);
+                        
                         break;
                     }
             }

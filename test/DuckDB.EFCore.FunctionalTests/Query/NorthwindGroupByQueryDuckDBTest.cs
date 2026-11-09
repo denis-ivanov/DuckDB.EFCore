@@ -197,7 +197,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
     }
 
     [ConditionalFact]
-    public void GroupBy_QuantileCont_translates_to_QUANTILE_CONT()
+    public void GroupBy_QuantileCont_translates_to_quantile_cont()
     {
         using var context = CreateContext();
 
@@ -206,7 +206,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
             .Select(g => new
             {
                 CustomerID = g.Key,
-                MedianOrderId = g.QuantileCont(o => o.OrderID, 0.5)
+                MedianOrderId = g.QuantileCont(o => o.OrderID, (double)0.5)
             })
             .ToList();
 
@@ -214,7 +214,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
 
         AssertSql(
             """
-            SELECT o."CustomerID", QUANTILE_CONT(o."OrderID", 0.5) AS "MedianOrderId"
+            SELECT o."CustomerID", quantile_cont(o."OrderID", 0.5) AS "MedianOrderId"
             FROM "Orders" AS o
             GROUP BY o."CustomerID"
             """
@@ -222,7 +222,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
     }
 
     [ConditionalFact]
-    public void GroupBy_QuantileCont_with_array_translates_to_QUANTILE_CONT()
+    public void GroupBy_QuantileCont_with_array_translates_to_quantile_cont()
     {
         using var context = CreateContext();
 
@@ -231,7 +231,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
             .Select(g => new
             {
                 CustomerID = g.Key,
-                Quantiles = g.QuantileCont(o => o.OrderID, new[] { 0.25f, 0.75f })
+                Quantiles = g.QuantileCont(o => o.OrderID, new[] { 0.25, 0.75 })
             })
             .ToList();
 
@@ -240,7 +240,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
 
         AssertSql(
             """
-            SELECT o."CustomerID", QUANTILE_CONT(o."OrderID", [0.25, 0.75]::FLOAT[]) AS "Quantiles"
+            SELECT o."CustomerID", quantile_cont(o."OrderID", [0.25, 0.75]::DOUBLE[]) AS "Quantiles"
             FROM "Orders" AS o
             GROUP BY o."CustomerID"
             """
@@ -265,7 +265,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
 
         AssertSql(
             """
-            SELECT o."CustomerID", QUANTILE_CONT(CASE
+            SELECT o."CustomerID", quantile_cont(CASE
                 WHEN o."OrderID" > 11000 THEN o."OrderID"
             END, 0.5) AS "MedianOrderId"
             FROM "Orders" AS o

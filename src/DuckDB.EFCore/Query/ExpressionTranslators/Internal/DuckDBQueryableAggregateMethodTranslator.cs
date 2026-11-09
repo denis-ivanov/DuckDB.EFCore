@@ -223,7 +223,7 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
             }
         }
 
-        // Support APPROX_QUANTILE(arg, pos), QUANTILE(arg, pos), QUANTILE_CONT(arg, pos) and QUANTILE_DISC(arg, pos) aggregate functions
+        // Support APPROX_QUANTILE(arg, pos), QUANTILE(arg, pos), quantile_cont(arg, pos) and QUANTILE_DISC(arg, pos) aggregate functions
         // (e.g., g.ApproxQuantile(e => e.Prop, 0.5), g.Quantile(e => e.Prop, 0.5), g.QuantileCont(e => e.Prop, 0.5), g.QuantileDisc(e => e.Prop, 0.5), g.ApproxQuantile(e => e.Prop, new[] { 0.25f, 0.75f }))
         if (method.DeclaringType == typeof(DuckDBGroupingExtensions)
             && (method.Name == nameof(DuckDBGroupingExtensions.ApproxQuantileAggregate)
@@ -237,7 +237,7 @@ public class DuckDBQueryableAggregateMethodTranslator : IAggregateMethodCallTran
             {
                 nameof(DuckDBGroupingExtensions.ApproxQuantileAggregate) => "APPROX_QUANTILE",
                 nameof(DuckDBGroupingExtensions.QuantileAggregate) => "QUANTILE",
-                nameof(DuckDBGroupingExtensions.QuantileContAggregate) => "QUANTILE_CONT",
+                nameof(DuckDBGroupingExtensions.QuantileContAggregate) => "quantile_cont",
                 _ => "QUANTILE_DISC"
             };
 

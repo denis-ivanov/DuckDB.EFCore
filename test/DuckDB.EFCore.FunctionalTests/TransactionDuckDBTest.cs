@@ -84,7 +84,7 @@ public class TransactionDuckDBTest : TransactionTestBase<TransactionDuckDBTest.T
 
         public override async Task ReseedAsync()
         {
-            using var context = CreateContext();
+            await using var context = CreateContext();
             context.Set<TransactionCustomer>().RemoveRange(await context.Set<TransactionCustomer>().ToListAsync());
             context.Set<TransactionOrder>().RemoveRange(await context.Set<TransactionOrder>().ToListAsync());
             await context.SaveChangesAsync();

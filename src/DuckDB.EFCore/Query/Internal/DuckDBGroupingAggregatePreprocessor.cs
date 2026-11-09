@@ -276,7 +276,7 @@ public class DuckDBGroupingAggregatePreprocessor : ExpressionVisitor
     {
         var projection = Project(source, selector);
 
-        var aggregateMethod = pos.Type == typeof(float[])
+        var aggregateMethod = pos.Type.IsArray
             ? methods.Array
             : methods.Single;
 

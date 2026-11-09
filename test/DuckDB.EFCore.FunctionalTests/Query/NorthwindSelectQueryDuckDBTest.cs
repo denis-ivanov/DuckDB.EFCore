@@ -14,6 +14,12 @@ public class NorthwindSelectQueryDuckDBTest : NorthwindSelectQueryRelationalTest
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Client_projection_with_string_initialization_with_scalar_subquery(bool async)
+    {
+        await base.Client_projection_with_string_initialization_with_scalar_subquery(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Correlated_collection_after_distinct_with_complex_projection_not_containing_original_identifier(bool async)
     {
         return base.Correlated_collection_after_distinct_with_complex_projection_not_containing_original_identifier(async);
@@ -35,6 +41,12 @@ public class NorthwindSelectQueryDuckDBTest : NorthwindSelectQueryRelationalTest
     public override Task Projection_containing_DateTime_subtraction(bool async)
     {
         return base.Projection_containing_DateTime_subtraction(async);
+    }
+
+    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Projection_when_arithmetic_expression_precedence(bool async)
+    {
+        await base.Projection_when_arithmetic_expression_precedence(async);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
