@@ -14,30 +14,6 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_another_json_property()
-    {
-        return base.ExecuteUpdate_within_json_to_another_json_property();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_constant()
-    {
-        return base.ExecuteUpdate_within_json_to_constant();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_nonjson_column()
-    {
-        return base.ExecuteUpdate_within_json_to_nonjson_column();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task ExecuteUpdate_within_json_to_parameter()
-    {
-        return base.ExecuteUpdate_within_json_to_parameter();
-    }
-
     [ConditionalFact]
     public void Bit_columns_are_created_with_BIT_store_type()
     {
