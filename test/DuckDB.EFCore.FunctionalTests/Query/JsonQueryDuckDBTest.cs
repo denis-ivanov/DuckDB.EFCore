@@ -36,9 +36,9 @@ public class JsonQueryDuckDBTest : JsonQueryRelationalTestBase<JsonQueryDuckDBFi
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Json_boolean_predicate(bool async)
+    public override async Task Json_boolean_predicate(bool async)
     {
-        return base.Json_boolean_predicate(async);
+        await base.Json_boolean_predicate(async);
     }
 
     [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
