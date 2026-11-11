@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <PackageVersion>1.0.7</PackageVersion>
-    <FileVersion>1.0.7</FileVersion>
-    <Version>1.0.7</Version>
+    <PackageVersion>1.0.8</PackageVersion>
+    <FileVersion>1.0.8</FileVersion>
+    <Version>1.0.8</Version>
     <Nullable>enable</Nullable>
     <Authors>Denis Ivanov</Authors>
     <Description>DuckDB provider for Entity Framework Core.</Description>
@@ -18,15 +18,15 @@
     <NoWarn>$(NoWarn);EF1001;EF9100</NoWarn>
     <IsPackable>true</IsPackable>
     <PackageReleaseNotes>
-        Release notes: https://github.com/denis-ivanov/DuckDB.EFCore/releases/tag/v1.0.7
+        Release notes: https://github.com/denis-ivanov/DuckDB.EFCore/releases/tag/v1.0.8
     </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="DuckDB.NET.Data.Full" Version="1.5.6.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.14" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="10.0.14" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="10.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.15" />
   </ItemGroup>
 
   <ItemGroup>
