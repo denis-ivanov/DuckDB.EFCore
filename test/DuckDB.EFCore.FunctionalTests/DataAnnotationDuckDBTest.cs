@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore;
 
@@ -14,19 +13,19 @@ public class DataAnnotationDuckDBTest : DataAnnotationRelationalTestBase<DataAnn
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task MaxLengthAttribute_throws_while_inserting_value_longer_than_max_length()
     {
         return base.MaxLengthAttribute_throws_while_inserting_value_longer_than_max_length();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task StringLengthAttribute_throws_while_inserting_value_longer_than_max_length()
     {
         return base.StringLengthAttribute_throws_while_inserting_value_longer_than_max_length();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task TimestampAttribute_throws_if_value_in_database_changed()
     {
         return base.TimestampAttribute_throws_if_value_in_database_changed();

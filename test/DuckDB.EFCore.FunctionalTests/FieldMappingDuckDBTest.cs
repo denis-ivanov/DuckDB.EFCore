@@ -10,7 +10,7 @@ public abstract class FieldMappingDuckDBTest
     public abstract class FieldMappingDuckDBTestBase<TFixture>(TFixture fixture) : FieldMappingTestBase<TFixture>(fixture)
         where TFixture : FieldMappingDuckDBTestBase<TFixture>.FieldMappingDuckDBFixtureBase, new()
     {
-        [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+        [Fact(Skip = DuckDBSkipReasons.Tbd)]
         public override void Can_define_a_backing_field_for_a_navigation_and_query_and_update_it()
         {
             base.Can_define_a_backing_field_for_a_navigation_and_query_and_update_it();

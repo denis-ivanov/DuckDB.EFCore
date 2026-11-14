@@ -1,5 +1,4 @@
 ﻿using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query.Associations.ComplexTableSplitting;
 
@@ -9,7 +8,7 @@ public class ComplexTableSplittingBulkUpdateDuckDBTest: ComplexTableSplittingBul
     {
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Update_inside_primitive_collection()
     {
         return base.Update_inside_primitive_collection();

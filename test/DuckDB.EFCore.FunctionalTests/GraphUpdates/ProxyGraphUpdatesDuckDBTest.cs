@@ -28,67 +28,150 @@ public class ProxyGraphUpdatesDuckDBTest
     public class LazyLoading(LazyLoading.ProxyGraphUpdatesWithLazyLoadingDuckDBFixture fixture)
         : ProxyGraphUpdatesDuckDBTestBase<LazyLoading.ProxyGraphUpdatesWithLazyLoadingDuckDBFixture>(fixture)
     {
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Fact(Skip = DuckDBSkipReasons.Tbd)]
         public override async Task Can_attach_full_required_non_PK_graph_of_duplicates()
         {
             await base.Can_attach_full_required_non_PK_graph_of_duplicates();
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Optional_many_to_one_dependents_are_orphaned_in_store(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Optional_many_to_one_dependents_are_orphaned_in_store(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Optional_many_to_one_dependents_with_alternate_key_are_orphaned_in_store(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Optional_many_to_one_dependents_with_alternate_key_are_orphaned_in_store(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_many_to_one_dependents_are_cascade_deleted_in_store(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_many_to_one_dependents_are_cascade_deleted_in_store(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_many_to_one_dependents_with_alternate_key_are_cascade_deleted_in_store(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_many_to_one_dependents_with_alternate_key_are_cascade_deleted_in_store(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [
+            Theory(Skip = DuckDBSkipReasons.Tbd),
+            InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges),
+            InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate),
+            InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never),
+            InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges),
+            InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate),
+            InlineData(CascadeTiming.Immediate, CascadeTiming.Never),
+            InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges),
+            InlineData(CascadeTiming.Never, CascadeTiming.Immediate),
+            InlineData(CascadeTiming.Never, CascadeTiming.Never)
+        ]
         public override async Task Required_non_PK_one_to_one_are_cascade_detached_when_Added(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_non_PK_one_to_one_are_cascade_detached_when_Added(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_non_PK_one_to_one_with_alternate_key_are_cascade_detached_when_Added(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_non_PK_one_to_one_with_alternate_key_are_cascade_detached_when_Added(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_one_to_one_are_cascade_detached_when_Added(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_one_to_one_are_cascade_detached_when_Added(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_one_to_one_with_alternate_key_are_cascade_deleted_in_store(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_one_to_one_with_alternate_key_are_cascade_deleted_in_store(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_one_to_one_with_alternate_key_are_cascade_detached_when_Added(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_one_to_one_with_alternate_key_are_cascade_detached_when_Added(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Fact(Skip = DuckDBSkipReasons.Tbd)]
         public override async Task Save_changed_optional_one_to_one_with_alternate_key_in_store()
         {
             await base.Save_changed_optional_one_to_one_with_alternate_key_in_store();
@@ -116,73 +199,148 @@ public class ProxyGraphUpdatesDuckDBTest
     public class ChangeTracking(ChangeTracking.ProxyGraphUpdatesWithChangeTrackingDuckDBFixture fixture)
         : ProxyGraphUpdatesDuckDBTestBase<ChangeTracking.ProxyGraphUpdatesWithChangeTrackingDuckDBFixture>(fixture)
     {
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-        public override async Task Can_attach_full_required_non_PK_graph_of_duplicates()
-        {
-            await base.Can_attach_full_required_non_PK_graph_of_duplicates();
-        }
-
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Optional_many_to_one_dependents_are_orphaned_in_store(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Optional_many_to_one_dependents_are_orphaned_in_store(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Optional_many_to_one_dependents_with_alternate_key_are_orphaned_in_store(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Optional_many_to_one_dependents_with_alternate_key_are_orphaned_in_store(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_many_to_one_dependents_are_cascade_deleted_in_store(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_many_to_one_dependents_are_cascade_deleted_in_store(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_many_to_one_dependents_with_alternate_key_are_cascade_deleted_in_store(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_many_to_one_dependents_with_alternate_key_are_cascade_deleted_in_store(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_non_PK_one_to_one_are_cascade_detached_when_Added(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_non_PK_one_to_one_are_cascade_detached_when_Added(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_non_PK_one_to_one_with_alternate_key_are_cascade_detached_when_Added(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_non_PK_one_to_one_with_alternate_key_are_cascade_detached_when_Added(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_one_to_one_are_cascade_detached_when_Added(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_one_to_one_are_cascade_detached_when_Added(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_one_to_one_with_alternate_key_are_cascade_deleted_in_store(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_one_to_one_with_alternate_key_are_cascade_deleted_in_store(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_one_to_one_with_alternate_key_are_cascade_detached_when_Added(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_one_to_one_with_alternate_key_are_cascade_detached_when_Added(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Fact]
         public override async Task Save_changed_optional_one_to_one_with_alternate_key_in_store()
         {
             await base.Save_changed_optional_one_to_one_with_alternate_key_in_store();
         }
 
-        [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+        [Fact(Skip = DuckDBSkipReasons.Tbd)]
         public override async Task Save_two_entity_cycle_with_lazy_loading()
         {
             await base.Save_two_entity_cycle_with_lazy_loading();
@@ -212,67 +370,152 @@ public class ProxyGraphUpdatesDuckDBTest
         : ProxyGraphUpdatesDuckDBTestBase<
             ChangeTrackingAndLazyLoading.ProxyGraphUpdatesWithChangeTrackingAndLazyLoadingDuckDBFixture>(fixture)
     {
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Fact(Skip = DuckDBSkipReasons.Tbd)]
         public override async Task Can_attach_full_required_non_PK_graph_of_duplicates()
         {
             await base.Can_attach_full_required_non_PK_graph_of_duplicates();
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [
+            Theory(Skip = DuckDBSkipReasons.Tbd),
+            InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges),
+            InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate),
+            InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never),
+            InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges),
+            InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate),
+            InlineData(CascadeTiming.Immediate, CascadeTiming.Never),
+            InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges),
+            InlineData(CascadeTiming.Never, CascadeTiming.Immediate),
+            InlineData(CascadeTiming.Never, CascadeTiming.Never)
+        ]
         public override async Task Optional_many_to_one_dependents_are_orphaned_in_store(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Optional_many_to_one_dependents_are_orphaned_in_store(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [
+            Theory(Skip = DuckDBSkipReasons.Tbd),
+            InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges),
+            InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate),
+            InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never),
+            InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges),
+            InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate),
+            InlineData(CascadeTiming.Immediate, CascadeTiming.Never),
+            InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges),
+            InlineData(CascadeTiming.Never, CascadeTiming.Immediate),
+            InlineData(CascadeTiming.Never, CascadeTiming.Never)
+        ]
         public override async Task Optional_many_to_one_dependents_with_alternate_key_are_orphaned_in_store(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Optional_many_to_one_dependents_with_alternate_key_are_orphaned_in_store(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_many_to_one_dependents_are_cascade_deleted_in_store(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_many_to_one_dependents_are_cascade_deleted_in_store(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_many_to_one_dependents_with_alternate_key_are_cascade_deleted_in_store(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_many_to_one_dependents_with_alternate_key_are_cascade_deleted_in_store(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_non_PK_one_to_one_are_cascade_detached_when_Added(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_non_PK_one_to_one_are_cascade_detached_when_Added(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_non_PK_one_to_one_with_alternate_key_are_cascade_detached_when_Added(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_non_PK_one_to_one_with_alternate_key_are_cascade_detached_when_Added(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_one_to_one_are_cascade_detached_when_Added(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_one_to_one_are_cascade_detached_when_Added(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_one_to_one_with_alternate_key_are_cascade_deleted_in_store(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_one_to_one_with_alternate_key_are_cascade_deleted_in_store(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.OnSaveChanges, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Immediate, CascadeTiming.Never)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.OnSaveChanges)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Immediate)]
+        [InlineData(CascadeTiming.Never, CascadeTiming.Never)]
         public override async Task Required_one_to_one_with_alternate_key_are_cascade_detached_when_Added(CascadeTiming cascadeDeleteTiming, CascadeTiming deleteOrphansTiming)
         {
             await base.Required_one_to_one_with_alternate_key_are_cascade_detached_when_Added(cascadeDeleteTiming, deleteOrphansTiming);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Fact(Skip = DuckDBSkipReasons.Tbd)]
         public override async Task Save_changed_optional_one_to_one_with_alternate_key_in_store()
         {
             await base.Save_changed_optional_one_to_one_with_alternate_key_in_store();

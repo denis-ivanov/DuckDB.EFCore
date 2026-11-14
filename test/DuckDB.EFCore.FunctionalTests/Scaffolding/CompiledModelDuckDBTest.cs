@@ -9,61 +9,67 @@ public class CompiledModelDuckDBTest : CompiledModelRelationalTestBase
     {
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Owned_entity_sharing_table_with_owner_that_has_an_index()
+    {
+        await base.Owned_entity_sharing_table_with_owner_that_has_an_index();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task BigModel_with_JSON_columns()
     {
         return base.BigModel_with_JSON_columns();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task CheckConstraints()
     {
         return base.CheckConstraints();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ComplexTypes()
     {
         return base.ComplexTypes();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Custom_function_parameter_type_mapping()
     {
         return base.Custom_function_parameter_type_mapping();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Custom_function_type_mapping()
     {
         return base.Custom_function_type_mapping();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task DbFunctions()
     {
         return base.DbFunctions();
     }
 
-    [ConditionalFact(Skip = "Stored procedures are not supported in DuckDB")]
+    [Fact(Skip = "Stored procedures are not supported in DuckDB")]
     public override Task Tpc_Sprocs()
     {
         return base.Tpc_Sprocs();
     }
 
-    [ConditionalFact(Skip = "duckdb_triggers function available only in v2")]
+    [Fact(Skip = "duckdb_triggers function available only in v2")]
     public override Task Triggers()
     {
         return base.Triggers();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task BigModel()
     {
         return base.BigModel();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task No_NativeAOT()
     {
         return base.No_NativeAOT();
@@ -80,6 +86,6 @@ public class CompiledModelDuckDBTest : CompiledModelRelationalTestBase
     protected override TestHelpers TestHelpers
         => DuckDBTestHelpers.Instance;
 
-    protected override ITestStoreFactory TestStoreFactory
+    protected override ITestStoreFactory NonSharedTestStoreFactory
         => DuckDBTestStoreFactory.Instance;
 }

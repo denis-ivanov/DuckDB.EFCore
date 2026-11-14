@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Query.Inheritance;
 using Microsoft.EntityFrameworkCore.Storage;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
@@ -11,7 +11,7 @@ public class InheritanceQueryDuckDBTest : TPHInheritanceQueryTestBase<TPHInherit
     {
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Setting_foreign_key_to_a_different_type_throws()
     {
         return base.Setting_foreign_key_to_a_different_type_throws();

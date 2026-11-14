@@ -10,25 +10,25 @@ public class DuckDBModelBuilderGenericTest : DuckDBModelBuilderTestBase
         {
         }
 
-        [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+        [Fact(Skip = DuckDBSkipReasons.Tbd)]
         protected override void Mapping_ignores_ignored_three_dimensional_array()
         {
             base.Mapping_ignores_ignored_three_dimensional_array();
         }
 
-        [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+        [Fact(Skip = DuckDBSkipReasons.Tbd)]
         protected override void Mapping_ignores_ignored_two_dimensional_array()
         {
             base.Mapping_ignores_ignored_two_dimensional_array();
         }
 
-        [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+        [Fact(Skip = DuckDBSkipReasons.Tbd)]
         protected override void Mapping_throws_for_non_ignored_three_dimensional_array()
         {
             base.Mapping_throws_for_non_ignored_three_dimensional_array();
         }
 
-        [ConditionalFact(Skip = "DuckDB supports dictionary types, so this test from EF Core no longer throws.")]
+        [Fact(Skip = "DuckDB supports dictionary types, so this test from EF Core no longer throws.")]
         protected override void Throws_for_int_keyed_dictionary()
         {
         }

@@ -1,4 +1,5 @@
-﻿using Xunit.Abstractions;
+﻿using Microsoft.EntityFrameworkCore.Query.Inheritance;
+using Xunit;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 

@@ -3,7 +3,6 @@ using DuckDB.EFCore.Metadata;
 using DuckDB.NET.Data;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore;
 

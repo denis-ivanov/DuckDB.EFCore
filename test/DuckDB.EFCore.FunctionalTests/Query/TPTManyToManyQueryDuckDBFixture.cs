@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.TestModels.ManyToManyModel;
+﻿using Microsoft.EntityFrameworkCore.Query.Inheritance;
+using Microsoft.EntityFrameworkCore.TestModels.ManyToManyModel;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.Query;

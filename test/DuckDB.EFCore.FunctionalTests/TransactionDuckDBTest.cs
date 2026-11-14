@@ -11,50 +11,71 @@ public class TransactionDuckDBTest : TransactionTestBase<TransactionDuckDBTest.T
     {
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task SaveChanges_uses_explicit_transaction_with_failure_behavior(bool async,
-        AutoTransactionBehavior autoTransactionBehavior)
+    [Theory(Skip = DuckDBSkipReasons.Tbd)]
+    [InlineData(true, AutoTransactionBehavior.WhenNeeded)]
+    [InlineData(true, AutoTransactionBehavior.Never)]
+    [InlineData(true, AutoTransactionBehavior.Always)]
+    [InlineData(false, AutoTransactionBehavior.WhenNeeded)]
+    [InlineData(false, AutoTransactionBehavior.Never)]
+    [InlineData(false, AutoTransactionBehavior.Always)]
+    public override async Task SaveChanges_uses_explicit_transaction_with_failure_behavior(bool async, AutoTransactionBehavior autoTransactionBehavior)
     {
         await base.SaveChanges_uses_explicit_transaction_with_failure_behavior(async, autoTransactionBehavior);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd)]
+    [InlineData(AutoTransactionBehavior.WhenNeeded)]
+    [InlineData(AutoTransactionBehavior.Never)]
+    [InlineData(AutoTransactionBehavior.Always)]
     public override void Query_uses_explicit_transaction(AutoTransactionBehavior autoTransactionBehavior)
     {
         base.Query_uses_explicit_transaction(autoTransactionBehavior);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd)]
+    [InlineData(AutoTransactionBehavior.WhenNeeded)]
+    [InlineData(AutoTransactionBehavior.Never)]
+    [InlineData(AutoTransactionBehavior.Always)]
     public override async Task QueryAsync_uses_explicit_transaction(AutoTransactionBehavior autoTransactionBehavior)
     {
         await base.QueryAsync_uses_explicit_transaction(autoTransactionBehavior);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd)]
+    [InlineData(true)]
+    [InlineData(false)]
     public override async Task SaveChanges_implicitly_creates_savepoint(bool async)
     {
         await base.SaveChanges_implicitly_creates_savepoint(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd)]
+    [InlineData(true)]
+    [InlineData(false)]
     public override async Task SaveChanges_can_be_used_with_no_savepoint(bool async)
     {
         await base.SaveChanges_can_be_used_with_no_savepoint(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd)]
+    [InlineData(true)]
+    [InlineData(false)]
     public override async Task Savepoint_can_be_rolled_back(bool async)
     {
         await base.Savepoint_can_be_rolled_back(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd)]
+    [InlineData(true)]
+    [InlineData(false)]
     public override async Task Savepoint_can_be_released(bool async)
     {
         await base.Savepoint_can_be_released(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd)]
+    [InlineData(true)]
+    [InlineData(false)]
     public override async Task Savepoint_name_is_quoted(bool async)
     {
         await base.Savepoint_name_is_quoted(async);

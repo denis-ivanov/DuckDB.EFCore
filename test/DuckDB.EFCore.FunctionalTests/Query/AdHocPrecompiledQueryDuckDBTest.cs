@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
@@ -10,13 +9,13 @@ public class AdHocPrecompiledQueryDuckDBTest : AdHocPrecompiledQueryRelationalTe
     {
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Projecting_entity_with_property_requiring_converter_with_closure_works()
     {
         return base.Projecting_entity_with_property_requiring_converter_with_closure_works();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Projecting_expression_requiring_converter_without_closure_works()
     {
         return base.Projecting_expression_requiring_converter_without_closure_works();
@@ -25,7 +24,7 @@ public class AdHocPrecompiledQueryDuckDBTest : AdHocPrecompiledQueryRelationalTe
     protected override bool AlwaysPrintGeneratedSources
         => false;
 
-    protected override ITestStoreFactory TestStoreFactory
+    protected override ITestStoreFactory NonSharedTestStoreFactory
         => DuckDBTestStoreFactory.Instance;
 
     protected override PrecompiledQueryTestHelpers PrecompiledQueryTestHelpers

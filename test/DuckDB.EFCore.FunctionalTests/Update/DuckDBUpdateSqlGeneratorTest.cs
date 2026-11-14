@@ -9,7 +9,7 @@ namespace Microsoft.EntityFrameworkCore.Update;
 
 public class DuckDBUpdateSqlGeneratorTest : UpdateSqlGeneratorTestBase
 {
-    [ConditionalFact]
+    [Fact]
     public override void AppendInsertOperation_appends_insert_and_select_rowcount_if_no_store_generated_columns_exist_or_conditions_exist()
     {
         var stringBuilder = new StringBuilder();
@@ -46,7 +46,7 @@ public class DuckDBUpdateSqlGeneratorTest : UpdateSqlGeneratorTestBase
             stringBuilder.ToString());
     }
 
-    [ConditionalFact]
+    [Fact]
     public override void GenerateNextSequenceValueOperation_correctly_handles_schemas()
     {
         var statement = CreateSqlGenerator().GenerateNextSequenceValueOperation("mysequence", "main");
@@ -56,7 +56,7 @@ public class DuckDBUpdateSqlGeneratorTest : UpdateSqlGeneratorTestBase
             statement);
     }
 
-    [ConditionalFact]
+    [Fact]
     public override void GenerateNextSequenceValueOperation_returns_statement_with_sanitized_sequence()
     {
         var statement = CreateSqlGenerator().GenerateNextSequenceValueOperation("sequence" + CloseDelimiter + "; --", null);

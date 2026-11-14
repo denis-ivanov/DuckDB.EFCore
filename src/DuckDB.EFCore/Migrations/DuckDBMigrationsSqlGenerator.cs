@@ -121,7 +121,7 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
             .Append("CREATE SEQUENCE IF NOT EXISTS ")
             .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(operation.Name, operation.Schema));
 
-        var typeMapping = Dependencies.TypeMappingSource.FindMapping(operation.ClrType);
+        var typeMapping = Dependencies.TypeMappingSource.FindMapping(typeof(long))!;
 
         builder
             .Append(" START WITH ")
@@ -154,11 +154,15 @@ public class DuckDBMigrationsSqlGenerator : MigrationsSqlGenerator
             {
                 var sequenceName = $"{operation.Name}_{column.Name}_seq";
 
+                var sequenceClrType = column.ClrType.UnwrapNullableType().IsInteger()
+                    ? column.ClrType
+                    : typeof(long);
+
                 Generate(new CreateSequenceOperation
                 {
                     Name = sequenceName,
                     Schema = operation.Schema,
-                    ClrType = column.ClrType
+                    ClrType = sequenceClrType
                 }, model, builder);
 
                 if (string.IsNullOrEmpty(column.DefaultValueSql) && column.DefaultValue == null)

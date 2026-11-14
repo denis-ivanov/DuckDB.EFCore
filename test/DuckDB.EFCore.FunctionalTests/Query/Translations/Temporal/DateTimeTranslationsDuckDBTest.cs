@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.TestModels.BasicTypesModel;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query.Translations.Temporal;
 
@@ -13,7 +12,7 @@ public class DateTimeTranslationsDuckDBTest : DateTimeTranslationsTestBase<Basic
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Strftime()
     {
         await AssertQuery(
@@ -31,7 +30,7 @@ public class DateTimeTranslationsDuckDBTest : DateTimeTranslationsTestBase<Basic
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Strptime()
     {
         await AssertQuery(
@@ -61,19 +60,19 @@ public class DateTimeTranslationsDuckDBTest : DateTimeTranslationsTestBase<Basic
             """);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Millisecond()
     {
         return base.Millisecond();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task subtract_and_TotalDays()
     {
         return base.subtract_and_TotalDays();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task TimeOfDay()
     {
         return base.TimeOfDay();

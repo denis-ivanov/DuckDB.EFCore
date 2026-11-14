@@ -1,5 +1,5 @@
-﻿using Xunit;
-using Xunit.Abstractions;
+﻿using Microsoft.EntityFrameworkCore.Query.Inheritance;
+using Xunit;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
@@ -12,7 +12,7 @@ public class TPCFiltersInheritanceQueryDuckDBTest : TPCFiltersInheritanceQueryTe
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Can_use_derived_set(bool async)
     {
         return base.Can_use_derived_set(async);

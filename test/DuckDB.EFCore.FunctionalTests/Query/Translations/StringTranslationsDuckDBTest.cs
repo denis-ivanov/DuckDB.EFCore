@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using Microsoft.EntityFrameworkCore.TestModels.BasicTypesModel;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query.Translations;
 
@@ -14,7 +13,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task DamerauLevenshtein()
     {
         await AssertQuery(
@@ -32,7 +31,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Hamming()
     {
         await AssertQuery(
@@ -50,7 +49,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Jaccard()
     {
         await AssertQuery(
@@ -68,7 +67,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Left()
     {
         await AssertQuery(
@@ -86,7 +85,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task LeftGrapheme()
     {
         await AssertQuery(
@@ -104,7 +103,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task LengthGrapheme()
     {
         await AssertQuery(
@@ -122,7 +121,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Levenshtein()
     {
         await AssertQuery(
@@ -140,7 +139,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Md5Number()
     {
         await AssertQuery(
@@ -158,7 +157,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Md5NumberLower()
     {
         await AssertQuery(
@@ -176,7 +175,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Md5NumberUpper()
     {
         await AssertQuery(
@@ -194,7 +193,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task NotILikeEscape()
     {
         await AssertQuery(
@@ -212,7 +211,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task NotLikeEscape()
     {
         await AssertQuery(
@@ -230,7 +229,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ILike()
     {
         await AssertQuery(
@@ -248,7 +247,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ILike_with_escape()
     {
         await AssertQuery(
@@ -266,7 +265,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ILike_with_escape_matching()
     {
         await AssertQuery(
@@ -284,7 +283,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task LikeEscape()
     {
         await AssertQuery(
@@ -302,7 +301,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task SimilarTo()
     {
         await AssertQuery(
@@ -320,7 +319,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task SimilarTo_negated()
     {
         await AssertQuery(
@@ -338,7 +337,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Glob()
     {
         await AssertQuery(
@@ -356,7 +355,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Glob_negated()
     {
         await AssertQuery(
@@ -374,7 +373,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task RegexExtract()
     {
         await AssertQuery(
@@ -392,7 +391,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task RegexExtract_group()
     {
         await AssertQuery(
@@ -410,7 +409,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task RegexExtract_group_and_options()
     {
         await AssertQuery(
@@ -428,7 +427,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task RegexExtractAll()
     {
         await AssertQuery(
@@ -446,7 +445,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task RegexExtractAll_group()
     {
         await AssertQuery(
@@ -464,7 +463,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task RegexExtractAll_group_and_options()
     {
         await AssertQuery(
@@ -482,7 +481,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task RegexFullMatch()
     {
         await AssertQuery(
@@ -500,7 +499,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task RegexFullMatch_options()
     {
         await AssertQuery(
@@ -518,7 +517,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task RegexMatches()
     {
         await AssertQuery(
@@ -536,7 +535,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task RegexMatches_options()
     {
         await AssertQuery(
@@ -554,7 +553,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Normalize()
     {
         await AssertQuery(
@@ -572,7 +571,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Normalize_FormC()
     {
         await AssertQuery(
@@ -590,7 +589,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task PadLeft()
     {
         await AssertQuery(
@@ -608,7 +607,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task PadRight()
     {
         await AssertQuery(
@@ -626,7 +625,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Path_GetFileName()
     {
         await AssertQuery(
@@ -644,7 +643,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Path_GetFileNameWithoutExtension()
     {
         await AssertQuery(
@@ -662,7 +661,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Uri_EscapeDataString()
     {
         await AssertQuery(
@@ -680,7 +679,7 @@ public class StringTranslationsDuckDBTest : StringTranslationsRelationalTestBase
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Uri_UnescapeDataString()
     {
         await AssertQuery(

@@ -8,6 +8,6 @@ public class AdHocQueryFiltersQueryDuckDBTest : AdHocQueryFiltersQueryRelational
     {
     }
 
-    protected override ITestStoreFactory TestStoreFactory
+    protected override ITestStoreFactory NonSharedTestStoreFactory
         => DuckDBTestStoreFactory.Instance;
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.TestModels.BasicTypesModel;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query.Translations.Temporal;
 
@@ -13,7 +12,7 @@ public class DateTimeOffsetTranslationsDuckDBTest : DateTimeOffsetTranslationsTe
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Strftime()
     {
         await AssertQuery(
@@ -34,123 +33,159 @@ public class DateTimeOffsetTranslationsDuckDBTest : DateTimeOffsetTranslationsTe
     private void AssertSql(params string[] expected)
         => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task AddDays()
     {
         return base.AddDays();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task AddHours()
     {
         return base.AddHours();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task AddMilliseconds()
     {
         return base.AddMilliseconds();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task AddMinutes()
     {
         return base.AddMinutes();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task AddMonths()
     {
         return base.AddMonths();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task AddSeconds()
     {
         return base.AddSeconds();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task AddYears()
     {
         return base.AddYears();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Date()
     {
         return base.Date();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task DayOfYear()
     {
         return base.DayOfYear();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Hour()
     {
         return base.Hour();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Day()
     {
         return base.Day();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Microsecond()
     {
         return base.Microsecond();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Millisecond()
     {
         return base.Millisecond();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Nanosecond()
     {
         return base.Nanosecond();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Now()
     {
         return base.Now();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task TimeOfDay()
     {
         return base.TimeOfDay();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ToUnixTimeMilliseconds()
     {
         return base.ToUnixTimeMilliseconds();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Minute()
     {
         return base.Minute();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ToUnixTimeSecond()
     {
         return base.ToUnixTimeSecond();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task UtcNow()
     {
         return base.UtcNow();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Ctor_DateTime()
+    {
+        await base.Ctor_DateTime();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Ctor_DateTime_TimeSpan()
+    {
+        await base.Ctor_DateTime_TimeSpan();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task DateTime()
+    {
+        await base.DateTime();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task LocalDateTime()
+    {
+        await base.LocalDateTime();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task ToOffset()
+    {
+        await base.ToOffset();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task UtcDateTime()
+    {
+        await base.UtcDateTime();
     }
 }

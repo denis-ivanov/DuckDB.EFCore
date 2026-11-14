@@ -3,29 +3,46 @@ using Xunit;
 
 namespace Microsoft.EntityFrameworkCore;
 
-// TODO
-/*
- * Can_build_monster_model_and_seed_data_using_dependent_navigations
- * Can_build_monster_model_and_seed_data_using_navigations_with_deferred_add
- * Can_build_monster_model_and_seed_data_using_principal_navigations
- * Composite_fixup_happens_when_FKs_change_test
- */
-public abstract class MonsterFixupChangedOnlyDuckDBTest : MonsterFixupTestBase<MonsterFixupChangedOnlyDuckDBTest.MonsterFixupChangedOnlyDuckDBFixture>
+public class MonsterFixupChangedOnlyDuckDBTest : MonsterFixupTestBase<MonsterFixupChangedOnlyDuckDBTest.MonsterFixupChangedOnlyDuckDBFixture>
 {
-    protected MonsterFixupChangedOnlyDuckDBTest(MonsterFixupChangedOnlyDuckDBFixture fixture) : base(fixture)
+    public MonsterFixupChangedOnlyDuckDBTest(MonsterFixupChangedOnlyDuckDBFixture fixture) : base(fixture)
     {
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_build_monster_model_and_seed_data_using_FKs()
     {
         await base.Can_build_monster_model_and_seed_data_using_FKs();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_build_monster_model_and_seed_data_using_all_navigations()
     {
         await base.Can_build_monster_model_and_seed_data_using_all_navigations();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Can_build_monster_model_and_seed_data_using_dependent_navigations()
+    {
+        await base.Can_build_monster_model_and_seed_data_using_dependent_navigations();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Can_build_monster_model_and_seed_data_using_navigations_with_deferred_add()
+    {
+        await base.Can_build_monster_model_and_seed_data_using_navigations_with_deferred_add();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Can_build_monster_model_and_seed_data_using_principal_navigations()
+    {
+        await base.Can_build_monster_model_and_seed_data_using_principal_navigations();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Composite_fixup_happens_when_FKs_change_test()
+    {
+        await base.Composite_fixup_happens_when_FKs_change_test();
     }
 
     public class MonsterFixupChangedOnlyDuckDBFixture : MonsterFixupChangedOnlyFixtureBase

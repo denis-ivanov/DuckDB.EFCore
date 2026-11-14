@@ -42,7 +42,7 @@ public class DuckDBAnnotationProvider : RelationalAnnotationProvider
         if (property != null)
         {
             var strategy = property.GetValueGenerationStrategy();
-            if (strategy != DuckDBValueGenerationStrategy.None)
+            if (strategy != DuckDBValueGenerationStrategy.None && property.IsCompatibleWithValueGeneration())
             {
                 yield return new Annotation(DuckDBAnnotationNames.ValueGenerationStrategy, strategy);
             }

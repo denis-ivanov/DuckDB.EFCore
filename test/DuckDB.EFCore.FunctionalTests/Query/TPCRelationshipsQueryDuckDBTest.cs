@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.TestUtilities;
-using Xunit.Abstractions;
+﻿using Microsoft.EntityFrameworkCore.Query.Inheritance;
+using Microsoft.EntityFrameworkCore.TestUtilities;
+using Xunit;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 

@@ -11,7 +11,7 @@ public class LazyLoadProxyDuckDBTest : LazyLoadProxyRelationalTestBase<LazyLoadP
     {
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override void Can_serialize_proxies_to_JSON()
     {
         base.Can_serialize_proxies_to_JSON();

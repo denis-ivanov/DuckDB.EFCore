@@ -30,6 +30,23 @@ public static class DuckDBPropertyExtensions
         return DuckDBValueGenerationStrategy.None;
     }
 
+    /// <summary>
+    ///     Returns a value indicating whether the property is compatible with any <see cref="DuckDBValueGenerationStrategy" />.
+    /// </summary>
+    /// <param name="property">The property.</param>
+    /// <returns><see langword="true" /> if compatible.</returns>
+    public static bool IsCompatibleWithValueGeneration(this IReadOnlyProperty property)
+    {
+        var valueConverter = property.GetValueConverter()
+            ?? property.FindTypeMapping()?.Converter;
+
+        var type = (property.GetProviderClrType()
+            ?? valueConverter?.ProviderClrType
+            ?? property.ClrType).UnwrapNullableType();
+
+        return type.IsInteger();
+    }
+
     public static CompressionType? GetCompressionType(this IReadOnlyProperty property)
     {
         var annotation = property.FindAnnotation(DuckDBAnnotationNames.CompressionType);

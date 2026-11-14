@@ -1,5 +1,5 @@
+using Microsoft.EntityFrameworkCore.Query.Inheritance;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
@@ -9,7 +9,7 @@ public class IncompleteMappingInheritanceQueryDuckDBTest : TPHInheritanceQueryTe
     {
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Setting_foreign_key_to_a_different_type_throws()
     {
         return base.Setting_foreign_key_to_a_different_type_throws();

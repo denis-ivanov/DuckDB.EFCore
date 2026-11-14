@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
@@ -12,13 +11,31 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task GroupBy_aggregate_projecting_conditional_expression(bool async)
     {
         return base.GroupBy_aggregate_projecting_conditional_expression(async);
     }
 
-    [ConditionalFact]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
+    public override async Task GroupBy_Select_Entire_Entity_composite_key_Select(bool async)
+    {
+        await base.GroupBy_Select_Entire_Entity_composite_key_Select(async);
+    }
+
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
+    public override async Task GroupBy_Select_Entire_Entity_Order(bool async)
+    {
+        await base.GroupBy_Select_Entire_Entity_Order(async);
+    }
+
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
+    public override async Task GroupBy_Select_Entire_Entity_Where(bool async)
+    {
+        await base.GroupBy_Select_Entire_Entity_Where(async);
+    }
+
+    [Fact]
     public void GroupBy_AnyValue_translates_to_ANY_VALUE()
     {
         using var context = CreateContext();
@@ -42,7 +59,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ApproxCountDistinct_translates_to_APPROX_COUNT_DISTINCT()
     {
         using var context = CreateContext();
@@ -67,7 +84,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ApproxQuantile_translates_to_APPROX_QUANTILE()
     {
         using var context = CreateContext();
@@ -92,7 +109,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ApproxQuantile_with_array_translates_to_APPROX_QUANTILE()
     {
         using var context = CreateContext();
@@ -118,7 +135,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Quantile_translates_to_QUANTILE()
     {
         using var context = CreateContext();
@@ -143,7 +160,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Quantile_with_array_translates_to_QUANTILE()
     {
         using var context = CreateContext();
@@ -169,7 +186,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Quantile_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -196,7 +213,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_QuantileCont_translates_to_QUANTILE_CONT()
     {
         using var context = CreateContext();
@@ -221,7 +238,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_QuantileCont_with_array_translates_to_QUANTILE_CONT()
     {
         using var context = CreateContext();
@@ -247,7 +264,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_QuantileCont_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -274,7 +291,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_QuantileDisc_translates_to_QUANTILE_DISC()
     {
         using var context = CreateContext();
@@ -299,7 +316,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_QuantileDisc_with_array_translates_to_QUANTILE_DISC()
     {
         using var context = CreateContext();
@@ -325,7 +342,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_QuantileDisc_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -352,7 +369,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ApproxTopK_translates_to_APPROX_TOP_K()
     {
         using var context = CreateContext();
@@ -378,7 +395,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ReservoirQuantile_translates_to_RESERVOIR_QUANTILE()
     {
         using var context = CreateContext();
@@ -403,7 +420,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ReservoirQuantile_with_sample_size_translates_to_RESERVOIR_QUANTILE()
     {
         using var context = CreateContext();
@@ -428,7 +445,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ReservoirQuantile_with_array_translates_to_RESERVOIR_QUANTILE()
     {
         using var context = CreateContext();
@@ -454,7 +471,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ReservoirQuantile_with_array_and_sample_size_translates_to_RESERVOIR_QUANTILE()
     {
         using var context = CreateContext();
@@ -480,7 +497,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ArgMax_translates_to_ARG_MAX()
     {
         using var context = CreateContext();
@@ -505,7 +522,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ArgMax_with_count_translates_to_ARG_MAX()
     {
         using var context = CreateContext();
@@ -531,7 +548,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ArgMaxNull_translates_to_ARG_MAX_NULL()
     {
         using var context = CreateContext();
@@ -556,7 +573,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ArgMin_translates_to_ARG_MIN()
     {
         using var context = CreateContext();
@@ -581,7 +598,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ArgMin_with_count_translates_to_ARG_MIN()
     {
         using var context = CreateContext();
@@ -607,7 +624,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ArgMinNull_translates_to_ARG_MIN_NULL()
     {
         using var context = CreateContext();
@@ -632,7 +649,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_BitAnd_translates_to_BIT_AND()
     {
         using var context = CreateContext();
@@ -657,7 +674,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_BitOr_translates_to_BIT_OR()
     {
         using var context = CreateContext();
@@ -682,7 +699,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_BitXor_translates_to_BIT_XOR()
     {
         using var context = CreateContext();
@@ -707,7 +724,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_BitStringAgg_with_bounds_translates_to_BITSTRING_AGG()
     {
         using var context = CreateContext();
@@ -733,7 +750,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_BitStringAgg_translates_to_BITSTRING_AGG()
     {
         using var context = CreateContext();
@@ -758,7 +775,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_BoolAnd_translates_to_BOOL_AND()
     {
         using var context = CreateContext();
@@ -783,7 +800,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_BoolOr_translates_to_BOOL_OR()
     {
         using var context = CreateContext();
@@ -808,7 +825,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_BoolAnd_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -835,7 +852,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_CountIf_translates_to_COUNTIF()
     {
         using var context = CreateContext();
@@ -861,7 +878,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_CountIf_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -888,7 +905,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_FAvg_translates_to_FAVG()
     {
         using var context = CreateContext();
@@ -914,7 +931,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_FAvg_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -941,7 +958,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_FSum_translates_to_FSUM()
     {
         using var context = CreateContext();
@@ -967,7 +984,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_FSum_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -994,7 +1011,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ArgFirst_translates_to_FIRST()
     {
         using var context = CreateContext();
@@ -1020,7 +1037,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_ArgFirst_with_nullable_selector_translates_to_FIRST()
     {
         using var context = CreateContext();
@@ -1047,7 +1064,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_GeometricMean_translates_to_GEOMETRIC_MEAN()
     {
         using var context = CreateContext();
@@ -1073,7 +1090,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_GeometricMean_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -1100,7 +1117,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Product_translates_to_PRODUCT()
     {
         using var context = CreateContext();
@@ -1126,7 +1143,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Product_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -1153,7 +1170,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Histogram_translates_to_HISTOGRAM()
     {
         using var context = CreateContext();
@@ -1179,7 +1196,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Histogram_with_boundaries_translates_to_HISTOGRAM()
     {
         using var context = CreateContext();
@@ -1205,7 +1222,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_HistogramExact_translates_to_HISTOGRAM_EXACT()
     {
         using var context = CreateContext();
@@ -1231,7 +1248,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Max_with_count_translates_to_MAX()
     {
         using var context = CreateContext();
@@ -1257,7 +1274,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Min_with_count_translates_to_MIN()
     {
         using var context = CreateContext();
@@ -1283,7 +1300,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Corr_translates_to_CORR()
     {
         using var context = CreateContext();
@@ -1308,7 +1325,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Corr_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -1335,7 +1352,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_CovarPop_translates_to_COVAR_POP()
     {
         using var context = CreateContext();
@@ -1360,7 +1377,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_CovarPop_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -1387,7 +1404,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Entropy_translates_to_ENTROPY()
     {
         using var context = CreateContext();
@@ -1413,7 +1430,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Entropy_with_nullable_selector_translates_to_ENTROPY()
     {
         using var context = CreateContext();
@@ -1441,7 +1458,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Kurtosis_translates_to_KURTOSIS()
     {
         using var context = CreateContext();
@@ -1466,7 +1483,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Kurtosis_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -1493,7 +1510,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_KurtosisPop_translates_to_KURTOSIS_POP()
     {
         using var context = CreateContext();
@@ -1518,7 +1535,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_KurtosisPop_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -1545,7 +1562,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Mad_translates_to_MAD()
     {
         using var context = CreateContext();
@@ -1570,7 +1587,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Mad_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -1597,7 +1614,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Median_translates_to_MEDIAN()
     {
         using var context = CreateContext();
@@ -1622,7 +1639,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Median_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -1649,7 +1666,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Mode_translates_to_MODE()
     {
         using var context = CreateContext();
@@ -1674,7 +1691,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Mode_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -1701,7 +1718,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_CovarSamp_translates_to_COVAR_SAMP()
     {
         using var context = CreateContext();
@@ -1726,7 +1743,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_CovarSamp_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -1753,7 +1770,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrAvgx_translates_to_REGR_AVGX()
     {
         using var context = CreateContext();
@@ -1778,7 +1795,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrAvgx_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -1805,7 +1822,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrAvgy_translates_to_REGR_AVGY()
     {
         using var context = CreateContext();
@@ -1830,7 +1847,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrAvgy_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -1857,7 +1874,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrCount_translates_to_REGR_COUNT()
     {
         using var context = CreateContext();
@@ -1882,7 +1899,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrCount_with_nullable_selector_returns_zero_for_all_null_group()
     {
         using var context = CreateContext();
@@ -1909,7 +1926,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrIntercept_translates_to_REGR_INTERCEPT()
     {
         using var context = CreateContext();
@@ -1934,7 +1951,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrIntercept_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -1961,7 +1978,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrR2_translates_to_REGR_R2()
     {
         using var context = CreateContext();
@@ -1986,7 +2003,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrR2_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -2013,7 +2030,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrSlope_translates_to_REGR_SLOPE()
     {
         using var context = CreateContext();
@@ -2038,7 +2055,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrSlope_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -2065,7 +2082,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrSxx_translates_to_REGR_SXX()
     {
         using var context = CreateContext();
@@ -2090,7 +2107,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrSxx_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -2117,7 +2134,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrSxy_translates_to_REGR_SXY()
     {
         using var context = CreateContext();
@@ -2142,7 +2159,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrSxy_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -2169,7 +2186,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrSyy_translates_to_REGR_SYY()
     {
         using var context = CreateContext();
@@ -2194,7 +2211,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_RegrSyy_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -2221,7 +2238,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Sem_translates_to_SEM()
     {
         using var context = CreateContext();
@@ -2246,7 +2263,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Sem_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -2273,7 +2290,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Skewness_translates_to_SKEWNESS()
     {
         using var context = CreateContext();
@@ -2298,7 +2315,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_Skewness_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -2325,7 +2342,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_StddevPop_translates_to_STDDEV_POP()
     {
         using var context = CreateContext();
@@ -2350,7 +2367,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_StddevPop_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -2377,7 +2394,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_StddevSamp_translates_to_STDDEV_SAMP()
     {
         using var context = CreateContext();
@@ -2402,7 +2419,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_StddevSamp_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -2429,7 +2446,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_VarPop_translates_to_VAR_POP()
     {
         using var context = CreateContext();
@@ -2454,7 +2471,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_VarPop_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();
@@ -2481,7 +2498,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_VarSamp_translates_to_VAR_SAMP()
     {
         using var context = CreateContext();
@@ -2506,7 +2523,7 @@ public class NorthwindGroupByQueryDuckDBTest : NorthwindGroupByQueryRelationalTe
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void GroupBy_VarSamp_with_nullable_selector_returns_null_for_all_null_group()
     {
         using var context = CreateContext();

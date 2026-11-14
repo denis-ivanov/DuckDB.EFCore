@@ -1,5 +1,5 @@
-﻿using Xunit;
-using Xunit.Abstractions;
+﻿using Microsoft.EntityFrameworkCore.BulkUpdates.Inheritance;
+using Xunit;
 
 namespace Microsoft.EntityFrameworkCore.BulkUpdates;
 
@@ -16,13 +16,13 @@ public class TPTFiltersInheritanceBulkUpdatesDuckDBTest : TPTFiltersInheritanceB
         Fixture.TestSqlLoggerFactory.Clear();
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Update_base_property_on_derived_type(bool async)
     {
         return base.Update_base_property_on_derived_type(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Update_base_type_with_OfType(bool async)
     {
         return base.Update_base_type_with_OfType(async);

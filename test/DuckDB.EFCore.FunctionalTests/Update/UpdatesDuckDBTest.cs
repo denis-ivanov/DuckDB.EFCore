@@ -10,25 +10,27 @@ public class UpdatesDuckDBTest : UpdatesRelationalTestBase<UpdatesDuckDBTest.Upd
     {
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Can_change_enums_with_conversion()
     {
         return base.Can_change_enums_with_conversion();
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd)]
+    [InlineData(false)]
+    [InlineData(true)]
     public override Task Can_change_type_of__dependent_by_replacing_with_new_dependent(bool async)
     {
         return base.Can_change_type_of__dependent_by_replacing_with_new_dependent(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Can_change_type_of_pk_to_pk_dependent_by_replacing_with_new_dependent(bool async)
+    [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData(false), InlineData(true)]
+    public override async Task Can_change_type_of_pk_to_pk_dependent_by_replacing_with_new_dependent(bool async)
     {
-        return base.Can_change_type_of_pk_to_pk_dependent_by_replacing_with_new_dependent(async);
+        await base.Can_change_type_of_pk_to_pk_dependent_by_replacing_with_new_dependent(async);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Can_use_shared_columns_with_conversion()
     {
         return base.Can_use_shared_columns_with_conversion();
@@ -55,7 +57,7 @@ public class UpdatesDuckDBTest : UpdatesRelationalTestBase<UpdatesDuckDBTest.Upd
             entityType.GetIndexes().Single().GetDatabaseName());
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Save_with_shared_foreign_key()
     {
         return base.Save_with_shared_foreign_key();

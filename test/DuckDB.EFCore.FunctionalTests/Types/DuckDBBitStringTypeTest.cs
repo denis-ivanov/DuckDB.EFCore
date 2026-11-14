@@ -1,44 +1,41 @@
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using System.Collections;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Types;
 
 public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBitStringTypeTest.BitStringFixture>
 {
     public DuckDBBitStringTypeTest(BitStringFixture fixture, ITestOutputHelper testOutputHelper)
-        : base(fixture)
+        : base(fixture, testOutputHelper)
     {
-        Fixture.TestSqlLoggerFactory.Clear();
-        Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_another_json_property()
     {
         return base.ExecuteUpdate_within_json_to_another_json_property();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_constant()
     {
         return base.ExecuteUpdate_within_json_to_constant();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_nonjson_column()
     {
         return base.ExecuteUpdate_within_json_to_nonjson_column();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_parameter()
     {
         return base.ExecuteUpdate_within_json_to_parameter();
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Bit_columns_are_created_with_BIT_store_type()
     {
         using var context = CreateBitStringContext();
@@ -50,7 +47,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         Assert.Equal("BIT", entityType.FindProperty(nameof(BitStringEntity.NullableBits))!.GetColumnType());
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_round_trip_bit_string_as_string()
     {
         using var context = CreateBitStringContext();
@@ -64,7 +61,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         Assert.Equal("10101", entity.BitString);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_round_trip_bit_string_as_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -81,7 +78,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         Assert.Equal(bits.Cast<bool>(), entity.Bits.Cast<bool>());
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_round_trip_null_bit_string()
     {
         using var context = CreateBitStringContext();
@@ -95,7 +92,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         Assert.Null(entity.NullableBits);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Preserves_leading_zeros()
     {
         using var context = CreateBitStringContext();
@@ -109,7 +106,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         Assert.Equal("000000101011", entity.BitString);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_filter_by_bit_string_parameter()
     {
         using var context = CreateBitStringContext();
@@ -124,7 +121,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         Assert.Equal(5, entity.Id);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_filter_by_bit_string_constant()
     {
         using var context = CreateBitStringContext();
@@ -140,7 +137,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         Assert.Contains("'111000'", Fixture.TestSqlLoggerFactory.SqlStatements[^1]);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_update_bit_string()
     {
         using var context = CreateBitStringContext();
@@ -160,7 +157,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         Assert.Equal(new BitArray([false, true]).Cast<bool>(), entity.Bits.Cast<bool>());
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Explicit_store_type_is_not_overridden_for_BitArray()
     {
         var options = new DbContextOptionsBuilder(Fixture.CreateOptions()).Options;
@@ -170,7 +167,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         Assert.Throws<InvalidOperationException>(() => context.Model);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_translate_bit_length_for_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -193,7 +190,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_translate_bit_length_for_string_mapped_to_bit()
     {
         using var context = CreateBitStringContext();
@@ -216,7 +213,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_bit_length()
     {
         using var context = CreateBitStringContext();
@@ -247,7 +244,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public void Can_translate_And_for_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -275,7 +272,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_And_for_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -307,7 +304,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_translate_And_between_columns_for_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -342,7 +339,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_translate_Or_for_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -370,7 +367,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_Or_for_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -402,7 +399,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_translate_Or_between_columns_for_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -437,7 +434,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_translate_Xor_for_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -465,7 +462,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_Xor_for_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -497,7 +494,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_translate_Xor_between_columns_for_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -532,7 +529,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_translate_Not_for_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -558,7 +555,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_Not_for_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -587,7 +584,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_translate_LeftShift_for_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -613,7 +610,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_LeftShift_for_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -642,7 +639,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_translate_RightShift_for_BitArray()
     {
         using var context = CreateBitStringContext();
@@ -668,7 +665,7 @@ public class DuckDBBitStringTypeTest : RelationalTypeTestBase<BitArray, DuckDBBi
         );
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_RightShift_for_BitArray()
     {
         using var context = CreateBitStringContext();

@@ -9,61 +9,75 @@ public class JsonTypesDuckDBTest : JsonTypesRelationalTestBase
     {
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData(false), InlineData(true)]
+    public override void Can_read_write_collection_of_nullable_struct_with_null_returning_converter(bool existingCollection)
+    {
+        base.Can_read_write_collection_of_nullable_struct_with_null_returning_converter(existingCollection);
+    }
+
+    [Theory(Skip = DuckDBSkipReasons.Tbd)]
+    [InlineData(false)]
+    [InlineData(true)]
+    public override void Can_read_write_collection_of_nullable_int_with_null_returning_converter(bool existingCollection)
+    {
+        base.Can_read_write_collection_of_nullable_int_with_null_returning_converter(existingCollection);
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_array_of_array_of_array_of_int_JSON_values()
     {
         await base.Can_read_write_array_of_array_of_array_of_int_JSON_values();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_array_of_list_of_array_of_IPAddress_JSON_values()
     {
         await base.Can_read_write_array_of_list_of_array_of_IPAddress_JSON_values();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_array_of_list_of_array_of_string_JSON_values()
     {
         await base.Can_read_write_array_of_list_of_array_of_string_JSON_values();
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData("""{"Prop":[["AAEC","AQ==","TQ=="],[],["Tg=="]]}""")]
     public override async Task Can_read_write_array_of_list_of_binary_JSON_values(string expected)
     {
         await base.Can_read_write_array_of_list_of_binary_JSON_values(expected);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData("""{"Prop":[["00000000-0000-0000-0000-000000000000","8c44242f-8e3f-4a20-8be8-98c7c1aadebd"],[],["ffffffff-ffff-ffff-ffff-ffffffffffff"]]}""")]
     public override async Task Can_read_write_array_of_list_of_GUID_JSON_values(string expected)
     {
         await base.Can_read_write_array_of_list_of_GUID_JSON_values(expected);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_array_of_list_of_int_JSON_values()
     {
         await base.Can_read_write_array_of_list_of_int_JSON_values();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_array_of_list_of_IPAddress_JSON_values()
     {
         await base.Can_read_write_array_of_list_of_IPAddress_JSON_values();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_array_of_list_of_string_JSON_values()
     {
         await base.Can_read_write_array_of_list_of_string_JSON_values();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_array_of_list_of_ulong_JSON_values()
     {
         await base.Can_read_write_array_of_list_of_ulong_JSON_values();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_collection_of_nullable_ulong_enum_JSON_values()
     {
         await base.Can_read_write_collection_of_nullable_ulong_enum_JSON_values();
@@ -82,120 +96,136 @@ public class JsonTypesDuckDBTest : JsonTypesRelationalTestBase
             """{"Prop":[0,18446744073709551615,0,1,8]}""", // DuckDB supports UBIGINT natively, unlike SQL Server
             mappedCollection: true);
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData("""{"Prop":[["AAEC","AQ==","TQ=="],[],["Tg=="]]}""")]
     public override async Task Can_read_write_list_of_array_of_binary_JSON_values(string expected)
     {
         await base.Can_read_write_list_of_array_of_binary_JSON_values(expected);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData(
+        """{"Prop":[["00000000-0000-0000-0000-000000000000","8c44242f-8e3f-4a20-8be8-98c7c1aadebd"],[],["ffffffff-ffff-ffff-ffff-ffffffffffff"]]}""")]
     public override async Task Can_read_write_list_of_array_of_GUID_JSON_values(string expected)
     {
         await base.Can_read_write_list_of_array_of_GUID_JSON_values(expected);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_list_of_array_of_int_JSON_values()
     {
         await base.Can_read_write_list_of_array_of_int_JSON_values();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_list_of_array_of_list_of_IPAddress_JSON_values()
     {
         await base.Can_read_write_list_of_array_of_list_of_IPAddress_JSON_values();
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_list_of_array_of_IPAddress_JSON_values()
     {
         await base.Can_read_write_list_of_array_of_IPAddress_JSON_values();
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData("""{"Prop":[[[["AAEC","AQ==","TQ=="]],[],[[],[]]],[],[[[]],[["AAEC","AQ==","TQ=="]]]]}""")]
     public override async Task Can_read_write_list_of_array_of_list_of_array_of_binary_JSON_values(string expected)
     {
         await base.Can_read_write_list_of_array_of_list_of_array_of_binary_JSON_values(expected);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_list_of_array_of_list_of_string_JSON_values()
     {
         await base.Can_read_write_list_of_array_of_list_of_string_JSON_values();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_list_of_array_of_list_of_ulong_JSON_values()
     {
         await base.Can_read_write_list_of_array_of_list_of_ulong_JSON_values();
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData("""{"Prop":[["00000000-0000-0000-0000-000000000000",null,"8c44242f-8e3f-4a20-8be8-98c7c1aadebd"],[],["ffffffff-ffff-ffff-ffff-ffffffffffff"]]}""")]
     public override async Task Can_read_write_list_of_array_of_nullable_GUID_JSON_values(string expected)
     {
         await base.Can_read_write_list_of_array_of_nullable_GUID_JSON_values(expected);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_list_of_array_of_nullable_int_JSON_values()
     {
         await base.Can_read_write_list_of_array_of_nullable_int_JSON_values();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_list_of_array_of_nullable_ulong_JSON_values()
     {
         await base.Can_read_write_list_of_array_of_nullable_ulong_JSON_values();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_list_of_array_of_string_JSON_values()
     {
         await base.Can_read_write_list_of_array_of_string_JSON_values();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_list_of_array_of_ulong_JSON_values()
     {
         await base.Can_read_write_list_of_array_of_ulong_JSON_values();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_read_write_list_of_list_of_list_of_int_JSON_values()
     {
         await base.Can_read_write_list_of_list_of_list_of_int_JSON_values();
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [
+        Theory(Skip = DuckDBSkipReasons.Tbd),
+        InlineData((ulong)EnumU64.Min, """{"Prop":0}"""),
+        InlineData((ulong)EnumU64.Max, """{"Prop":18446744073709551615}"""),
+        InlineData((ulong)EnumU64.One, """{"Prop":1}"""),
+        InlineData(null, """{"Prop":null}""")
+    ]
     public override async Task Can_read_write_nullable_ulong_enum_JSON_values(object? value, string json)
     {
         await base.Can_read_write_nullable_ulong_enum_JSON_values(value, json);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [
+        Theory(Skip = DuckDBSkipReasons.Tbd),
+        InlineData((ulong)EnumU64.Min, """{"Prop":0}"""),
+        InlineData((ulong)EnumU64.Max, """{"Prop":18446744073709551615}"""),
+        InlineData((ulong)EnumU64.One, """{"Prop":1}""")
+    ]
     public override async Task Can_read_write_ulong_enum_JSON_values(EnumU64 value, string json)
     {
         await base.Can_read_write_ulong_enum_JSON_values(value, json);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData("""{"Prop":["AAAAAQ==","/////w==","","AQIDBA=="]}""")]
     public override async Task Can_read_write_collection_of_binary_JSON_values(string expected)
     {
         await base.Can_read_write_collection_of_binary_JSON_values(expected);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [
+        Theory(Skip = DuckDBSkipReasons.Tbd),
+        InlineData("""{"Prop":["AAAAAAAAAAAAAAAAAAAAAA==","LyREjD+OIEqL6JjHwarevQ==","/////////////////////w=="]}""")
+    ]
     public override async Task Can_read_write_collection_of_Guid_converted_to_bytes_JSON_values(string expected)
     {
         await base.Can_read_write_collection_of_Guid_converted_to_bytes_JSON_values(expected);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd)]
+    [InlineData("{\"Prop\":[\"AAAAAQ==\",null,\"/////w==\",\"\",\"AQIDBA==\"]}")]
     public override async Task Can_read_write_collection_of_nullable_binary_JSON_values(string expected)
     {
         await base.Can_read_write_collection_of_nullable_binary_JSON_values(expected);
     }
 
-    protected override ITestStoreFactory TestStoreFactory
+    protected override ITestStoreFactory NonSharedTestStoreFactory
         => DuckDBTestStoreFactory.Instance;
 }
