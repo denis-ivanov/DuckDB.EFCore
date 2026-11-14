@@ -33,14 +33,14 @@ jobs:
       run: dotnet build --no-restore
 
     - name: Test
-      run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover --logger:"junit;LogFilePath=junit.xml"
+      run: dotnet test --no-build --verbosity normal -- --coverlet --coverlet-output-format opencover --report-xunit-junit --report-xunit-junit-filename junit.xml
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v7
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         slug: denis-ivanov/DuckDB.EFCore
-        files: ./**/coverage.opencover.xml
+        files: ./**/coverage*.xml
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
