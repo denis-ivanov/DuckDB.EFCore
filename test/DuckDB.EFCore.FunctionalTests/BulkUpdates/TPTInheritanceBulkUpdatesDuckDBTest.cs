@@ -1,5 +1,5 @@
-﻿using Xunit;
-using Xunit.Abstractions;
+﻿using Microsoft.EntityFrameworkCore.BulkUpdates.Inheritance;
+using Xunit;
 
 namespace Microsoft.EntityFrameworkCore.BulkUpdates;
 
@@ -9,21 +9,15 @@ public class TPTInheritanceBulkUpdatesDuckDBTest : TPTInheritanceBulkUpdatesTest
     {
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_base_property_on_derived_type(bool async)
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
+    public override async Task Update_base_property_on_derived_type(bool async)
     {
-        return base.Update_base_property_on_derived_type(async);
+        await base.Update_base_property_on_derived_type(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Update_base_type_with_OfType(bool async)
     {
         return base.Update_base_type_with_OfType(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Delete_GroupBy_Where_Select_First_3(bool async)
-    {
-        return base.Delete_GroupBy_Where_Select_First_3(async);
     }
 }

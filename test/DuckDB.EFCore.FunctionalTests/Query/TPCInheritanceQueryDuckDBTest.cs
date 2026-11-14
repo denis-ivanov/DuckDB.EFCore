@@ -1,23 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Query.Inheritance;
 using Microsoft.EntityFrameworkCore.Storage;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
-public class TPCInheritanceQueryDuckDBTest: TPCInheritanceQueryTestBase<TPCInheritanceQueryDuckDBFixture>
+public class TPCInheritanceQueryDuckDBTest : TPCInheritanceQueryTestBase<TPCInheritanceQueryDuckDBFixture>
 {
     public TPCInheritanceQueryDuckDBTest(TPCInheritanceQueryDuckDBFixture fixture, ITestOutputHelper testOutputHelper) : base(fixture, testOutputHelper)
     {
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Can_insert_update_delete()
     {
         return base.Can_insert_update_delete();
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Setting_foreign_key_to_a_different_type_throws()
     {
         return base.Setting_foreign_key_to_a_different_type_throws();

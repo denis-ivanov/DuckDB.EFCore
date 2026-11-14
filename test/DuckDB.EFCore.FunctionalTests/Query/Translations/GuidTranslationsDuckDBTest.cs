@@ -1,4 +1,4 @@
-﻿using Xunit.Abstractions;
+﻿using Xunit;
 
 namespace Microsoft.EntityFrameworkCore.Query.Translations;
 
@@ -9,10 +9,5 @@ public class GuidTranslationsDuckDBTest : GuidTranslationsTestBase<BasicTypesQue
     {
         Fixture.TestSqlLoggerFactory.Clear();
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
-    }
-
-    public override Task NewGuid()
-    {
-        return base.NewGuid();
     }
 }

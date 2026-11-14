@@ -9,13 +9,13 @@ public class NorthwindSetOperationsQueryDuckDBTest : NorthwindSetOperationsQuery
     {
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Client_eval_Union_FirstOrDefault(bool async)
     {
         return base.Client_eval_Union_FirstOrDefault(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Select_Union_different_fields_in_anonymous_with_subquery(bool async)
     {
         return base.Select_Union_different_fields_in_anonymous_with_subquery(async);

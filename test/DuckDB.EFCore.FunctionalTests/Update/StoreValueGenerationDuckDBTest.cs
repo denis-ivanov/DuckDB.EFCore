@@ -1,5 +1,4 @@
 ﻿using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Update;
 
@@ -12,79 +11,79 @@ public class StoreValueGenerationDuckDBTest : StoreValueGenerationTestBase<Store
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Add_Add_with_different_entity_types_and_all_generated_values(bool async)
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
+    public override async Task Add_Add_with_different_entity_types_and_all_generated_values(bool async)
     {
-        return base.Add_Add_with_different_entity_types_and_all_generated_values(async);
+        await base.Add_Add_with_different_entity_types_and_all_generated_values(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Add_Add_with_different_entity_types_and_generated_values(bool async)
     {
         return base.Add_Add_with_different_entity_types_and_generated_values(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Add_Add_with_different_entity_types_and_no_generated_values(bool async)
     {
         return base.Add_Add_with_different_entity_types_and_no_generated_values(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Add_Add_with_same_entity_type_and_all_generated_values(bool async)
     {
         return base.Add_Add_with_same_entity_type_and_all_generated_values(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Add_Add_with_same_entity_type_and_generated_values(bool async)
     {
         return base.Add_Add_with_same_entity_type_and_generated_values(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Add_Add_with_same_entity_type_and_no_generated_values(bool async)
     {
         return base.Add_Add_with_same_entity_type_and_no_generated_values(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Delete_Add_with_same_entity_types(bool async)
     {
         return base.Delete_Add_with_same_entity_types(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Delete_Delete_with_different_entity_types(bool async)
     {
         return base.Delete_Delete_with_different_entity_types(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Delete_Delete_with_same_entity_type(bool async)
     {
         return base.Delete_Delete_with_same_entity_type(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Modify_Modify_with_different_entity_types_and_generated_values(bool async)
     {
         return base.Modify_Modify_with_different_entity_types_and_generated_values(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Modify_Modify_with_different_entity_types_and_no_generated_values(bool async)
     {
         return base.Modify_Modify_with_different_entity_types_and_no_generated_values(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData((nameof(IsAsyncData)))]
     public override Task Modify_Modify_with_same_entity_type_and_generated_values(bool async)
     {
         return base.Modify_Modify_with_same_entity_type_and_generated_values(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Modify_Modify_with_same_entity_type_and_no_generated_values(bool async)
     {
         return base.Modify_Modify_with_same_entity_type_and_no_generated_values(async);

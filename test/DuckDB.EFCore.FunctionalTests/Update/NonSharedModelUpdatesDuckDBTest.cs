@@ -8,6 +8,6 @@ public class NonSharedModelUpdatesDuckDBTest : NonSharedModelUpdatesTestBase
     {
     }
 
-    protected override ITestStoreFactory TestStoreFactory
+    protected override ITestStoreFactory NonSharedTestStoreFactory
         => DuckDBTestStoreFactory.Instance;
 }

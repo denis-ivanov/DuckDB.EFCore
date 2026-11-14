@@ -9,7 +9,10 @@ public class ValueConvertersEndToEndDuckDBTest : ValueConvertersEndToEndTestBase
     {
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd)]
+    [InlineData(new[] { 0, 1, 2, 3 })]
+    [InlineData(new[] { 3, 2, 1, 0 })]
+    [InlineData(new[] { 0, 2, 0, 2 })]
     public override Task Can_insert_and_read_back_with_conversions(int[] valueOrder)
     {
         return base.Can_insert_and_read_back_with_conversions(valueOrder);

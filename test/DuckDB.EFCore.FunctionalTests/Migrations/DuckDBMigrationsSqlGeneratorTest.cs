@@ -202,7 +202,7 @@ public class DuckDBMigrationsSqlGeneratorTest : MigrationsSqlGeneratorTestBase
             """);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override void InsertDataOperation_throws_for_unsupported_column_types()
     {
         base.InsertDataOperation_throws_for_unsupported_column_types();

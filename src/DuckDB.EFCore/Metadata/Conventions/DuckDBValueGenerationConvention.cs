@@ -90,7 +90,7 @@ public class DuckDBValueGenerationConvention :
                 }
 
                 if (property.ValueGenerated == ValueGenerated.OnAdd
-                    && property.ClrType.UnwrapNullableType().IsInteger()
+                    && property.IsCompatibleWithValueGeneration()
                     && !HasConverter(property))
                 {
                     property.SetValueGenerationStrategy(DuckDBValueGenerationStrategy.AutoIncrement);
@@ -104,5 +104,6 @@ public class DuckDBValueGenerationConvention :
 
     private static bool HasConverter(IConventionProperty property)
         => property.FindTypeMapping()?.Converter != null
-           || property.GetValueConverter() != null;
+           || property.GetValueConverter() != null
+           || property.GetProviderClrType() != null;
 }

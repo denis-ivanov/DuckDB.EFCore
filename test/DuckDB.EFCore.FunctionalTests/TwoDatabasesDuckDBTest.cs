@@ -10,7 +10,7 @@ public class TwoDatabasesDuckDBTest : TwoDatabasesTestBase, IClassFixture<TwoDat
     {
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override void Can_query_from_one_connection_string_and_save_changes_to_another()
     {
         base.Can_query_from_one_connection_string_and_save_changes_to_another();

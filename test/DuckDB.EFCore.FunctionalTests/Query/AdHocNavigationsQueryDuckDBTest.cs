@@ -8,5 +8,5 @@ public class AdHocNavigationsQueryDuckDBTest : AdHocNavigationsQueryRelationalTe
     {
     }
 
-    protected override ITestStoreFactory TestStoreFactory => DuckDBTestStoreFactory.Instance;
+    protected override ITestStoreFactory NonSharedTestStoreFactory => DuckDBTestStoreFactory.Instance;
 }

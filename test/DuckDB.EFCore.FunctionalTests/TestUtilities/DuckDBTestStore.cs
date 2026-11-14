@@ -77,7 +77,7 @@ public class DuckDBTestStore : RelationalTestStore
         Func<DbContext, Task> seed)
         => (DuckDBTestStore)await InitializeAsync(serviceProvider, () => createContext(this), seed);
 
-    public override Task CleanAsync(DbContext context)
+    public override Task CleanAsync(DbContext context, bool createTables = true)
     {
         context.Database.EnsureClean();
         return Task.CompletedTask;
@@ -122,7 +122,7 @@ public class DuckDBTestStore : RelationalTestStore
 
     public override void OpenConnection()
     {
-        var connection = (DuckDBConnection)Connection;
+        var connection = Connection;
 
         if (connection.State != ConnectionState.Open)
         {
@@ -134,13 +134,21 @@ public class DuckDBTestStore : RelationalTestStore
 
     public override async Task OpenConnectionAsync()
     {
-        var connection = (DuckDBConnection)Connection;
+        var connection = Connection;
 
         if (connection.State != ConnectionState.Open)
         {
             await connection.OpenAsync();
             ExecuteNonQuery("PRAGMA threads=1");
             LoadSpatialExtensionIfNeeded();
+        }
+    }
+
+    public override void CloseConnection()
+    {
+        if (Connection.State != ConnectionState.Closed)
+        {
+            Connection.Close();
         }
     }
 

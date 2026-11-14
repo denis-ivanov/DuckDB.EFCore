@@ -1,4 +1,4 @@
-﻿using Xunit.Abstractions;
+﻿using Xunit;
 
 namespace Microsoft.EntityFrameworkCore.Query.Associations.OwnedNavigations;
 

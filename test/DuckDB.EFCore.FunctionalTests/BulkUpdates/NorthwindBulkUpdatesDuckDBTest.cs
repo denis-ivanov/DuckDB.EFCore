@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.BulkUpdates;
 
@@ -13,13 +12,13 @@ public class NorthwindBulkUpdatesDuckDBTest : NorthwindBulkUpdatesRelationalTest
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Delete_Where_predicate_with_GroupBy_aggregate(bool async)
     {
         return base.Delete_Where_predicate_with_GroupBy_aggregate(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Delete_Where_predicate_with_GroupBy_aggregate_2(bool async)
     {
         return base.Delete_Where_predicate_with_GroupBy_aggregate_2(async);
@@ -67,7 +66,7 @@ public class NorthwindBulkUpdatesDuckDBTest : NorthwindBulkUpdatesRelationalTest
             """);
     }
 
-    [ConditionalTheory]
+    [Theory, MemberData(nameof(IsAsyncData))]
     public override async Task Update_Where_GroupBy_aggregate_set_constant(bool async)
     {
         await base.Update_Where_GroupBy_aggregate_set_constant(async);
@@ -87,61 +86,31 @@ public class NorthwindBulkUpdatesDuckDBTest : NorthwindBulkUpdatesRelationalTest
             """);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_Where_GroupBy_First_set_constant(bool async)
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
+    public override async Task Update_with_cross_join_cross_apply_set_constant(bool async)
     {
-        return base.Update_Where_GroupBy_First_set_constant(async);
+        await base.Update_with_cross_join_cross_apply_set_constant(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_Where_GroupBy_First_set_constant_2(bool async)
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
+    public override async Task Update_with_cross_join_left_join_set_constant(bool async)
     {
-        return base.Update_Where_GroupBy_First_set_constant_2(async);
+        await base.Update_with_cross_join_left_join_set_constant(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_Where_GroupBy_First_set_constant_3(bool async)
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
+    public override async Task Update_with_cross_join_outer_apply_set_constant(bool async)
     {
-        return base.Update_Where_GroupBy_First_set_constant_3(async);
+        await base.Update_with_cross_join_outer_apply_set_constant(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_Where_Join_set_property_from_joined_single_result_scalar(bool async)
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
+    public override async Task Update_with_cross_join_set_constant(bool async)
     {
-        return base.Update_Where_Join_set_property_from_joined_single_result_scalar(async);
+        await base.Update_with_cross_join_set_constant(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_Where_Join_set_property_from_joined_single_result_table(bool async)
-    {
-        return base.Update_Where_Join_set_property_from_joined_single_result_table(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_with_cross_join_cross_apply_set_constant(bool async)
-    {
-        return base.Update_with_cross_join_cross_apply_set_constant(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_with_cross_join_left_join_set_constant(bool async)
-    {
-        return base.Update_with_cross_join_left_join_set_constant(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_with_cross_join_outer_apply_set_constant(bool async)
-    {
-        return base.Update_with_cross_join_outer_apply_set_constant(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Update_with_cross_join_set_constant(bool async)
-    {
-        return base.Update_with_cross_join_set_constant(async);
-    }
-
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override async Task Update_with_two_inner_joins(bool async)
     {
         await base.Update_with_two_inner_joins(async);

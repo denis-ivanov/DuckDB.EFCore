@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore;
 
@@ -12,34 +11,16 @@ public class ConvertToProviderTypesDuckDBTest : ConvertToProviderTypesTestBase<C
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact(Skip = "DateTimeOffset with non-zero offset, https://github.com/dotnet/efcore/issues/26068")]
-    public override async Task Can_insert_and_read_back_non_nullable_backed_data_types()
-    {
-        await base.Can_insert_and_read_back_non_nullable_backed_data_types();
-    }
-
-    [ConditionalFact(Skip = "DateTimeOffset with non-zero offset, https://github.com/dotnet/efcore/issues/26068")]
-    public override async Task Can_insert_and_read_back_nullable_backed_data_types()
-    {
-        await base.Can_insert_and_read_back_nullable_backed_data_types();
-    }
-
-    [ConditionalFact(Skip = "DateTimeOffset with non-zero offset, https://github.com/dotnet/efcore/issues/26068")]
+    [Fact(Skip = "DateTimeOffset with non-zero offset, https://github.com/dotnet/efcore/issues/26068")]
     public override async Task Can_insert_and_read_back_object_backed_data_types()
     {
         await base.Can_insert_and_read_back_object_backed_data_types();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Can_insert_and_read_back_with_string_key()
     {
         await base.Can_insert_and_read_back_with_string_key();
-    }
-
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Can_query_using_any_nullable_data_type_as_literal()
-    {
-        await base.Can_query_using_any_nullable_data_type_as_literal();
     }
 
     public class ConvertToProviderTypesDuckDBFixture : ConvertToProviderTypesFixtureBase, ITestSqlLoggerFactory

@@ -35,25 +35,25 @@ public abstract class ConnectionInterceptionDuckDBTestBase : ConnectionIntercept
     public class ConnectionInterceptionDuckDBTest(ConnectionInterceptionDuckDBTest.InterceptionDuckDBFixture fixture)
         : ConnectionInterceptionDuckDBTestBase(fixture), IClassFixture<ConnectionInterceptionDuckDBTest.InterceptionDuckDBFixture>
     {
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData(false), InlineData(true)]
         public override async Task Intercept_connection_creation_passively(bool async)
         {
             await base.Intercept_connection_creation_passively(async);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData(false), InlineData(true)]
         public override async Task Intercept_connection_to_override_connection_after_creation(bool async)
         {
             await base.Intercept_connection_to_override_connection_after_creation(async);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData(false), InlineData(true)]
         public override async Task Intercept_connection_to_override_creation(bool async)
         {
             await base.Intercept_connection_to_override_creation(async);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData(false), InlineData(true)]
         public override async Task Intercept_connection_to_suppress_dispose(bool async)
         {
             await base.Intercept_connection_to_suppress_dispose(async);
@@ -71,25 +71,25 @@ public abstract class ConnectionInterceptionDuckDBTestBase : ConnectionIntercept
         : ConnectionInterceptionDuckDBTestBase(fixture),
             IClassFixture<ConnectionInterceptionWithDiagnosticsDuckDBTest.InterceptionDuckDBFixture>
     {
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData(false), InlineData(true)]
         public override async Task Intercept_connection_creation_passively(bool async)
         {
             await base.Intercept_connection_creation_passively(async);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData(false), InlineData(true)]
         public override async Task Intercept_connection_to_override_connection_after_creation(bool async)
         {
             await base.Intercept_connection_to_override_connection_after_creation(async);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData(false), InlineData(true)]
         public override async Task Intercept_connection_to_override_creation(bool async)
         {
             await base.Intercept_connection_to_override_creation(async);
         }
 
-        [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+        [Theory(Skip = DuckDBSkipReasons.Tbd), InlineData(false), InlineData(true)]
         public override async Task Intercept_connection_to_suppress_dispose(bool async)
         {
             await base.Intercept_connection_to_suppress_dispose(async);

@@ -6,7 +6,7 @@ namespace Microsoft.EntityFrameworkCore;
 
 public class DuckDBDatabaseFacadeExtensionsTest
 {
-    [ConditionalFact]
+    [Fact]
     public void IsDuckDB_when_using_DuckDB()
     {
         using var context = new ProviderContext(

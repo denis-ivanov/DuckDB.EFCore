@@ -21,13 +21,13 @@ public class NorthwindDbFunctionsQueryDuckDBTest : NorthwindDbFunctionsQueryRela
             c => c.ContactName.Contains("M"));
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Collate_case_sensitive(bool async)
     {
         return base.Collate_case_sensitive(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Collate_case_sensitive_constant(bool async)
     {
         return base.Collate_case_sensitive_constant(async);

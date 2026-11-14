@@ -8,5 +8,5 @@ public class AdHocAdvancedMappingsQueryDuckDBTest : AdHocAdvancedMappingsQueryRe
     {
     }
 
-    protected override ITestStoreFactory TestStoreFactory => DuckDBTestStoreFactory.Instance;
+    protected override ITestStoreFactory NonSharedTestStoreFactory => DuckDBTestStoreFactory.Instance;
 }

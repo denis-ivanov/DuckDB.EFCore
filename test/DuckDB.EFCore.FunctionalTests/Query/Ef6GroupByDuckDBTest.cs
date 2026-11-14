@@ -18,15 +18,15 @@ public class Ef6GroupByDuckDBTest : Ef6GroupByTestBase<Ef6GroupByDuckDBTest.Ef6G
             => DuckDBTestStoreFactory.Instance;
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Average_Grouped_from_LINQ_101(bool async)
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
+    public override async Task Average_Grouped_from_LINQ_101(bool async)
     {
-        return base.Average_Grouped_from_LINQ_101(async);
+        await base.Average_Grouped_from_LINQ_101(async);
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
-    public override Task Whats_new_2021_sample_3(bool async)
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
+    public override async Task Whats_new_2021_sample_3(bool async)
     {
-        return base.Whats_new_2021_sample_3(async);
+        await base.Whats_new_2021_sample_3(async);
     }
 }

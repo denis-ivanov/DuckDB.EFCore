@@ -6,29 +6,30 @@ namespace Microsoft.EntityFrameworkCore.Types.Miscellaneous;
 
 public class BoolTypeTest : RelationalTypeTestBase<bool, BoolTypeTest.BoolTypeFixture>
 {
-    public BoolTypeTest(BoolTypeFixture fixture) : base(fixture)
+    public BoolTypeTest(BoolTypeFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture, testOutputHelper)
     {
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_another_json_property()
     {
         return base.ExecuteUpdate_within_json_to_another_json_property();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_constant()
     {
         return base.ExecuteUpdate_within_json_to_constant();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_nonjson_column()
     {
         return base.ExecuteUpdate_within_json_to_nonjson_column();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_parameter()
     {
         return base.ExecuteUpdate_within_json_to_parameter();
@@ -45,29 +46,30 @@ public class BoolTypeTest : RelationalTypeTestBase<bool, BoolTypeTest.BoolTypeFi
 
 public class StringTypeTest : RelationalTypeTestBase<string, StringTypeTest.StringTypeFixture>
 {
-    public StringTypeTest(StringTypeFixture fixture) : base(fixture)
+    public StringTypeTest(StringTypeFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture, testOutputHelper)
     {
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_another_json_property()
     {
         return base.ExecuteUpdate_within_json_to_another_json_property();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_constant()
     {
         return base.ExecuteUpdate_within_json_to_constant();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_parameter()
     {
         return base.ExecuteUpdate_within_json_to_parameter();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_nonjson_column()
     {
         return base.ExecuteUpdate_within_json_to_nonjson_column();
@@ -84,34 +86,36 @@ public class StringTypeTest : RelationalTypeTestBase<string, StringTypeTest.Stri
 
 public class GuidTypeTest : RelationalTypeTestBase<Guid, GuidTypeTest.GuidTypeFixture>
 {
-    public GuidTypeTest(GuidTypeFixture fixture) : base(fixture)
+    public GuidTypeTest(GuidTypeFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture, testOutputHelper)
     {
     }
 
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task ExecuteUpdate_within_json_to_nonjson_column()
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => base.ExecuteUpdate_within_json_to_nonjson_column());
         Assert.Equal(RelationalStrings.ExecuteUpdateCannotSetJsonPropertyToNonJsonColumn, exception.Message);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_another_json_property()
     {
         return base.ExecuteUpdate_within_json_to_another_json_property();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_constant()
     {
         return base.ExecuteUpdate_within_json_to_constant();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_parameter()
     {
         return base.ExecuteUpdate_within_json_to_parameter();
     }
-
+    
     public class GuidTypeFixture : RelationalTypeFixtureBase<Guid>
     {
         public override Guid Value { get; } = new("8f7331d6-cde9-44fb-8611-81fff686f280");
@@ -123,44 +127,69 @@ public class GuidTypeTest : RelationalTypeTestBase<Guid, GuidTypeTest.GuidTypeFi
 
 public class ByteArrayTypeTest : RelationalTypeTestBase<byte[], ByteArrayTypeTest.ByteArrayTypeFixture>
 {
-    public ByteArrayTypeTest(ByteArrayTypeFixture fixture) : base(fixture)
+    public ByteArrayTypeTest(ByteArrayTypeFixture fixture, ITestOutputHelper testOutputHelper)
+        : base(fixture, testOutputHelper)
     {
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_nonjson_column()
     {
         return base.ExecuteUpdate_within_json_to_nonjson_column();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Query_property_within_json()
     {
         return base.Query_property_within_json();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_another_json_property()
     {
         return base.ExecuteUpdate_within_json_to_another_json_property();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_constant()
     {
         return base.ExecuteUpdate_within_json_to_constant();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ExecuteUpdate_within_json_to_parameter()
     {
         return base.ExecuteUpdate_within_json_to_parameter();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task SaveChanges_within_json()
     {
         return base.SaveChanges_within_json();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task SaveChanges()
+    {
+        await base.SaveChanges();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Equality_in_query_with_constant()
+    {
+        await base.Equality_in_query_with_constant();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Equality_in_query_with_parameter()
+    {
+        await base.Equality_in_query_with_parameter();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Primitive_collection_in_query()
+    {
+        await base.Primitive_collection_in_query();
     }
 
     public class ByteArrayTypeFixture : RelationalTypeFixtureBase<byte[]>

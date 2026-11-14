@@ -15,9 +15,6 @@ public class AdHocQuerySplittingQueryDuckDBTest: AdHocQuerySplittingQueryTestBas
     {
     }
 
-    protected override ITestStoreFactory TestStoreFactory
-        => DuckDBTestStoreFactory.Instance;
-
     protected override DbContextOptionsBuilder SetQuerySplittingBehavior(DbContextOptionsBuilder optionsBuilder, QuerySplittingBehavior splittingBehavior)
     {
         new DuckDBDbContextOptionsBuilder(optionsBuilder).UseQuerySplittingBehavior(splittingBehavior);
@@ -41,4 +38,6 @@ public class AdHocQuerySplittingQueryDuckDBTest: AdHocQuerySplittingQueryTestBas
 
         return optionsBuilder;
     }
+
+    protected override ITestStoreFactory NonSharedTestStoreFactory => DuckDBTestStoreFactory.Instance;
 }

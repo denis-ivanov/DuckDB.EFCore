@@ -1,4 +1,5 @@
-﻿using Xunit.Abstractions;
+﻿using Microsoft.EntityFrameworkCore.BulkUpdates.Inheritance;
+using Xunit;
 
 namespace Microsoft.EntityFrameworkCore.BulkUpdates;
 

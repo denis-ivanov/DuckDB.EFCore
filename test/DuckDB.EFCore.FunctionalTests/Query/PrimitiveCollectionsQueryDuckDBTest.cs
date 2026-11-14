@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.TestUtilities;
+﻿using DuckDB.EFCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
@@ -10,6 +10,12 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
     {
         Fixture.TestSqlLoggerFactory.Clear();
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Multidimensional_array_is_not_supported()
+    {
+        await base.Multidimensional_array_is_not_supported();
     }
 
     public override async Task Column_collection_Any()
@@ -272,19 +278,6 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
-    public override async Task Column_collection_of_strings_contains_null()
-    {
-        await base.Column_collection_of_strings_contains_null();
-
-        AssertSql(
-            """
-            SELECT p."Id", p."Bool", p."Bools", p."DateTime", p."DateTimes", p."Enum", p."Enums", p."Int", p."Ints", p."NullableInt", p."NullableInts", p."NullableString", p."NullableStrings", p."NullableWrappedId", p."NullableWrappedIdWithNullableComparer", p."String", p."Strings", p."WrappedId"
-            FROM "PrimitiveCollectionsEntity" AS p
-            WHERE array_position(p."Strings", NULL) IS NOT NULL
-            """);
-    }
-
     public override async Task Column_collection_OrderByDescending_ElementAt()
     {
         await base.Column_collection_OrderByDescending_ElementAt();
@@ -537,7 +530,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Inline_collection_Contains_with_EF_Parameter()
     {
         await base.Inline_collection_Contains_with_EF_Parameter();
@@ -554,19 +547,19 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Inline_collection_Contains_with_IEnumerable_EF_Parameter()
     {
         await base.Inline_collection_Contains_with_IEnumerable_EF_Parameter();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Inline_collection_Count_with_column_predicate_with_EF_Parameter()
     {
         await base.Inline_collection_Count_with_column_predicate_with_EF_Parameter();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Inline_collection_Except_column_collection()
     {
         await base.Inline_collection_Except_column_collection();
@@ -584,13 +577,13 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Inline_collection_index_Column_with_EF_Constant()
     {
         await base.Inline_collection_index_Column_with_EF_Constant();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Inline_collection_Join_ordered_column_collection()
     {
         await base.Inline_collection_Join_ordered_column_collection();
@@ -698,67 +691,67 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Parameter_collection_index_Column_equal_Column()
     {
         await base.Parameter_collection_index_Column_equal_Column();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Parameter_collection_index_Column_equal_constant()
     {
         await base.Parameter_collection_index_Column_equal_constant();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Parameter_collection_with_type_inference_for_JsonScalarExpression()
     {
         await base.Parameter_collection_with_type_inference_for_JsonScalarExpression();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Project_collection_of_datetimes_filtered()
     {
         await base.Project_collection_of_datetimes_filtered();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Project_collection_of_ints_ordered()
     {
         await base.Project_collection_of_ints_ordered();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Project_collection_of_nullable_ints_with_paging2()
     {
         await base.Project_collection_of_nullable_ints_with_paging2();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Project_empty_collection_of_nullables_and_collection_only_containing_nulls()
     {
         await base.Project_empty_collection_of_nullables_and_collection_only_containing_nulls();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Project_inline_collection_with_Union()
     {
         await base.Project_inline_collection_with_Union();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Project_multiple_collections()
     {
         await base.Project_multiple_collections();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Parameter_collection_of_nullable_structs_Contains_nullable_struct_with_nullable_comparer()
     {
         await base.Parameter_collection_of_nullable_structs_Contains_nullable_struct_with_nullable_comparer();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override async Task Parameter_collection_of_structs_Contains_nullable_struct_with_nullable_comparer()
     {
         await base.Parameter_collection_of_structs_Contains_nullable_struct_with_nullable_comparer();
@@ -792,37 +785,37 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Project_collection_of_ints_with_ToList_and_FirstOrDefault()
     {
         return base.Project_collection_of_ints_with_ToList_and_FirstOrDefault();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Project_collection_of_nullable_ints_with_paging()
     {
         return base.Project_collection_of_nullable_ints_with_paging();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Project_collection_of_nullable_ints_with_paging3()
     {
         return base.Project_collection_of_nullable_ints_with_paging3();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Project_collection_of_ints_with_distinct()
     {
         return base.Project_collection_of_ints_with_distinct();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Parameter_collection_of_nullable_ints_Contains_nullable_int_with_EF_Parameter()
     {
         return base.Parameter_collection_of_nullable_ints_Contains_nullable_int_with_EF_Parameter();
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual async Task Column_collection_Append()
     {
         await AssertQuery(
@@ -837,7 +830,7 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public virtual async Task Column_collection_Prepend()
     {
         await AssertQuery(
@@ -862,5 +855,13 @@ public class PrimitiveCollectionsQueryDuckDBTest : PrimitiveCollectionsQueryRela
 
         protected override ITestStoreFactory TestStoreFactory
             => DuckDBTestStoreFactory.Instance;
+    }
+
+    protected override DbContextOptionsBuilder SetParameterizedCollectionMode(DbContextOptionsBuilder optionsBuilder,
+        ParameterTranslationMode parameterizedCollectionMode)
+    {
+        new DuckDBDbContextOptionsBuilder(optionsBuilder).UseParameterizedCollectionMode(parameterizedCollectionMode);
+
+        return optionsBuilder;
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.TestUtilities;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Microsoft.EntityFrameworkCore;
 

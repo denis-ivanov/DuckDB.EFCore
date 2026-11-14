@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.TestModels.BasicTypesModel;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query.Translations;
 
@@ -13,7 +12,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayValue_Float()
     {
         await AssertQuery(
@@ -29,7 +28,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayValue_Double()
     {
         await AssertQuery(
@@ -45,7 +44,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayValue_Int()
     {
         await AssertQuery(
@@ -61,7 +60,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayValue_String()
     {
         await AssertQuery(
@@ -77,7 +76,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayCosineDistance_Float()
     {
         await AssertQuery(
@@ -95,7 +94,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayCosineDistance_Double()
     {
         await AssertQuery(
@@ -113,7 +112,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayCosineSimilarity_Float()
     {
         await AssertQuery(
@@ -131,7 +130,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayCosineSimilarity_Double()
     {
         await AssertQuery(
@@ -149,7 +148,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayCrossProduct_Float()
     {
         await AssertQuery(
@@ -176,7 +175,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayCrossProduct_Double()
     {
         await AssertQuery(
@@ -203,7 +202,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayDistance_Float()
     {
         await AssertQuery(
@@ -221,7 +220,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayDistance_Double()
     {
         await AssertQuery(
@@ -239,7 +238,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayInnerProduct_Float()
     {
         await AssertQuery(
@@ -257,7 +256,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayInnerProduct_Double()
     {
         await AssertQuery(
@@ -275,7 +274,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayNegativeInnerProduct_Float()
     {
         await AssertQuery(
@@ -293,7 +292,7 @@ public class ArrayTranslationsDuckDBTest : QueryTestBase<BasicTypesQueryDuckDBFi
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task ArrayNegativeInnerProduct_Double()
     {
         await AssertQuery(

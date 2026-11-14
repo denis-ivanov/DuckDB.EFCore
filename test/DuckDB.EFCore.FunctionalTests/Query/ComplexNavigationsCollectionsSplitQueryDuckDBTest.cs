@@ -8,7 +8,7 @@ public class ComplexNavigationsCollectionsSplitQueryDuckDBTest : ComplexNavigati
     {
     }
 
-    [ConditionalTheory(Skip = DuckDBSkipReasons.Tbd)]
+    [Theory(Skip = DuckDBSkipReasons.Tbd), MemberData(nameof(IsAsyncData))]
     public override Task Filtered_include_outer_parameter_used_inside_filter(bool async)
     {
         return base.Filtered_include_outer_parameter_used_inside_filter(async);

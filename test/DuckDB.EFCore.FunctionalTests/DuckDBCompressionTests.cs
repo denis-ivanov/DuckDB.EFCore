@@ -93,7 +93,7 @@ public class DuckDBCompressionTests : IClassFixture<DuckDBCompressionTests.Compr
         var model = modelBuilder.Model;
         var entity = model.FindEntityType("TestEntity");
         var property = entity.FindProperty("Data");
-        
+
         Assert.Equal(compressionType, property.GetCompressionType());
     }
 

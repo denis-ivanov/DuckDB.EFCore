@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.TestModels.BasicTypesModel;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query.Translations.Temporal;
 
@@ -13,7 +12,7 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Strftime()
     {
         await AssertQuery(
@@ -31,7 +30,7 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task DayName()
     {
         await AssertQuery(
@@ -49,7 +48,7 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task DaysInMonth()
     {
         await AssertQuery(
@@ -67,7 +66,7 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Greatest()
     {
         await AssertQuery(
@@ -85,7 +84,7 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task IsFinite()
     {
         await AssertQuery(
@@ -102,7 +101,7 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task IsInfinite()
     {
         await AssertQuery(
@@ -119,7 +118,7 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Julian()
     {
         await AssertQuery(
@@ -136,7 +135,7 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task LastDay()
     {
         await AssertQuery(
@@ -158,7 +157,7 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task MonthName()
     {
         await AssertQuery(
@@ -176,7 +175,7 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Century()
     {
         await AssertQuery(
@@ -194,7 +193,7 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Decade()
     {
         await AssertQuery(
@@ -226,31 +225,31 @@ public class DateOnlyTranslationsDuckDBTest : DateOnlyTranslationsTestBase<Basic
             """);
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ToDateTime_constant_DateTime_with_property_TimeOnly()
     {
         return base.ToDateTime_constant_DateTime_with_property_TimeOnly();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ToDateTime_property_with_constant_TimeOnly()
     {
         return base.ToDateTime_property_with_constant_TimeOnly();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ToDateTime_property_with_property_TimeOnly()
     {
         return base.ToDateTime_property_with_property_TimeOnly();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ToDateTime_with_complex_DateTime()
     {
         return base.ToDateTime_with_complex_DateTime();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task ToDateTime_with_complex_TimeOnly()
     {
         return base.ToDateTime_with_complex_TimeOnly();

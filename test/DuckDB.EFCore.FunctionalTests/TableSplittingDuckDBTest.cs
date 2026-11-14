@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.TestUtilities;
 using Microsoft.EntityFrameworkCore.TestModels.TransportationModel;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Microsoft.EntityFrameworkCore;
 
@@ -19,6 +19,6 @@ public class TableSplittingDuckDBTest : TableSplittingTestBase
             .Property(e => e.Computed).HasComputedColumnSql("1");
     }
 
-    protected override ITestStoreFactory TestStoreFactory
+    protected override ITestStoreFactory NonSharedTestStoreFactory
         => DuckDBTestStoreFactory.Instance;
 }

@@ -9,19 +9,25 @@ namespace Microsoft.EntityFrameworkCore;
 public abstract class TransactionInterceptionDuckDBTestBase(TransactionInterceptionDuckDBTestBase.InterceptionDuckDBFixtureBase fixture)
     : TransactionInterceptionTestBase(fixture)
 {
-    [ConditionalTheory(Skip = "DuckDB does not support savepoints")]
+    [Theory(Skip = "DuckDB does not support savepoints")]
+    [InlineData(false)]
+    [InlineData(true)]
     public override async Task Intercept_CreateSavepoint(bool async)
     {
         await base.Intercept_CreateSavepoint(async);
     }
 
-    [ConditionalTheory(Skip = "DuckDB does not support savepoints")]
+    [Theory(Skip = "DuckDB does not support savepoints")]
+    [InlineData(false)]
+    [InlineData(true)]
     public override async Task Intercept_RollbackToSavepoint(bool async)
     {
         await base.Intercept_RollbackToSavepoint(async);
     }
 
-    [ConditionalTheory(Skip = "DuckDB does not support savepoints")]
+    [Theory(Skip = "DuckDB does not support savepoints")]
+    [InlineData(false)]
+    [InlineData(true)]
     public override async Task Intercept_ReleaseSavepoint(bool async)
     {
         await base.Intercept_ReleaseSavepoint(async);

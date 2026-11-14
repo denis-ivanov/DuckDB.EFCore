@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.TestUtilities;
-using Xunit.Abstractions;
+using Xunit;
 
 namespace Microsoft.EntityFrameworkCore;
 
@@ -14,6 +14,6 @@ public class TPTTableSplittingDuckDBTest : TPTTableSplittingTestBase
         // This scenario is not valid for TPT
         => Task.CompletedTask;
 
-    protected override ITestStoreFactory TestStoreFactory
+    protected override ITestStoreFactory NonSharedTestStoreFactory
         => DuckDBTestStoreFactory.Instance;
 }

@@ -2,7 +2,6 @@
 using System.Security.Cryptography;
 using System.Text;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query.Translations;
 
@@ -15,31 +14,37 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact(Skip = "https://github.com/duckdb/duckdb/discussions/7071")]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Any()
+    {
+        await base.Any();
+    }
+
+    [Fact(Skip = "https://github.com/duckdb/duckdb/discussions/7071")]
     public override Task Contains_with_column()
     {
         return base.Contains_with_column();
     }
 
-    [ConditionalFact(Skip = "https://github.com/duckdb/duckdb/discussions/7071")]
+    [Fact(Skip = "https://github.com/duckdb/duckdb/discussions/7071")]
     public override Task Contains_with_constant()
     {
         return base.Contains_with_constant();
     }
 
-    [ConditionalFact(Skip = "https://github.com/duckdb/duckdb/discussions/7071")]
+    [Fact(Skip = "https://github.com/duckdb/duckdb/discussions/7071")]
     public override Task Contains_with_parameter()
     {
         return base.Contains_with_parameter();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task First()
     {
         return base.First();
     }
 
-    [ConditionalFact(Skip = DuckDBSkipReasons.Tbd)]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public override Task Index()
     {
         return base.Index();
@@ -57,7 +62,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_ToBase64String()
     {
         await AssertQuery(
@@ -70,7 +75,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_FromBase64String()
     {
         await AssertQuery(
@@ -86,7 +91,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_ToHexString()
     {
         await AssertQuery(
@@ -101,7 +106,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_FromHexString()
     {
         await AssertQuery(
@@ -117,7 +122,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task MD5_HashData()
     {
         await AssertQuery(
@@ -133,7 +138,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_ToHexString_MD5_HashData()
     {
         await AssertQuery(
@@ -149,7 +154,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_ToHexString_MD5_HashData_in_where()
     {
         await AssertQuery(
@@ -164,7 +169,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task SHA1_HashData()
     {
         await AssertQuery(
@@ -180,7 +185,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_ToHexString_SHA1_HashData()
     {
         await AssertQuery(
@@ -196,7 +201,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_ToHexString_SHA1_HashData_in_where()
     {
         await AssertQuery(
@@ -211,7 +216,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task SHA256_HashData()
     {
         await AssertQuery(
@@ -227,7 +232,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_ToHexString_SHA256_HashData()
     {
         await AssertQuery(
@@ -243,7 +248,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_ToHexString_SHA256_HashData_in_where()
     {
         await AssertQuery(
@@ -258,7 +263,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Encoding_UTF8_GetBytes()
     {
         await AssertQuery(
@@ -274,7 +279,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Encoding_UTF8_GetBytes_in_where()
     {
         await AssertQuery(
@@ -288,7 +293,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Encoding_UTF8_GetString()
     {
         await AssertQuery(
@@ -303,7 +308,7 @@ public class ByteArrayTranslationsDuckDBTest : ByteArrayTranslationsTestBase<Bas
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Encoding_UTF8_GetString_in_where()
     {
         await AssertQuery(

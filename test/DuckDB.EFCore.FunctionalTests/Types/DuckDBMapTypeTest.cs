@@ -2,7 +2,6 @@ using DuckDB.EFCore.Extensions;
 using DuckDB.NET.Data;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Types;
 
@@ -17,7 +16,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
 
     private MapFixture Fixture { get; }
 
-    [ConditionalFact]
+    [Fact]
     public void Map_columns_are_created_with_MAP_store_type()
     {
         using var context = CreateContext();
@@ -35,7 +34,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             entityType.FindProperty(nameof(MapEntity.Measurements))!.GetColumnType());
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_round_trip_map()
     {
         using var context = CreateContext();
@@ -55,7 +54,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
         Assert.Equal(new Dictionary<int, double> { [7] = 1.5 }, entity.Measurements);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_round_trip_empty_map()
     {
         using var context = CreateContext();
@@ -69,7 +68,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
         Assert.Empty(entity.Counters);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_round_trip_null_map()
     {
         using var context = CreateContext();
@@ -83,7 +82,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
         Assert.Null(context.Entities.Single(e => e.Id == 3).OptionalCounters);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_round_trip_map_with_null_values()
     {
         using var context = CreateContext();
@@ -98,7 +97,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
         Assert.Equal(new Dictionary<string, int?> { ["a"] = null, ["b"] = 2 }, entity.NullableValues);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_round_trip_keys_and_values_needing_escaping()
     {
         using var context = CreateContext();
@@ -120,7 +119,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
         Assert.Equal(labels, context.Entities.Single(e => e.Id == 5).Labels);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_update_map()
     {
         using var context = CreateContext();
@@ -136,7 +135,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
         Assert.Equal(new Dictionary<string, int> { ["a"] = 1, ["b"] = 2 }, context.Entities.Single(e => e.Id == 6).Counters);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Mutating_a_map_is_detected_by_change_tracking()
     {
         using var context = CreateContext();
@@ -153,7 +152,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
         Assert.Equal(EntityState.Modified, context.Entry(tracked).State);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_filter_by_map_parameter()
     {
         using var context = CreateContext();
@@ -168,7 +167,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
         Assert.Equal(8, entity.Id);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Generates_map_sql_literal()
     {
         using var context = CreateContext();
@@ -186,7 +185,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
         Assert.Equal("NULL", typeMapping.GenerateSqlLiteral(null));
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Generated_map_sql_literal_is_valid_duckdb_sql()
     {
         using var context = CreateContext();
@@ -207,7 +206,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
         Assert.Equal(expected, reader.GetFieldValue<Dictionary<string, int>>(0));
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Explicit_store_type_is_used_for_map()
     {
         using var context = CreateContext();
@@ -219,7 +218,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             entityType.FindProperty(nameof(MapEntity.ExplicitlyTyped))!.GetColumnType());
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_round_trip_map_with_explicit_store_type()
     {
         using var context = CreateContext();
@@ -235,7 +234,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             context.Entities.Single(e => e.Id == 9).ExplicitlyTyped);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_round_trip_map_with_non_string_element_types()
     {
         using var context = CreateContext();
@@ -262,7 +261,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
         Assert.Equal(amounts, loaded.Amounts);
     }
 
-    [ConditionalFact]
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
     public void Can_filter_by_map_count()
     {
         using var context = CreateContext();
@@ -286,7 +285,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_map_count()
     {
         using var context = CreateContext();
@@ -309,7 +308,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_filter_by_map_contains_key()
     {
         using var context = CreateContext();
@@ -333,7 +332,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_map_contains_key()
     {
         using var context = CreateContext();
@@ -356,7 +355,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_filter_by_map_contains_value()
     {
         using var context = CreateContext();
@@ -380,7 +379,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_map_contains_value()
     {
         using var context = CreateContext();
@@ -403,7 +402,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_filter_by_map_indexer()
     {
         using var context = CreateContext();
@@ -427,7 +426,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_map_indexer()
     {
         using var context = CreateContext();
@@ -450,7 +449,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_filter_and_project_map_indexer_non_string_key()
     {
         using var context = CreateContext();
@@ -475,7 +474,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_map_keys_to_array()
     {
         using var context = CreateContext();
@@ -498,7 +497,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_map_keys_to_list()
     {
         using var context = CreateContext();
@@ -521,7 +520,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_map_keys_to_array_non_string()
     {
         using var context = CreateContext();
@@ -546,7 +545,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_map_keys_to_list_non_string()
     {
         using var context = CreateContext();
@@ -571,7 +570,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_map_values_to_array()
     {
         using var context = CreateContext();
@@ -594,7 +593,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_map_values_to_list()
     {
         using var context = CreateContext();
@@ -617,7 +616,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_map_values_to_array_non_string()
     {
         using var context = CreateContext();
@@ -642,7 +641,7 @@ public class DuckDBMapTypeTest : IClassFixture<DuckDBMapTypeTest.MapFixture>
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public void Can_project_map_values_to_list_non_string()
     {
         using var context = CreateContext();

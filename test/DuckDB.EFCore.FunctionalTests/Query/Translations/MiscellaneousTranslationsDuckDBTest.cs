@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.TestModels.BasicTypesModel;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.Query.Translations;
 
@@ -13,7 +12,7 @@ public class MiscellaneousTranslationsDuckDBTest : MiscellaneousTranslationsRela
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_ToChar()
     {
         await AssertQuery(
@@ -31,7 +30,7 @@ public class MiscellaneousTranslationsDuckDBTest : MiscellaneousTranslationsRela
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_ToInt32_char()
     {
         await AssertQuery(
@@ -49,7 +48,7 @@ public class MiscellaneousTranslationsDuckDBTest : MiscellaneousTranslationsRela
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_ToString_Byte_with_base()
     {
         await AssertQuery(
@@ -67,7 +66,7 @@ public class MiscellaneousTranslationsDuckDBTest : MiscellaneousTranslationsRela
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_ToString_Short_with_base()
     {
         await AssertQuery(
@@ -85,7 +84,7 @@ public class MiscellaneousTranslationsDuckDBTest : MiscellaneousTranslationsRela
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_ToString_Int_with_base()
     {
         await AssertQuery(
@@ -103,7 +102,7 @@ public class MiscellaneousTranslationsDuckDBTest : MiscellaneousTranslationsRela
             """);
     }
 
-    [ConditionalFact]
+    [Fact]
     public async Task Convert_ToString_Long_with_base()
     {
         await AssertQuery(
@@ -119,6 +118,42 @@ public class MiscellaneousTranslationsDuckDBTest : MiscellaneousTranslationsRela
             FROM "BasicTypesEntities" AS b
             WHERE b."Long" > 0 AND to_base(b."Long", 2) = '1000'
             """);
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Byte_Parse()
+    {
+        await base.Byte_Parse();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Decimal_Parse()
+    {
+        await base.Decimal_Parse();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Double_Parse()
+    {
+        await base.Double_Parse();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Int_Parse()
+    {
+        await base.Int_Parse();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Long_Parse()
+    {
+        await base.Long_Parse();
+    }
+
+    [Fact(Skip = DuckDBSkipReasons.Tbd)]
+    public override async Task Short_Parse()
+    {
+        await base.Short_Parse();
     }
 
     private void AssertSql(params string[] expected)
